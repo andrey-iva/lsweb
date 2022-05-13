@@ -1,0 +1,171 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block title %}{{ product.seo_title }}{% endblock %}
+{% block description %}{{ product.seo_desc }}{% endblock %}
+{% block keywords %}{{ product.seo_key }}{% endblock %}
+
+{% block content %}
+<div class="breadcrumb-area bg-gray">
+    <div class="container">
+        <div class="breadcrumb-content text-center">
+            <ul>
+                <li>
+                    <a href="{% url 'shop:home' %}">Главная</a>
+                </li>
+                <li>
+                    <a href="{% url 'shop:product_list' %}">Каталог</a>
+                </li>
+                <li>
+                    <a href="{{ product.category.get_absolute_url }}">{{ product.category }}</a>
+                </li>
+                <li class="active">{{ product.name|truncatewords:4 }}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="product-details-area pt-120 pb-115">
+    <div class="container">
+        <form action="{% url 'shop:cart_add' product.id %}" method="post" class="row product_detail product_list_add_to_cart">
+            {% csrf_token %}
+            <input type="text" name="override" value="0" hidden>
+            <input type="text" name="quantity" value="1" hidden>
+            <div class="col-lg-6 col-md-6">
+                <div class="product-details-tab">
+                    <div class="pro-dec-big-img-slider">
+                        <div class="easyzoom-style">
+                            <div class="easyzoom easyzoom--overlay">
+                                <a href="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}">
+                                    <img src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}" alt="">
+                                </a>
+                            </div>
+                            <a class="easyzoom-pop-up img-popup" href="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}"><i class="icon-size-fullscreen"></i></a>
+                        </div>
+                        {% for item in images %}
+                        <div class="easyzoom-style">
+                            <div class="easyzoom easyzoom--overlay">
+                                <a href="{{ item.image.url }}">
+                                    <img src="{{ item.image.url }}" alt="">
+                                </a>
+                            </div>
+                            <a class="easyzoom-pop-up img-popup" href="{{ item.image.url }}"><i class="icon-size-fullscreen"></i></a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="product-dec-slider-small product-dec-small-style1">
+                        <div class="product-dec-small active">
+                            <img src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}" alt="">
+                        </div>
+                        {% for item in images %}
+                        <div class="product-dec-small active">
+                            <img src="{{ item.image.url }}" alt="">
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6">
+                <div class="product-details-content pro-details-content-mrg">
+                    <h2 class="bd-highlight">{{ product.name }}</h2>
+                    <div class="product-ratting-review-wrap">
+                        <p>{{ product.description_short }}</p>
+                    </div>
+                    <div class="pro-details-price">
+                        <!-- <span class="new-price">$75.72</span> -->
+                        <!-- <span class="old-price">$95.72</span> -->
+                        <span>{{ currency }}{{ product.price }}</span>
+                    </div>
+                    <div class="pro-details-quality">
+                        <!-- <span>Колличество:</span> -->
+                        <div class="cart-plus-minus">
+                            <input name="qtybutton" class="cart-plus-minus-box" type="text" value="1" disabled>
+                        </div>
+                    </div>
+                    <div class="product-details-meta">
+                        <ul>
+                            <li>
+                                <span>Категория: </span>
+                                <a href="{{ product.category.get_absolute_url }}">{{ product.category }}</a>
+                            </li>
+                            <!-- <li><span>Tag: </span>
+                                <a href="#">Fashion,</a> <a href="#">Mentone</a> , <a href="#">Texas</a>
+                            </li> -->
+                        </ul>
+                    </div>
+                    <div class="pro-details-action-wrap">
+                        <div class="pro-details-add-to-cart">
+                            <!-- <a id="product_detail_add_to_cart" href="{% url 'shop:cart_add' product.id %}">Добавить в корзину</a> -->
+                            <button type="submit" class="btn btn-danger bg-black p-3 border-0 btn-outline-none">Добавить в корзину</button>
+                        </div>
+<!--                         <div class="pro-details-action">
+                            <a class="social" title="Social" href="#"><i class="icon-share"></i></a>
+                            <div class="product-dec-social">
+                                <a class="facebook" title="Facebook" href="#"><i class="icon-social-facebook"></i></a>
+                                <a class="twitter" title="Twitter" href="#"><i class="icon-social-twitter"></i></a>
+                                <a class="instagram" title="Instagram" href="#"><i class="icon-social-instagram"></i></a>
+                                <a class="pinterest" title="Pinterest" href="#"><i class="icon-social-pinterest"></i></a>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="description-review-wrapper pb-110">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="dec-review-topbar nav mb-45">
+                    <a class="active" data-toggle="tab" href="#des-details1">Описание товара.</a>
+                    <!-- <a data-toggle="tab" href="#des-details2">Спецификация</a> -->
+                </div>
+                <div class="tab-content dec-review-bottom">
+                    <div id="des-details1" class="tab-pane active">
+                        <div class="description-wrap">
+                            {{ product.description_full|linebreaks }}
+                        </div>
+                    </div>
+<!--                     <div id="des-details2" class="tab-pane">
+                        <div class="specification-wrap table-responsive">
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td class="title width1">Name</td>
+                                        <td>Salwar Kameez</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="title width1">SKU</td>
+                                        <td>0x48e2c</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="title width1">Models</td>
+                                        <td>FX 829 v1</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="title width1">Categories</td>
+                                        <td>Digital Print</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="title width1">Size</td>
+                                        <td>60’’ x 40’’</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="title width1">Brand </td>
+                                        <td>Individual Collections</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="title width1">Color</td>
+                                        <td>Black, White</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

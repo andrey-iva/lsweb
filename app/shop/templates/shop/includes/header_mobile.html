@@ -1,0 +1,62 @@
+<div class="mobile-header-active mobile-header-wrapper-style">
+    <div class="clickalbe-sidebar-wrap">
+        <a class="sidebar-close"><i class="icon_close"></i></a>
+        <div class="mobile-header-content-area">
+            <div class="header-offer-wrap-3 mobile-header-padding-border-4">
+                <!-- <p class="black">Free shipping worldwide for orders over $99 <a href="#">Learn More</a></p> -->
+            </div>
+            <div class="mobile-menu-wrap mobile-header-padding-border-2">
+                <!-- mobile menu start -->
+                <nav>
+                    <ul class="mobile-menu">
+                        <li class="menu-item-has-children">
+                            <a href="{% url 'shop:home' %}">Главная</a>
+                        </li>
+                        <li class="menu-item-has-children"><a href="#">Товары</a>
+                            <ul class="dropdown">
+                                <li><a href="{% url 'shop:product_list' %}?products=кронштейн">Кронштейны ISOFIX </a></li>
+                                <li><a href="{% url 'shop:product_list' %}?products=рейка">Рейки ISOFIX Для Задних Сидений </a></li>
+                            </ul>
+                        </li>
+                        <li class="menu-item-has-children "><a href="#">Услуги</a>
+                            <ul class="dropdown">
+                                <li><a href="{% url 'shop:product_list' %}?services=установка">Установка ISOFIX </a></li>
+                                <li><a href="{% url 'shop:product_list' %}?services=разработка">Разработка нового кронштейна </a></li>
+                            </ul>
+                        </li>
+                        <li class="menu-item-has-children "><a href="#">Информация</a>
+                            <ul class="dropdown">
+                                <li><a href="{% url 'shop:shipping_payment' %}">Доставка и оплата </a></li>
+                                <li><a href="{% url 'shop:contact' %}">Контакты </a></li>
+                                <li><a href="{% url 'shop:about' %}">О Нас </a></li>
+                                
+                            </ul>
+                        </li>
+                        <li class="menu-item-has-children">
+                            <a href="{% url 'shop:post_list' %}">обзоры </a>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- mobile menu end -->
+            </div>
+            <div class="mobile-header-info-wrap mobile-header-padding-border-3">
+                <!--                 <div class="single-mobile-header-info">
+                    <a href="store-location.html"><i class="lastudioicon-pin-3-2"></i> Store Location </a>
+                </div> -->
+            </div>
+            <div class="mobile-contact-info mobile-header-padding-border-4">
+                <ul>
+                    <li><i class="icon-phone "></i> +7 (495) 179-65-27</li>
+                    <li><i class="icon-envelope-open "></i> INFO@ISOFIX-MSK.RU</li>
+                    <li><i class="icon-home"></i> г. Москва, Солнцево, ул.Щорса, д.8 стр.1 – автокомплекс “Buncar”</li>
+                </ul>
+            </div>
+            <div class="mobile-social-icon">
+<!--                 <a class="facebook" href="#"><i class="icon-social-facebook"></i></a>
+                <a class="twitter" href="#"><i class="icon-social-twitter"></i></a>
+                <a class="pinterest" href="#"><i class="icon-social-pinterest"></i></a>
+                <a class="instagram" href="#"><i class="icon-social-instagram"></i></a> -->
+            </div>
+        </div>
+    </div>
+</div>

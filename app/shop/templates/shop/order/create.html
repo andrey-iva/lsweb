@@ -1,0 +1,168 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block title %}Оформление заказа{% endblock %}
+{% block content %}
+<div class="breadcrumb-area bg-gray">
+    <div class="container">
+        <div class="breadcrumb-content text-center">
+            <ul>
+                <li>
+                    <a href="{% url 'shop:home' %}">Главная</a>
+                </li>
+                <li class="active">Оформление заказа </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% if errorMessage %}
+<div class="alert alert-danger text-center" role="alert">
+  {{errorMessage}}
+</div>
+{% endif %}
+<div class="checkout-main-area pt-120 pb-120">
+    <div class="container">
+        <div class="checkout-wrap pt-30">
+            <form id="order_create" action="{% url 'shop:order_create' %}" method="post" class="row">
+                {% csrf_token %}
+                <div class="col-lg-7">
+                    <div class="billing-info-wrap mr-50">
+                        <h3>ДЕТАЛИ ОПЛАТЫ</h3>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6">
+                                <div class="billing-info mb-20">
+                                    <label for="first_name">Имя <abbr class="required" title="required">*</abbr></label>
+                                    <input maxlength="50" type="text" name="first_name" id="first_name" placeholder="Ваше имя" required>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6">
+                                <div class="billing-info mb-20">
+                                    <label for="last_name">Фамилия <abbr class="required" title="required">*</abbr></label>
+                                    <input maxlength="50" type="text" name="last_name" id="last_name" placeholder="Ваша фамилия" required>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="billing-info mb-20">
+                                    <label for="country">Страна <abbr class="required" title="required">*</abbr></label>
+                                    <input maxlength="50" type="text" name="country" id="country" placeholder="Страна проживания" required>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12">
+                                <div class="billing-info mb-20">
+                                    <label for="region">Регион / район <abbr class="required" title="required">*</abbr></label>
+                                    <input maxlength="100" type="text" name="region" id="region" placeholder="Регион или район" required>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="billing-info mb-20">
+                                    <label for="address">Адресс / Город, улица, дом, квартира <abbr class="required" title="required">*</abbr></label>
+                                    <input maxlength="250" type="text" name="address" id="address" placeholder="г Название, ул Название, д номер, кв номер" required>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12">
+                                <div class="billing-info mb-20">
+                                    <label for="postal_code">Почтовый индекс <abbr class="required" title="required">*</abbr></label>
+                                    <input maxlength="20" type="text" name="postal_code" id="postal_code" required>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12">
+                                <div class="billing-info mb-20">
+                                    <label for="phone">Телефон <abbr class="required" title="required">*</abbr></label>
+                                    <input maxlength="100" type="text" name="phone" id="phone" style="padding-left: 50px;" required>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12">
+                                <div class="billing-info mb-20">
+                                    <label for="email">Email Address <abbr class="required" title="required">*</abbr></label>
+                                    <input type="email" name="email" id="email" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="additional-info-wrap">
+                            <label>Примечания к заказу</label>
+                            <textarea maxlength="1000" type="text" name="notes" placeholder="Ваше сообщение"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="your-order-area">
+                        <h3>ВАШ ЗАКАЗ</h3>
+                        <div class="your-order-wrap gray-bg-4">
+                            <div class="your-order-info-wrap">
+                                <div class="your-order-info">
+                                    <ul>
+                                        <li>товары <span>итог</span></li>
+                                    </ul>
+                                </div>
+                                <div class="your-order-middle">
+                                    <ul>
+                                        {% for item in cart %}
+                                        <li data-toggle="tooltip" data-placement="top" title="{{item.product.name}}">{{ item.product.name|truncatewords:3 }} <b>({{item.quantity}})</b> <span>{{currency}}{{item.total_price}}</span></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <div class="your-order-info order-subtotal">
+                                    <ul>
+                                        <li>Подитог <span>{{currency}}{{cart.get_total_price}} </span></li>
+                                    </ul>
+                                </div>
+<!--                                 <div class="your-order-info order-shipping">
+                                    <ul>
+                                        <li>Shipping <p>Enter your full address </p>
+                                        </li>
+                                    </ul>
+                                </div> -->
+                                <div class="your-order-info order-total">
+                                    <ul>
+                                        <li>Итог <span>{{currency}}{{cart.get_total_price}} </span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="payment-method">
+<!--                                 <div class="pay-top sin-payment">
+                                    <input id="payment_method_1" class="input-radio" type="radio" value="cheque" checked="checked" name="payment_method">
+                                    <label for="payment_method_1"> Direct Bank Transfer </label>
+                                    <div class="payment-box payment_method_bacs">
+                                        <p>Make your payment directly into our bank account. Please use your Order ID as the payment reference.</p>
+                                    </div>
+                                </div>
+                                <div class="pay-top sin-payment">
+                                    <input id="payment-method-2" class="input-radio" type="radio" value="cheque" name="payment_method">
+                                    <label for="payment-method-2">Check payments</label>
+                                    <div class="payment-box payment_method_bacs">
+                                        <p>Make your payment directly into our bank account. Please use your Order ID as the payment reference.</p>
+                                    </div>
+                                </div>
+                                <div class="pay-top sin-payment">
+                                    <input id="payment-method-3" class="input-radio" type="radio" value="cheque" name="payment_method">
+                                    <label for="payment-method-3">Cash on delivery </label>
+                                    <div class="payment-box payment_method_bacs">
+                                        <p>Make your payment directly into our bank account. Please use your Order ID as the payment reference.</p>
+                                    </div>
+                                </div>
+                                <div class="pay-top sin-payment sin-payment-3">
+                                    <input id="payment-method-4" class="input-radio" type="radio" value="cheque" name="payment_method">
+                                    <label for="payment-method-4">PayPal <img alt="" src="/static/shop/assets/images/icon-img/payment.png"><a href="#">What is PayPal?</a></label>
+                                    <div class="payment-box payment_method_bacs">
+                                        <p>Make your payment directly into our bank account. Please use your Order ID as the payment reference.</p>
+                                    </div>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="Place-order">
+                            <button type="submit" class="btn btn-danger w-100 text-uppercase p-3">Оформить заказ</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    // var inputs = document.querySelectorAll("input")
+    // for (var i = 0; i < inputs.length; i++) {
+    //     inputs[i].onclick = function(e) {
+    //         this.value = ""
+    //     }
+    // }
+</script>
+{% endblock %}

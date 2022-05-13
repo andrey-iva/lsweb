@@ -1,0 +1,71 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block title %}Обзоры - список статей{% endblock %}
+{% block content %}
+<div class="breadcrumb-area bg-gray">
+    <div class="container">
+        <div class="breadcrumb-content text-center">
+            <ul>
+                <li>
+                    <a href="{% url 'shop:home' %}">Главная</a>
+                </li>
+                <li class="active">Обзоры</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="blog-area pt-120 pb-120">
+    <div class="container">
+        <div class="row">
+            {% for post in posts %}
+            <div class="col-lg-4 col-md-6 col-12 col-sm-6">
+                <div class="blog-wrap mb-40">
+                    <div class="blog-img mb-20">
+                        <a href="blog-details.html"><img src="{{ post.image_preview.url }}" alt="blog-img"></a>
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-meta">
+                            <ul class="">
+                                <li>Опубликовано</li>
+                                <li>{{ post.publish }}</li>
+                                <li>{{ post.author }}</li>
+                            </ul>
+                        </div>
+                        <h1><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h1>
+                        <p>{{ post.body_preview|truncatewords:20|linebreaks }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="col-12">
+                <div class="pro-pagination-style text-center mt-10">
+                    {% if not posts %}
+                    <div class="h3 text-center text-danger">Данный раздел пуст!</div>
+                    {% else %}
+
+                   
+                    <ul>
+                        {% if page.has_previous %}
+                        <li>
+                            <a id="prev" class="prev" href="?page={{page.previous_page_number}}">
+                                <i class="icon-arrow-left"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                        <li class="h6 pl-3 pr-3">{{ page.number }} из {{ page.paginator.num_pages }}</li>
+                        {% if page.has_next %}
+                        <li>
+                            <a id="next" class="next" href="?page={{page.next_page_number}}">
+                                <i class="icon-arrow-right"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+            
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

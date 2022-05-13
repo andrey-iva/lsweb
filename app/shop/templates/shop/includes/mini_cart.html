@@ -1,0 +1,50 @@
+{% load static %}
+<div class="sidebar-cart-active">
+    <div class="sidebar-cart-all">
+        <a class="cart-close" href="#"><i class="icon_close"></i></a>
+        <div class="cart-content cart-content-mini">
+
+            <h3>Корзина</h3>
+            <ul id="cart_mini_content">
+                {% for item in cart %}
+                {% with product=item.product %}
+                <li class="single-product-cart cart-detail-mini-delete">
+                    <div class="cart-img">
+                        <a href="{{ product.get_absolute_url }}">
+                            <img src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}" alt="">
+                        </a>
+                    </div>
+                    <div class="cart-title">
+                        <h4><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h4>
+                        <span> {{ item.quantity }} × {{ currency }}{{ item.price }}</span>
+                    </div>
+                    <div class="cart-delete">
+                        <form action="{% url 'shop:cart_remove' product.id %}" method="post">
+                            {% csrf_token %}
+                            <button class="btn btn-link btn-outline-none" type="submit">×</button>
+                        </form>
+                    </div>
+                </li>
+                {% endwith %}
+                {% endfor %}
+            </ul>
+            <div id="no_enpty_mini_cart" class="{% if cart|length == 0 %}d-none{% endif %}">
+                <div class="cart-total">
+                    <h4>Подитог: <span id="cart-mini-sub-total">{{ currency }}{{ cart.get_total_price }}</span></h4>
+                </div>
+                <div class="cart-checkout-btn">
+                    <a class="btn-hover cart-btn-style" href="{% url 'shop:cart_detail' %}">Корзина</a>
+                    <a class="no-mrg btn-hover cart-btn-style" href="{% url 'shop:order_create' %}">Оформить заказ</a>
+                </div>
+            </div>
+            <div id="enpty_mini_cart" class="{% if cart|length > 0 %}d-none{% endif %}">
+                <div class="cart-total">
+                    <h4 class="text-center">ВЫБРАНЫХ ТОВАРОВ НЕТ.</h4>
+                </div>
+                <div class="cart-checkout-btn">
+                    <a class="no-mrg btn-hover cart-btn-style text-uppercase" href="{% url 'shop:product_list' %}">ПЕРЕЙТИ К ПОКУПКАМ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

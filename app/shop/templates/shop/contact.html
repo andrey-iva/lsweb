@@ -1,0 +1,93 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block title %}Наши контакты{% endblock %}
+{% block content %}
+<div class="breadcrumb-area bg-gray">
+    <div class="container">
+        <div class="breadcrumb-content text-center">
+            <ul>
+                <li>
+                    <a href="{% url 'shop:home' %}">Главная</a>
+                </li>
+                <li class="active">Наши контакты </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% if message %}
+<div class="alert alert-light m-5 text-center text-danger h2" role="alert">
+  {{ message }}
+</div>
+{% endif %}
+<div class="contact-area pt-115">
+    <div class="container">
+        <div class="contact-info-wrap-3 pb-85">
+            <h3>Контактная информация</h3>
+            <div class="row">
+                <div class="col-lg-4 col-md-4">
+                    <div class="single-contact-info-3 text-center mb-30">
+                        <i class="icon-location-pin "></i>
+                        <h4>Наш адресс</h4>
+                        <p>г. Москва, Солнцево, ул.Щорса, д.8 стр.1 – автокомплекс “Buncar” </p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4">
+                    <div class="single-contact-info-3 extra-contact-info text-center mb-30">
+                        <ul>
+                            <li><i class="icon-screen-smartphone"></i> +7 (495) 179-65-27 </li>
+                            <li><i class="icon-envelope "></i> <a href="#"> INFO@ISOFIX-MSK.RU</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4">
+                    <div class="single-contact-info-3 text-center mb-30">
+                        <i class="icon-clock "></i>
+                        <h4>Часы работы</h4>
+                        <p>Понедельник - Пятница. 9:00 - 5:00 </p>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="single-contact-info-3 text-center mb-30">
+                        <i class="icon-location-pin "></i>
+                        <h4>Расположение</h4>
+                        <p>
+                            Автокомплекс расположен в действующем бомбоубежище под жилым домом, заезд с правого торца дома если стоять лицом к подъездам, от торца поверните направо, через 30 м развернитесь на 180 градусов под железную арку, спуск между белыми стенками под дом
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="get-in-touch-wrap">
+            <h3>Напишите нам</h3>
+            <div class="contact-from contact-shadow">
+                <form id="contact-form" action="{% url 'shop:contact_send_message' %}" method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6">
+                            <input maxlength="50" name="name" type="text" placeholder="Имя" required>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <input name="email" type="email" placeholder="Email" required>
+                        </div>
+                        <div class="col-lg-12 col-md-12">
+                            <input maxlength="200" name="subject" type="text" placeholder="Тема сообщения" required>
+                        </div>
+                        <div class="col-lg-12 col-md-12">
+                            <textarea maxlength="1000" name="notes" placeholder="Ваше сообщение" required></textarea>
+                        </div>
+                        <div class="col-lg-12 col-md-12">
+                            <button class="submit" type="submit">Отправить</button>
+                        </div>
+                    </div>
+                </form>
+                <p class="form-messege"></p>
+            </div>
+        </div>
+        <div class="contact-map pt-120 pb-180">
+            <div id="map">
+                <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A0e19914ef4d5b30855031a416c3e9be77a57555f5c9f13a4078e21c2bb1c992c&amp;source=constructor" width="100%" height="477" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

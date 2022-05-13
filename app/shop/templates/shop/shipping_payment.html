@@ -1,0 +1,96 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block title %}Доставка и оплата &bull; ISOFIX-MSK{% endblock %}
+{% block content %}
+<div class="breadcrumb-area bg-gray">
+    <div class="container">
+        <div class="breadcrumb-content text-center">
+            <ul>
+                <li>
+                    <a href="{% url 'shop:home' %}">Главная</a>
+                </li>
+                <li class="active">Доставка и оплата</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="container mt-50 mb-180">
+    <div class="row accordion" id="accordionExample">
+        <div class="card border-0 col-md-10 col-sm-12 col-12 m-auto">
+            <div class="card-header pl-2" id="headingOne">
+                <h2 class="mb-0">
+                    <button class="btn btn-link text-left text-dark collapsed btn-outline-none" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        Самовывоз с автокомплекса Buncar (г.Москва, ул.Щорса, д.8 корп.1)
+                    </button>
+                </h2>
+            </div>
+            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                <div class="card-body">
+                    <h4 class="text-danger mb-2">Способы оплаты</h4>
+                    <ol class="text-dark">
+                    	<li>Оплата наличными</li>
+                    	<li>Банковской картой при оформлении заказа на сайте</li>
+                    	<li>Банковской картой по платежной ссылке при получении заказа</li>
+                    	<li>Перевод по системе быстрых платежей или онлайн-перевод через приложение банка</li>
+                    	<li>Безналичный расчет для юридических лиц</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="card border-0 col-md-10 col-sm-12 col-12 m-auto">
+            <div class="card-header pl-2" id="headingTwo">
+                <h2 class="mb-0">
+                    <button class="btn btn-link text-left text-dark collapsed btn-outline-none" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        Доставка до адреса покупателя (СДЭК)
+                    </button>
+                </h2>
+            </div>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                <div class="card-body">
+                    <h4 class="text-danger mb-2">Способы оплаты</h4>
+                    <ol class="text-dark">
+                    	<li>Банковской картой при оформлении заказа на сайте</li>
+                    	<li>Наложенный платеж (оплата банковской картой или наличными при получении товара, +5% от стоимости товара)</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="card border-0 col-md-10 col-sm-12 col-12 m-auto">
+            <div class="card-header pl-2" id="headingThree">
+                <h2 class="mb-0">
+                    <button class="btn btn-link text-left text-dark collapsed btn-outline-none" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        Доставка в пункты выдачи транспортной компании СДЭК
+                    </button>
+                </h2>
+            </div>
+            <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                <div class="card-body">
+                    <h4 class="text-danger mb-2">Способы оплаты</h4>
+                    <ol class="text-dark">
+                    	<li>Банковской картой при оформлении заказа на сайте</li>
+                    	<li>Наложенный платеж (оплата банковской картой или наличными при получении товара, +5% от стоимости товара)</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="card border-0 col-md-10 col-sm-12 col-12 m-auto">
+            <div class="card-header pl-2" id="headingFour">
+                <h2 class="mb-0">
+                    <button class="btn btn-link text-left text-dark collapsed btn-outline-none" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                        Доставка другой транспортной компанией
+                    </button>
+                </h2>
+            </div>
+            <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
+                <div class="card-body">
+                	<h4 class="text-danger mb-2">Способы оплаты</h4>
+                    <ol class="text-dark">
+                    	<li>Банковской картой при оформлении заказа на сайте</li>
+                    	<li>Оплата банковской картой или наличными при получении товара в пункте выдачи заказов или при доставке курьерской службой (+5% от стоимости товара)</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

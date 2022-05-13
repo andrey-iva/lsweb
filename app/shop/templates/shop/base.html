@@ -1,0 +1,270 @@
+<!doctype html>
+<html class="no-js" lang="ru-RU">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="robots" content="none" />
+    <meta name="description" content="{% block description %}{% endblock %}">
+    <meta name="keywords" content="{% block keywords %}{% endblock %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/static/shop/assets/images/favicon.png">
+    <!-- All CSS is here
+    ============================================ -->
+    <!-- <link rel="stylesheet" href="/static/shop/assets/css/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/shop/assets/css/vendor/signericafat.css">
+    <link rel="stylesheet" href="/static/shop/assets/css/vendor/cerebrisans.css">
+    <link rel="stylesheet" href="/static/shop/assets/css/vendor/simple-line-icons.css">
+    <link rel="stylesheet" href="/static/shop/assets/css/vendor/elegant.css">
+    <link rel="stylesheet" href="/static/shop/assets/css/vendor/linear-icon.css">
+    <link rel="stylesheet" href="/static/shop/assets/css/plugins/nice-select.css">
+    <link rel="stylesheet" href="/static/shop/assets/css/plugins/easyzoom.css">
+    <link rel="stylesheet" href="/static/shop/assets/css/plugins/slick.css">
+    <link rel="stylesheet" href="/static/shop/assets/css/plugins/animate.css">
+    <link rel="stylesheet" href="/static/shop/assets/css/plugins/magnific-popup.css">
+    <link rel="stylesheet" href="/static/shop/assets/css/plugins/jquery-ui.css"> -->
+    <link rel="stylesheet" href="/static/shop/assets/css/vendor/vendor.min.css">
+    <link rel="stylesheet" href="/static/shop/assets/css/plugins/plugins.min.css">
+    <link rel="stylesheet" href="/static/shop/assets/js/inttel/css/intlTelInput.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/css/suggestions.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/shop/assets/css/style.css">
+    <!-- Use the minified version files listed below for better performance and remove the files listed above
+    
+    <link rel="stylesheet" href="/static/shop/assets/css/style.min.css"> -->
+    
+    <style>
+    .btn-outline-none:focus {
+        border: none !important;
+        box-shadow: none !important;
+        outline: 0 none !important;
+    }
+
+    .shop-topbar-wrapper .product-sorting-wrapper .shorting-style select {
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        background: #fff url("/static/shop/assets/images/icon-img/shop.png") no-repeat scroll right 10px center;
+        border: 1px solid #ebebeb;
+        border-radius: 3px;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+        color: #000000;
+        cursor: pointer;
+        font-size: 14px;
+        height: 30px;
+        padding-left: 10px;
+        width: 170px;
+    }
+
+    .thumb-wrap {
+        position: relative;
+        padding-bottom: 56.25%;
+        /* задаёт высоту контейнера для 16:9 (если 4:3 — поставьте 75%) */
+        height: 0;
+        overflow: hidden;
+    }
+
+    .thumb-wrap iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-width: 0;
+        outline-width: 0;
+    }
+    img.note-float-left {
+        padding: 0 20px 0 0;
+    }
+    img.note-float-right {
+        padding: 0 0 0 20px;
+    }
+
+    .blog_post_detail_img_w100 p img {
+        width: 100%;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="main-wrapper">
+        {% include 'shop/includes/header.html' %}
+        <!-- mobile header start -->
+        {% include 'shop/includes/header_mobile.html' %}
+        <!-- mini cart start -->
+        {% include 'shop/includes/mini_cart.html' %}
+        {% block content %}{% endblock %}
+        {% include 'shop/includes/footer.html' %}
+        <!-- Modal -->
+        {% include 'shop/includes/modal.html' %}
+        <!-- Modal end -->
+    </div>
+    <!-- All JS is here
+============================================ -->
+    <!-- <script src="/static/shop/assets/js/vendor/modernizr-3.6.0.min.js"></script> -->
+    <script src="/static/shop/assets/js/vendor/jquery-3.5.1.min.js"></script>
+    <!-- <script src="/static/shop/assets/js/vendor/jquery-migrate-3.3.0.min.js"></script> -->
+    <script src="/static/shop/assets/js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="/static/shop/assets/js/plugins/slick.js"></script>
+    <!-- <script src="/static/shop/assets/js/plugins/jquery.syotimer.min.js"></script> -->
+    <!-- <script src="/static/shop/assets/js/plugins/jquery.instagramfeed.min.js"></script> -->
+    <script src="/static/shop/assets/js/plugins/jquery.nice-select.min.js"></script>
+    <script src="/static/shop/assets/js/plugins/wow.js"></script>
+    <script src="/static/shop/assets/js/plugins/jquery-ui-touch-punch.js"></script>
+    <script src="/static/shop/assets/js/plugins/jquery-ui.js"></script>
+    <script src="/static/shop/assets/js/plugins/magnific-popup.js"></script>
+    <script src="/static/shop/assets/js/plugins/sticky-sidebar.js"></script>
+    <script src="/static/shop/assets/js/plugins/sticky-sidebar.js"></script>
+    <!-- <script src="/static/shop/assets/js/plugins/easyzoom.js"></script> -->
+    <script src="/static/shop/assets/js/plugins/scrollup.js"></script>
+    <script src="/static/shop/assets/js/plugins/jquery.mask.min.js"></script>
+    <script src="/static/shop/assets/js/inttel/js/intlTelInput-jquery.min.js"></script>
+    <!-- <script src="/static/shop/assets/js/plugins/ajax-mail.js"></script> -->
+    <!-- Use the minified version files listed below for better performance and remove the files listed above  
+<script src="/static/shop/assets/js/vendor/vendor.min.js"></script>
+<script src="/static/shop/assets/js/plugins/plugins.min.js"></script>  -->
+
+    <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
+    <!-- Main JS -->
+    <script>
+    var CSRF_TOKEN         = '{% csrf_token %}';
+    var PRODUCT_LIST_URL   = "{% url 'shop:product_list' %}"
+    var CART_INFO_JSON_URL = "{% url 'shop:cart_json' %}"
+    var FILTER_URL         = "{% url 'shop:product_filter' %}"
+    var NO_IMAGE_URL       = "{{ no_image }}"
+
+    // $("#first_name").suggestions({
+    //     token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
+    //     type: "NAME",
+    //      //Вызывается, когда пользователь выбирает одну из подсказок 
+    //     onSelect: function(suggestion) {
+    //         console.log(suggestion);
+    //     }
+    // });
+
+    // Инициализирует подсказки по ФИО на указанном элементе
+    function init($surname, $name) {
+      var self = {};
+      self.$surname = $surname;
+      self.$name = $name;
+      
+      var fioParts = ["NAME", "SURNAME"];
+      $.each([$surname, $name], function(index, $el) {
+        var sgt = $el.suggestions({
+          token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
+          type: "NAME",
+          triggerSelectOnSpace: false,
+          hint: "",
+          noCache: true,
+          params: {
+            // каждому полю --- соответствующая подсказка
+            parts: [fioParts[index]]
+          },
+        });
+      });
+    };
+
+
+    init($("#first_name"), $("#last_name"));
+
+    // Город, улица, дом, квартира
+    $("#address").suggestions({
+      token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
+      type: "ADDRESS",
+      // Вызывается, когда пользователь выбирает одну из подсказок
+      onSelect: function(suggestion) {
+        $("#postal_code").val(suggestion['data']['postal_code'])
+        console.log(suggestion['unrestricted_value']);
+        console.log(suggestion);
+      }
+    });
+
+    // Город, улица, дом, квартира
+    // var token = "17a564feb19fabf1391ab53059b81a6a2012b9a9";
+
+    // var type  = "ADDRESS";
+    // var $region = $("#region");
+    // var $city   = $("#city");
+    // var $street = $("#street");
+    // var $house  = $("#house");
+
+    // // регион и район
+    // $region.suggestions({
+    //   token: token,
+    //   type: type,
+    //   hint: false,
+    //   bounds: "region-area"
+    // });
+
+    // // город и населенный пункт
+    // $city.suggestions({
+    //   token: token,
+    //   type: type,
+    //   hint: false,
+    //   bounds: "city-settlement",
+    //   constraints: $region
+    // });
+
+    // // улица
+    // $street.suggestions({
+    //   token: token,
+    //   type: type,
+    //   hint: false,
+    //   bounds: "street",
+    //   constraints: $city,
+    //   count: 15
+    // });
+
+    // // дом
+    // $house.suggestions({
+    //   token: token,
+    //   type: type,
+    //   hint: false,
+    //   noSuggestionsHint: false,
+    //   bounds: "house",
+    //   constraints: $street
+    // });
+
+
+    // console.log($house.suggestions())
+
+    $("#country").suggestions({
+        token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
+        type: "country"
+    });
+
+    $("#region").suggestions({
+        token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
+        type: "ADDRESS",
+        // Вызывается, когда пользователь выбирает одну из подсказок 
+        onSelect: function(suggestion) {
+            console.log(suggestion);
+        }
+    });
+
+    // $("#address").suggestions({
+    //     token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
+    //     type: "ADDRESS",
+    //      //Вызывается, когда пользователь выбирает одну из подсказок 
+    //     onSelect: function(suggestion) {
+    //         console.log(suggestion);
+    //     }
+    // });
+    $("#postal_code").suggestions({
+        token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
+        type: "postal_unit"
+    });
+    $("#email").suggestions({
+        token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
+        type: "EMAIL",
+        /* Вызывается, когда пользователь выбирает одну из подсказок */
+        onSelect: function(suggestion) {
+            console.log(suggestion);
+        }
+    });
+    </script>
+    <script src="/static/shop/assets/js/main.js"></script>
+</body>
+
+</html>

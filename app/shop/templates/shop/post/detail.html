@@ -1,0 +1,47 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block content %}
+
+<div class="breadcrumb-area bg-gray">
+    <div class="container">
+        <div class="breadcrumb-content text-center">
+            <ul>
+                <li>
+                    <a href="{% url 'shop:home' %}">Главная</a>
+                </li>
+                <li class="active">{{ post.title }}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="blog-area pt-120 pb-120">
+    <div class="container">
+        <div class="row">
+            <div class="col-lx-10 col-lg-10 col-md-12 col-sm-12 col-12 m-auto">
+                <div class="blog-details-wrapper">
+                    <div class="blog-details-top">
+                        <div class="blog-details-img">
+                            <img alt="" src="{{ post.image_preview.url }}">
+                        </div>
+                        <div class="blog-details-content">
+                            <div class="blog-meta-2 pb-3">
+                            	<h1>{{ post.title }}</h1>
+                                <ul>
+                                    <li>Опубликовано</li>
+	                                <li>{{ post.publish }}</li>
+	                                <li>{{ post.author }}</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="blog_post_detail_img_w100 text-justify">
+                                {{ post.body|safe }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

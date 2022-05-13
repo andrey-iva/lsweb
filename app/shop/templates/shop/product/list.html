@@ -1,0 +1,351 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}{% if category %}{{ category.name }}{% else %}{% if request.META.PATH_INFO == '/shop/' %}Крепления ISOFIX &bull; ISOFIX-MSK{% else %}Крепление Аксессуары и услуги &bull; ISOFIX-MSK{% endif %}{% endif %}{% endblock %}
+
+{% block description %}{% if request.META.PATH_INFO == '/shop/' %}Производство и установка креплений ISOFIX на переднее, заднее и сиденья третьего ряда Вашего автомобиля для простой фиксации детских автокресел{% else %}Крепления ISOFIX на любые сидения автомобилей (переднее, заднее по середине, третий ряд) для простой и надежной фиксации детских автокресел. Купить кронштейн ISOFIX.{% endif %}{% endblock %}
+
+{% block keywords %}кронштейны, рейки, установка, разработка, нового, isofix{% endblock %}
+
+
+{% block content %}
+<div class="breadcrumb-area bg-gray">
+    <div class="container">
+        <div class="breadcrumb-content text-center">
+            <ul>
+                <li>
+                    <a href="{% url 'shop:home' %}">Главная</a>
+                </li>
+                {% if not category %}
+                <li class="active">Каталог </li>
+                {% else %}
+                <li><a href="{% url 'shop:product_list' %}">Каталог</a></li>
+                <li class="active">{{ category.name }}</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div id="modal_filter" class="modal fade bd-example-modal-xl" tabindex="-1" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title h4" id="myExtraLargeModalLabel">ФИЛЬТРЫ</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body mt-1 pt-1">
+                <div class="row">
+                    <div class="col-12 pb-3">
+                        <div id="modal_brand_car">
+                            <h4><b class="text-danger">Кронштейны</b></h4>
+<!--                             <select class="form-control select_products">
+                                <option value="кронштейн">Кронштейны</option>
+                                <option value="рейка">Рейки</option>
+                                <option value="услуга">Услуги</option>
+                            </select> -->
+                        </div>    
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12 pb-3 bracket">
+                        <div>Марка машины</div>
+                        <select data-filter-name="brand_car" class="form-control brands_car change_bracket">
+                            <!-- brands -->
+                            <option></option>
+                            {% for brand in brands %}
+                            <option value="{{brand|upper}}">{{brand|upper}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12 pb-3 bracket">
+                        <div>Модель машины</div>
+                        <select data-filter-name="model_car" class="form-control models_car change_bracket">
+                            <!-- models -->
+                        </select>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12 pb-3 bracket">
+                        <div>Год машины</div>
+                        <select data-filter-name="year" class="form-control years_car change_bracket">
+                            <!-- years -->
+                        </select>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12 pb-3 bracket">
+                        <div>Марка машины</div>
+                        <select data-filter-name="seat_type" class="form-control seat_types_car change_bracket">
+                            <!-- seat types -->
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 mt-10 mb-30">
+                        <button class="w-100 btn btn-danger clear_all">очистить фильтры</button>
+                    </div>
+                </div>
+                <div id="modal_filter_content" class="row">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="shop-area pt-120 pb-120">
+    <div class="container">
+        <div class="row flex">
+            <div class="order-xl-2 order-lg-2 order-2 col-lg-9">
+                <div class="shop-topbar-wrapper">
+                    <div class="shop-topbar-left">
+                        <div class="view-mode nav">
+                            {% if product_view_style == 'grid' %}
+                            <a class="grid_style active" data-grid-style-url="{% url 'shop:toggle_style' 'grid' %}">
+                                <i class="icon-grid"></i>
+                            </a>
+                            <a class="list_style" data-list-style-url="{% url 'shop:toggle_style' 'list' %}">
+                                <i class="icon-menu"></i>
+                            </a>
+                            {% else %}
+                            <a class="grid_style" data-grid-style-url="{% url 'shop:toggle_style' 'grid' %}">
+                                <i class="icon-grid"></i>
+                            </a>
+                            <a class="list_style active" data-list-style-url="{% url 'shop:toggle_style' 'list' %}">
+                                <i class="icon-menu"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+
+                        <button type="button" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target=".bd-example-modal-xl">фильтр</button>
+
+                        <a class="btn btn-outline-info btn-sm ml-1" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                            марки
+                          </a>
+                       
+                    </div>
+                    <div class="product-sorting-wrapper">
+                        <div class="product-show shorting-style">
+                            <label>Показывать :&nbsp;&nbsp;</label>
+                            <select id="product_list_size">
+                                <option value="{% url 'shop:product_list_size' 12 %}" {% if request.session.pagination_size == 12 %}selected{% endif %}> 12</option>
+                                <option value="{% url 'shop:product_list_size' 24 %}" {% if request.session.pagination_size == 24 %}selected{% endif %}> 24</option>
+                            </select>
+                        </div>
+                        <div class="product-show shorting-style">
+                            <label>Сортировать :</label>
+                            <select id="procuct_list_sort">
+                                <option value="{% url 'shop:product_sort_by' 'default' %}" {% if sort_by == 'default' %}selected{% endif %}> По умолчанию</option>
+                                <option value="{% url 'shop:product_sort_by' 'price_min' %}" {% if sort_by == 'price_min' %}selected{% endif %}> Цены: с низу</option>
+                                <option value="{% url 'shop:product_sort_by' 'price_max' %}" {% if sort_by == 'price_max' %}selected{% endif %}> Цены: с верху</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="scroll_to_products" class="shop-bottom-area">
+                    <div class="tab-content jump">
+                        <div class="collapse" id="collapseExample"> 
+                          <div class="card card-body mb-5">
+                            <div class="row d-flex flex-wrap justify-content-around">
+                            {% for brand in brands %}
+                                <div class="col-md-2 col-sm-4 col-4">
+                                   <a class="dropdown-item badge badge-light" href="/product-category/{{brand}}/">{{ brand|upper }}</a> 
+                                </div>
+                                
+                            {% endfor %}
+                            </div>
+                          </div>
+                        </div>
+
+                        {% if product_view_style == 'grid' %}
+                        <div id="shop-1" class="product_grid_style tab-pane active">
+                            <div class="row">
+                                {% for product in products %}
+                                <!-- <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12"> -->
+                                <form 
+                                    action="{% url 'shop:cart_add' product.id %}" 
+                                    method="post" 
+                                    class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-6 product_list_add_to_cart"
+                                >
+                                    {% csrf_token %}
+                                    <input type="text" name="override" value="0" hidden>
+                                    <input type="text" name="quantity" value="1" hidden>
+                                    <div class="single-product-wrap mb-35">
+                                        <div class="product-img product-img-zoom mb-15">
+                                            <a href="{{ product.get_absolute_url }}">
+                                                <img src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}" alt="">
+                                            </a>
+                                            <div class="product-action-2 tooltip-style-2">
+                                                <button 
+                                                class="quick_view" 
+                                                title="Быстрый просмотр" 
+                                                data-toggle="modal" 
+                                                data-target="#exampleModal" 
+                                                data-product-name="{{product.name}}" 
+                                                data-product-price="{{currency}}{{product.price}}" 
+                                                data-product-category="{{product.category.name}}" 
+                                                data-product-category-url="{{product.category.get_absolute_url}}" 
+                                                data-product-absolute-url="{{product.get_absolute_url}}" 
+                                                data-product-description-short="{{product.description_short}}" 
+                                                data-product-image-base="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}" 
+                                                data-product-add-to-cart-url="{% url 'shop:cart_add' product.id %}">
+                                                    <i class="icon-size-fullscreen icons"></i>
+                                                </button>
+                                                <button type="submit"><i class="icon-basket-loaded"></i></button>
+                                            </div>
+                                        </div>
+                                        <div class="product-content-wrap-2 text-center">
+                                            <h3>{{ product.name }}</h3>
+                                            <div class="product-price-2">
+                                                <span>{{ currency }}{{ product.price }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="product-content-wrap-2 product-content-position text-center">
+                                            <h3><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
+                                            <div class="product-price-2">
+                                                <span>{{ currency }}{{ product.price }}</span>
+                                            </div>
+                          <!--                   <div class="pro-add-to-cart">
+                                                <form class="product_list_add_to_cart" action="{% url 'shop:cart_add' product.id %}" method="post">
+                                                    {% csrf_token %}
+                                                    <input type="text" name="override" value="0" hidden>
+                                                    <input type="text" name="quantity" value="1" hidden>
+                                                    <button type="submit"><i class="icon-basket-loaded"></i></button>
+                                                </form>
+                                            </div> -->
+                                        </div>
+                                    </div>
+                                </form>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% else %}
+                        <div id="shop-2" class="product_list_style tab-pane active">
+                            {% for product in products %}
+                            <div class="shop-list-wrap mb-30">
+                                <div class="row">
+                                    <div class="col-xl-4 col-lg-5 col-md-6 col-sm-6">
+                                        <div class="product-list-img">
+                                            <a href="{{ product.get_absolute_url }}">
+                                                <img src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}" alt="">
+                                            </a>
+                                            <div class="product-list-quickview">
+                                                <button 
+                                                class="quick_view" 
+                                                title="Быстрый просмотр" 
+                                                data-toggle="modal" 
+                                                data-target="#exampleModal" 
+                                                data-product-name="{{product.name}}" 
+                                                data-product-price="{{currency}}{{product.price}}" 
+                                                data-product-category="{{product.category.name}}" 
+                                                data-product-category-url="{{product.category.get_absolute_url}}" 
+                                                data-product-absolute-url="{{product.get_absolute_url}}" 
+                                                data-product-description-short="{{product.description_short}}" 
+                                                data-product-image-base="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}" 
+                                                data-product-add-to-cart-url="{% url 'shop:cart_add' product.id %}">
+                                                    <i class="icon-size-fullscreen icons"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-8 col-lg-7 col-md-6 col-sm-6">
+                                        <div class="shop-list-content">
+                                            <h3><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
+                                            <hr>
+                                            <div class="pro-list-price">
+                                                <!-- <span class="new-price">$35.45</span> -->
+                                                <!-- <span class="old-price">$45.80</span> -->
+                                                <span>{{ currency }}{{ product.price }}</span>
+                                            </div>
+                                            <p>{{ product.description_short }}</p>
+                                            <p>
+                                                <span class="font-weight-bold h6 text-dark">Категория:</span>
+                                                {{product.category.name}}
+                                            </p>
+                                            <div>
+                                                <form class="product_list_add_to_cart" action="{% url 'shop:cart_add' product.id %}" method="post">
+                                                    {% csrf_token %}
+                                                    <input type="text" name="override" value="0" hidden>
+                                                    <input type="text" name="quantity" value="1" hidden>
+                                                    <button type="submit" class="btn btn-danger bg-black border-0 btn-outline-none">В корзину</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% if not products %}
+                    <h4 class="text-center text-danger">Данный раздел пуст.</h4>
+                    {% else %}
+                    <div class="pro-pagination-style text-center mt-10">
+                        {% if not products %}
+                        <div class="h3 text-center">В данной категории нет товаров!</div>
+                        {% else %}
+
+                        
+                        <ul>
+                            {% if page.has_previous %}
+                            <li>
+                                <a id="prev" class="prev" href="?page={{page.previous_page_number}}{% if request.GET.products %}&products={{ request.GET.products }}{% endif %}{% if request.GET.services %}&products={{ request.GET.services }}{% endif %}">
+                                    <i class="icon-arrow-left"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                            <li class="h6 pl-3 pr-3">{{ page.number }} из {{ page.paginator.num_pages }}</li>
+                            {% if page.has_next %}
+                            <li>
+                                <a id="next" class="next" href="?page={{page.next_page_number}}{% if request.GET.products %}&products={{ request.GET.products }}{% endif %}{% if request.GET.services %}&services={{ request.GET.services }}{% endif %}">
+                                    <i class="icon-arrow-right"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                        
+
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="order-xl-1 order-lg-1 order-1 col-lg-3">
+                <div class="sidebar-wrapper sidebar-wrapper-mrg-right">
+                    <div class="sidebar-widget mb-40">
+                        <h4 class="sidebar-widget-title">Поиск </h4>
+                        <div class="sidebar-search">
+                            {% if category %}
+                            <form class="sidebar-search-form" action="{% url 'shop:product_list_by_category' category.slug %}">
+                                {% else %}
+                                <form class="sidebar-search-form" action="{% url 'shop:product_list' %}">
+                                    {% endif %}
+                                    <input type="text" name="search_query" placeholder="Что будем искать?">
+                                    <button type="submit">
+                                        <i class="icon-magnifier"></i>
+                                    </button>
+                                </form>
+                        </div>
+                    </div>
+                    <div class="sidebar-widget shop-sidebar-border mb-35 pt-40">
+                        <h4 class="sidebar-widget-title">Категории </h4>
+                        <div class="shop-catigory">
+                            <ul>
+ <!--                                <li class="text-uppercase">
+                                    <a {% if not category %}class="font-weight-bold text-danger" {% endif %} href="{% url 'shop:product_list' %}">Все товары</a>
+                                </li> -->
+                                {% for c in categories %}
+                                <li>
+                                    <a {% if category.slug == c.slug %}class="font-weight-bold text-danger" {% endif %} href="{{ c.get_absolute_url }}">{{ c.name }}</a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
