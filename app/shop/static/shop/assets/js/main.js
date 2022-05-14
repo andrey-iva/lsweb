@@ -1287,7 +1287,7 @@
     $('#exampleModal').on('shown.bs.modal', function(e) {
         // слайдер, карточка товара
         $('.quickview-slide-active').not('.slick-initialized').slick({
-            lazyLoad: 'ondemand',
+            // lazyLoad: 'ondemand',
             slidesToShow: 3,
             slidesToScroll: 1,
             fade: false,
@@ -1351,7 +1351,7 @@
 
         var smallIMG =
             "<a class='active' data-toggle='tab' href='#pro-1'>\
-                    <img data-lazy='" + parentElem.data("productImageBase") + "'>\
+                    <img src='" + parentElem.data("productImageBase") + "'>\
                 </a>"
         // запрос на получение доп изображений 
         $.ajax({
@@ -1377,30 +1377,38 @@
                         <img src='" + responseData[i] + "'>\
                     </div>"
                 }
-                modal.find(".quickview-big-img").html(bigIMG)
+                
 
                 sPro = 2
                 for (var i = 0; i < responseData.length; i++) {
                     smallIMG +=
                         "<a data-toggle='tab' href='#pro-" + (sPro++) + "'>\
-                        <img data-lazy='" + responseData[i] + "'>\
+                        <img src='" + responseData[i] + "'>\
                     </a>"
                 }
-                modal.find(".quickview-slide-active").html(smallIMG)
 
                 modal.find(".modal_product_name").html("<a style='color:black;' href='" +
                     parentElem.data("productAbsoluteUrl") + "'>" +
                     parentElem.data("productName") + "</a>"
                 )
                 modal.find(".modal_product_price").html("<span>" + parentElem.data("productPrice") + "</span>")
-                modal.find(".modal_product_category").html("<span>Категория:</span><a href='" +
+                modal.find(".modal_product_category").html("<span>Категория: </span><a href='" +
                     parentElem.data("productCategoryUrl") + "'>" +
                     parentElem.data("productCategory") + ",</a>"
                 )
+                modal.find(".modal_item_num").html("<span>Код товара: </span>" + parentElem.data("productItemNum"))
+                var available = parentElem.data("productAvailable")
+                if (available === "True") {
+                    modal.find(".modal_product_available").html("<span>Наличие: </span> Есть в наличии")
+                } else {
+                    modal.find(".modal_product_available").html("<span>Наличие: </span> Нет в наличии")
+                }
                 modal.find(".modal_product_desc_short").text(parentElem.data("productDescriptionShort"))
 
                 modal.find("form").attr("action", parentElem.data("productAddToCartUrl"))
 
+                modal.find(".quickview-big-img").html(bigIMG)
+                modal.find(".quickview-slide-active").html(smallIMG)
             },
             error: function() {
                 console.error(this.url)

@@ -27,7 +27,7 @@ class CategoryAdmin(admin.ModelAdmin):
 # import - export
 @admin.register(Product)
 class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
-    list_per_page = 50
+    list_per_page = 20
     resource_class = ProductResource
     inlines = [ProductImageInline,]
     fields = [

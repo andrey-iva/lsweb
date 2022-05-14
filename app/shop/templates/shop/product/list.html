@@ -187,7 +187,11 @@
                                                 data-product-absolute-url="{{product.get_absolute_url}}" 
                                                 data-product-description-short="{{product.description_short}}" 
                                                 data-product-image-base="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}" 
-                                                data-product-add-to-cart-url="{% url 'shop:cart_add' product.id %}">
+                                                data-product-add-to-cart-url="{% url 'shop:cart_add' product.id %}"
+
+                                                data-product-item-num="{{ product.item_number }}"
+                                                data-product-available="{{ product.available }}"
+                                                >
                                                     <i class="icon-size-fullscreen icons"></i>
                                                 </button>
                                                 <button type="submit"><i class="icon-basket-loaded"></i></button>
@@ -241,7 +245,11 @@
                                                 data-product-absolute-url="{{product.get_absolute_url}}" 
                                                 data-product-description-short="{{product.description_short}}" 
                                                 data-product-image-base="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}" 
-                                                data-product-add-to-cart-url="{% url 'shop:cart_add' product.id %}">
+                                                data-product-add-to-cart-url="{% url 'shop:cart_add' product.id %}"
+
+                                                data-product-item-num="{{ product.item_number }}"
+                                                data-product-available="{{ product.available }}"
+                                                >
                                                     <i class="icon-size-fullscreen icons"></i>
                                                 </button>
                                             </div>

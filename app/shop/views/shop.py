@@ -79,7 +79,8 @@ def product_list(request, category_slug=None):
     category = None
 
     categories = Category.objects.all()
-    products = Product.objects.filter(available=True)
+    products = Product.objects.all()
+    # products = Product.objects.filter(available=True)
 
     brands = {}
     for brand in (b for b in products.values(*['brand_car']).distinct()):
@@ -163,8 +164,7 @@ def product_list(request, category_slug=None):
 # "{0}://{1}{2}".format(request.scheme, request.get_host(), request.path)
 def product_detail(request, slug):
     product = get_object_or_404(Product,
-                                slug=slug,
-                                available=True)
+                                slug=slug)
     # как-то проверить есть ли
     product.full_url = "{0}://{1}{2}".format(request.scheme, request.get_host(), request.path)
     product.save()

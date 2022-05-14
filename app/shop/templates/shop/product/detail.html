@@ -87,9 +87,18 @@
                                 <span>Категория: </span>
                                 <a href="{{ product.category.get_absolute_url }}">{{ product.category }}</a>
                             </li>
-                            <!-- <li><span>Tag: </span>
-                                <a href="#">Fashion,</a> <a href="#">Mentone</a> , <a href="#">Texas</a>
-                            </li> -->
+                            <li>
+                                <span>Код товара: </span>
+                                {{ product.item_number }}
+                            </li>
+                            <li>
+                                <span>Наличие:</span>
+                                {% if product.available %}
+                                Есть в наличии
+                                {% else %}
+                                Нет в наличии
+                                {% endif %}
+                            </li>
                         </ul>
                     </div>
                     <div class="pro-details-action-wrap">

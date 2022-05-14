@@ -342,30 +342,14 @@
     <div class="container">
         <div class="section-title-tab-wrap mb-55">
             <div class="section-title-4">
-                <h2>press &amp; looks</h2>
+                <h2>Статьи</h2>
             </div>
             <div class="btn-style-6 ml-60">
-                <a href="blog-details.html">All articles</a>
+                <a href="{% url 'shop:post_list' %}">Все статьи</a>
             </div>
         </div>
-        <div class="row">
-            <div class="col-lg-4 col-md-6">
-                <div class="blog-wrap mb-30">
-                    <div class="blog-img mb-25">
-                        <a href="blog-details.html"><img src="/static/shop/assets/images/blog/blog-1.jpg" alt="blog-img"></a>
-                    </div>
-                    <div class="blog-content">
-                        <div class="blog-meta">
-                            <ul>
-                                <li><a href="#">News </a></li>
-                                <li>May 25, 2020</li>
-                            </ul>
-                        </div>
-                        <h3><a href="blog-details.html">Five things you only know if you’re at Chanel's Hamburg Show</a></h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
+        <div class="d-flex flex-nowrap" style="overflow-x: scroll;">
+            <div class="col-lg-3 col-md-6 col-sm-12 col-12">
                 <div class="blog-wrap mb-30">
                     <div class="blog-img mb-25">
                         <a href="blog-details.html"><img src="/static/shop/assets/images/blog/blog-2.jpg" alt="blog-img"></a>
@@ -381,7 +365,55 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 col-md-6">
+            <div class="col-lg-3 col-md-6 col-sm-12 col-12">
+                <div class="blog-wrap mb-30">
+                    <div class="blog-img mb-25">
+                        <a href="blog-details.html"><img src="/static/shop/assets/images/blog/blog-3.jpg" alt="blog-img"></a>
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-meta">
+                            <ul>
+                                <li><a href="#">Lookbook </a></li>
+                                <li>May 25, 2020</li>
+                            </ul>
+                        </div>
+                        <h3><a href="blog-details.html">Calvin Klein Shoes Collection 2020, Activites Summer</a></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-12 col-12">
+                <div class="blog-wrap mb-30">
+                    <div class="blog-img mb-25">
+                        <a href="blog-details.html"><img src="/static/shop/assets/images/blog/blog-1.jpg" alt="blog-img"></a>
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-meta">
+                            <ul>
+                                <li><a href="#">News </a></li>
+                                <li>May 25, 2020</li>
+                            </ul>
+                        </div>
+                        <h3><a href="blog-details.html">Five things you only know if you’re at Chanel's Hamburg Show</a></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-12 col-12">
+                <div class="blog-wrap mb-30">
+                    <div class="blog-img mb-25">
+                        <a href="blog-details.html"><img src="/static/shop/assets/images/blog/blog-2.jpg" alt="blog-img"></a>
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-meta">
+                            <ul>
+                                <li><a href="#">Inspiration </a></li>
+                                <li>May 25, 2020</li>
+                            </ul>
+                        </div>
+                        <h3><a href="blog-details.html">Basic colord mixed - trendind 2020</a></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-12 col-12">
                 <div class="blog-wrap mb-30">
                     <div class="blog-img mb-25">
                         <a href="blog-details.html"><img src="/static/shop/assets/images/blog/blog-3.jpg" alt="blog-img"></a>
@@ -400,4 +432,5 @@
         </div>
     </div>
 </div>
+
 {% endblock %}
