@@ -1284,48 +1284,8 @@
     });
 
     // модальное окно с карточкой товара
-    $('#exampleModal').on('shown.bs.modal', function(e) {
-        // слайдер, карточка товара
-        $('.quickview-slide-active').not('.slick-initialized').slick({
-            // lazyLoad: 'ondemand',
-            slidesToShow: 3,
-            slidesToScroll: 1,
-            fade: false,
-            loop: true,
-            dots: false,
-            arrows: true,
-            prevArrow: '<span class="icon-prev"><i class="icon-arrow-left"></i></span>',
-            nextArrow: '<span class="icon-next"><i class="icon-arrow-right"></i></span>',
-            responsive: [{
-                    breakpoint: 1199,
-                    settings: {
-                        slidesToShow: 3,
-                    }
-                },
-                {
-                    breakpoint: 991,
-                    settings: {
-                        slidesToShow: 3,
-                    }
-                },
-                {
-                    breakpoint: 767,
-                    settings: {
-                        slidesToShow: 3,
-                    }
-                },
-                {
-                    breakpoint: 575,
-                    settings: {
-                        slidesToShow: 2,
-                    }
-                }
-            ]
-        });
-        $('.quickview-slide-active a').on('click', function() {
-            $('.quickview-slide-active a').removeClass('active');
-        })
-    })
+
+    
     // отключаем повторную инициализацию, карточка товара
     $("#exampleModal").find(".close").click(function(e) {
         $('.quickview-slide-active').slick('unslick');
@@ -1333,7 +1293,7 @@
 
     // quickview-slide-active nav-style-6 slick-initialized slick-slider
     // обновление данных в модальном окне, текущая карточка товара
-    $(".quick_view").click(function(e) {
+    $(".quick_view").on("click", function(e) {
         e.preventDefault()
         
         // глючит слайдер
@@ -1353,7 +1313,9 @@
             "<a class='active' data-toggle='tab' href='#pro-1'>\
                     <img src='" + parentElem.data("productImageBase") + "'>\
                 </a>"
-        // запрос на получение доп изображений 
+        // запрос на получение доп изображений
+        modal.find(".quickview-big-img").html(bigIMG)
+        modal.find(".quickview-slide-active").html(smallIMG)
         $.ajax({
             url: parentElem.data("productAbsoluteUrl"),
             method: "GET",
@@ -1361,12 +1323,13 @@
             success: function(response) {
                 try {
                     var responseData = JSON.parse(response)
+                    console.log(responseData)
                 } catch (err) {
                     // если ошибка при получении url-лов картинок, вставляем базовое изображение
                     // 
-                    modal.find(".quickview-big-img").html(bigIMG)
-                    modal.find(".quickview-slide-active").html(smallIMG)
-                    console.info("УСТАНОВЛЕНЫ БАЗОВЫЕ ИЗОБРАЖЕНИЕ:", err)
+                    // modal.find(".quickview-big-img").html(bigIMG)
+                    // modal.find(".quickview-slide-active").html(smallIMG)
+                    // console.info("УСТАНОВЛЕНЫ БАЗОВЫЕ ИЗОБРАЖЕНИЕ:", err)
                     return
                 }
 
@@ -1409,6 +1372,51 @@
 
                 modal.find(".quickview-big-img").html(bigIMG)
                 modal.find(".quickview-slide-active").html(smallIMG)
+
+                $('.quickview-slide-active').not('.slick-initialized').slick({
+                    // lazyLoad: 'ondemand',
+                    slidesToShow: 3,
+                    slidesToScroll: 1,
+                    fade: false,
+                    loop: true,
+                    dots: false,
+                    arrows: true,
+                    prevArrow: '<span class="icon-prev"><i class="icon-arrow-left"></i></span>',
+                    nextArrow: '<span class="icon-next"><i class="icon-arrow-right"></i></span>',
+                    responsive: [{
+                            breakpoint: 1199,
+                            settings: {
+                                slidesToShow: 3,
+                            }
+                        },
+                        {
+                            breakpoint: 991,
+                            settings: {
+                                slidesToShow: 3,
+                            }
+                        },
+                        {
+                            breakpoint: 767,
+                            settings: {
+                                slidesToShow: 3,
+                            }
+                        },
+                        {
+                            breakpoint: 575,
+                            settings: {
+                                slidesToShow: 2,
+                            }
+                        }
+                    ]
+                });
+
+                $('#exampleModal').trigger('shown.bs.modal', function(e) {
+                    // слайдер, карточка товара
+
+                })
+                $('.quickview-slide-active a').on('click', function() {
+                    $('.quickview-slide-active a').removeClass('active');
+                })
             },
             error: function() {
                 console.error(this.url)
