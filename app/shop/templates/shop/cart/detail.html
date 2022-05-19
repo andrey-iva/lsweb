@@ -14,7 +14,7 @@
         </div>
     </div>
 </div>
-
+{{ request.session.grand_total }}
 <div class="cart-main-area pt-115 pb-120">
     <div class="container" id="cart-container">
         {% if cart|length %}
@@ -53,10 +53,10 @@
                                         {% csrf_token %}
                                         <input type="text" name="override" value="1" hidden>
                                         <input type="text" name="quantity" value="{{ item.quantity }}" hidden>
-                                        <button title="update" type="submit" class="btn_update btn btn-success pb-1 border-0 btn-outline-none" data-update-url="{% url 'shop:cart_add' product.id %}">
+                                        <button title="обновить" type="submit" class="btn_update btn btn-success pb-1 border-0 btn-outline-none" data-update-url="{% url 'shop:cart_add' product.id %}">
                                             <i class="icon-refresh"></i>
                                         </button>
-                                        <button title="delete" type="submit" class="btn_remove btn btn-danger pb-1 border-0 btn-outline-none" data-delete-url="{% url 'shop:cart_remove' product.id %}">
+                                        <button title="удалить" type="submit" class="btn_remove btn btn-danger pb-1 border-0 btn-outline-none" data-delete-url="{% url 'shop:cart_remove' product.id %}">
                                             <i class="icon-close"></i>
                                         </button>
                                     </form>
@@ -83,25 +83,20 @@
                 <div class="row">
 
                     
-                    <div class="col-lg-4 col-md-6">
+                    <div class="col-md-6">
+
 <!--                         <div class="cart-tax">
                             <div class="title-wrap">
-                                <h4 class="cart-bottom-title section-bg-gray">Estimate Shipping And Tax</h4>
+                                <h4 class="cart-bottom-title section-bg-gray">Стоимость доставки</h4>
                             </div>
                             <div class="tax-wrapper">
-                                <p>Enter your destination to get a shipping estimate.</p>
+                                <p>Введите пункт назначения, чтобы рассчитать стоимость доставки.</p>
                                 <div class="tax-select-wrapper">
                                     <div class="tax-select">
                                         <label>
-                                            * Country
+                                            * Город
                                         </label>
-                                        <select class="email s-email s-wid">
-                                            <option>Bangladesh</option>
-                                            <option>Albania</option>
-                                            <option>Åland Islands</option>
-                                            <option>Afghanistan</option>
-                                            <option>Belgium</option>
-                                        </select>
+                                        <input maxlength="50" type="text" name="city" id="city" placeholder="Ваш город" required>
                                     </div>
                                     <div class="tax-select">
                                         <label>
@@ -127,37 +122,25 @@
                         </div> -->
                     </div>
 
-
-                    <div class="col-lg-4 col-md-6">
-<!--                         <div class="discount-code-wrapper">
-                            <div class="title-wrap">
-                                <h4 class="cart-bottom-title section-bg-gray">Use Coupon Code</h4>
-                            </div>
-                            <div class="discount-code">
-                                <p>Enter your coupon code if you have one.</p>
-                                <form>
-                                    <input type="text" required="" name="name">
-                                    <button class="cart-btn-2" type="submit">Apply Coupon</button>
-                                </form>
-                            </div>
-                        </div> -->
-                    </div>
-
-
-                    <div class="col-lg-4 col-md-12">
+                    <div class="col-md-6">
                         <div class="grand-totall">
                             <div class="title-wrap">
                                 <h4 class="cart-bottom-title section-bg-gary-cart">Итого</h4>
                             </div>
                             <h5 id="sub_total">Подитог <span>{{ currency }}{{ cart.get_total_price }}</span></h5>
-<!--                             <div class="total-shipping">
-                                <h5>Стоимость доставки</h5>
-                                <ul>
-                                    <li><input type="checkbox"> Standard <span>{{ currency }}20.00</span></li>
-                                    <li><input type="checkbox"> Express <span>{{ currency }}30.00</span></li>
+                            <div class="total-shipping">
+                                <h5>Стоимость доставки по России</h5>
+                                <div id="ser" class="pt-3 w-100">
+                                    <input maxlength="50" type="text" name="city" id="city" placeholder="Ваш город" required>
+                                </div>
+                                <div id="search_city_err_msg" class="bg-danger text-white text-center">
+                                    <!-- error message -->
+                                </div>
+                                <ul id="triffs_list">
+                                    <li><input data-delivery-sum="0" type="radio" name="tariff_code" value="standard"> Standard <span>{{ currency }}0.00</span></li>
                                 </ul>
-                            </div> -->
-                            <h4 id="grand_total" class="grand-totall-title">Итог <span>{{ currency }}{{ cart.get_total_price }}</span></h4>
+                            </div>
+                            <h4 id="grand_total" class="grand-totall-title GT">Итог <span>{{ currency }}{{ cart.get_grand_total_price }}</span></h4>
                             <a href="{% url 'shop:order_create' %}">Оформить заказ</a>
                         </div>
                     </div>

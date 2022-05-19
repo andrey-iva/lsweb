@@ -1381,6 +1381,7 @@
                     loop: true,
                     dots: false,
                     arrows: true,
+                    focusOnSelect: true,
                     prevArrow: '<span class="icon-prev"><i class="icon-arrow-left"></i></span>',
                     nextArrow: '<span class="icon-next"><i class="icon-arrow-right"></i></span>',
                     responsive: [{
@@ -1410,10 +1411,9 @@
                     ]
                 });
 
-                $('#exampleModal').trigger('shown.bs.modal', function(e) {
-                    // слайдер, карточка товара
 
-                })
+                $('#exampleModal').trigger('shown.bs.modal')
+
                 $('.quickview-slide-active a').on('click', function() {
                     $('.quickview-slide-active a').removeClass('active');
                 })
@@ -1486,6 +1486,8 @@
                 "<div class='spinner-border spinner-border-sm' role='status'>\
                     <span class='sr-only'>Загрузка...</span>\
                 </div>")
+            $("#triffs_list").html('<li><input data-delivery-sum="0" type="radio" name="tariff_code" value="standard"> Standard <span>'+CURRENCY+'0.00</span></li>')
+            $("#ser").html('<input maxlength="50" type="text" name="city" id="city" placeholder="Ваш город" required>')
             $.ajax({
                 url: $(this).attr("action"),
                 method: "POST",

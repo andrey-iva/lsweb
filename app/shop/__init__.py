@@ -1,4 +1,4 @@
-# 
 
 CART_SESSION_ID = 'cart'
-NO_IMAGE_PATH   = '/static/shop/images/no_image/placeholder.jpg'
+GRAND_TOTAL_SESSION_ID = 'grand_total'
+NO_IMAGE_PATH = '/static/shop/images/no_image/placeholder.jpg'

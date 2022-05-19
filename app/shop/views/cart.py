@@ -3,7 +3,7 @@ from django.views.decorators.http import require_POST
 from django.http import HttpResponse
 from decimal import Decimal
 
-from .. import CART_SESSION_ID, NO_IMAGE_PATH
+from .. import CART_SESSION_ID, GRAND_TOTAL_SESSION_ID, NO_IMAGE_PATH
 from ..models import Product
 from ..cart import Cart
 from ..ctx_proc import currency
@@ -23,6 +23,8 @@ def cart_add(request, product_id):
         product = get_object_or_404(Product, id=product_id)
 
         if quantity > 0:
+            if request.session.get(GRAND_TOTAL_SESSION_ID):
+                del request.session[GRAND_TOTAL_SESSION_ID]
             cart.add(product=product, quantity=quantity,
                      override_quantity=override)
 
@@ -37,10 +39,33 @@ def cart_add(request, product_id):
                     'result': 'update',
                     'total_price': total_price,
                     'sub_total': sub_total,
-                    'cart_length': len(cart),
+                    'cart_length': len(cart)
                 }))
 
     return redirect('shop:cart_detail')
+
+
+@require_POST
+def add_delivery_tax(request):
+    request.session[GRAND_TOTAL_SESSION_ID] = {}
+
+    delivery_tax = request.POST.get('delivery_tax')
+    tariff_code = request.POST.get('tariff_code')
+    grand_total = 0
+    cart = Cart(request)
+
+    if delivery_tax and tariff_code:
+        grand_total = cart.get_total_price() + Decimal(delivery_tax)
+        request.session[GRAND_TOTAL_SESSION_ID]['total_price'] = str(grand_total)
+        request.session[GRAND_TOTAL_SESSION_ID]['tariff_code'] = str(tariff_code)
+        request.session.modified = True
+
+        return HttpResponse(json.dumps({
+                'ok': True,
+                'grand_total': currency(request)['currency'] + str(grand_total)
+            }))
+    
+    return HttpResponse(json.dumps({'error': 'add delivery tax!'}))
 
 
 @require_POST
@@ -49,7 +74,10 @@ def cart_remove(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     cart.remove(product)
 
-    if request.headers.get('X-Requested-With'):
+    if request.session.get(GRAND_TOTAL_SESSION_ID):
+        del request.session[GRAND_TOTAL_SESSION_ID]
+
+    if request.headers.get('X-Requested-With'):       
         sub_total = currency(
             request)['currency'] + str(cart.get_total_price())
         return HttpResponse(json.dumps({
@@ -97,6 +125,8 @@ def cart_json(request):
 
 
 def cart_clear(request):
+    if request.session.get(GRAND_TOTAL_SESSION_ID):
+        del request.session[GRAND_TOTAL_SESSION_ID]
     cart = Cart(request)
     cart.clear()
     return redirect('shop:product_list')

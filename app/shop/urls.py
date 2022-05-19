@@ -1,6 +1,6 @@
 from django.urls import re_path, path, include
 
-from .views import view, shop, cart, order, blog, error
+from .views import view, shop, cart, order, blog, cdek, error
 
 app_name = 'shop'
 
@@ -36,6 +36,7 @@ urlpatterns = [
 		path('add/<int:product_id>/', cart.cart_add, name='cart_add'),
 		# /cart/remove/id - прописан жестко в JS 1-раз
 		path('remove/<int:product_id>/', cart.cart_remove, name='cart_remove'),
+		path('add/delivery/tax/', cart.add_delivery_tax, name='add_delivery_tax'),
 	])),
 	path('order/', include([
 		path('create/', order.order_create, name='order_create'),
@@ -44,6 +45,9 @@ urlpatterns = [
 	path('blog/', include([
 		path('', blog.post_list, name='post_list'),
 		path('<int:year>/<int:month>/<int:day>/<slug:post>/', blog.post_detail, name='post_detail'),
+	])),
+	path('cdek/', include([
+		path('tariffs/', cdek.tarifflist, name='tarifflist'),
 	])),
 	path('404/', error.page_not_found),
 	path('400/', error.bad_request),
