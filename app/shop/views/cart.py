@@ -53,13 +53,15 @@ def add_delivery_tax(request):
 
     delivery_tax = request.POST.get('delivery_tax')
     tariff_code = request.POST.get('tariff_code')
+    delivery_name = request.POST.get('delivery_name')
     grand_total = 0
     cart = Cart(request)
-    print(delivery_tax, tariff_code)
-    if delivery_tax and tariff_code:
+    
+    if delivery_tax and tariff_code and delivery_name:
         grand_total = cart.get_total_price() + Decimal(delivery_tax)
         request.session[GRAND_TOTAL_SESSION_ID]['total_price'] = str(grand_total)
         request.session[GRAND_TOTAL_SESSION_ID]['tariff_code'] = str(tariff_code)
+        request.session[GRAND_TOTAL_SESSION_ID]['tariff_name'] = str(delivery_name)
         request.session.modified = True
 
         return HttpResponse(json.dumps({

@@ -1486,8 +1486,8 @@
                 "<div class='spinner-border spinner-border-sm' role='status'>\
                     <span class='sr-only'>Загрузка...</span>\
                 </div>")
-            $("#triffs_list").html('<li><input data-delivery-sum="0" type="radio" name="tariff_code" value="standard"> Standard <span>'+CURRENCY+'0.00</span></li>')
-            $("#ser").html('<input maxlength="50" type="text" name="city" id="city" placeholder="Ваш город" required>')
+            // $("#triffs_list").html('<li><input data-delivery-name="standard" data-delivery-sum="0" type="radio" name="tariff_code" value="standard"> Standard <span>'+CURRENCY+'0.00</span></li>')
+            // $("#ser").html('<input maxlength="50" type="text" name="city" id="city" placeholder="Ваш город" required>')
             $.ajax({
                 url: $(this).attr("action"),
                 method: "POST",

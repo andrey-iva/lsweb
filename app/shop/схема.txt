@@ -1,10 +1,141 @@
+        // страница корзины start
+        // калькулятор СДЕК
+        var $city = $("#city");
+        function loadDelivery(suggestion) {
+          var kladr_id = suggestion.data.kladr_id;
+          if (kladr_id.length > 13) {
+            // план. структура
+            kladr_id = kladr_id.substr(0, 11) + "00";
+          }
+          
+          fetchDelivery(kladr_id)
+          .done(function(response) {            
+            if (response.suggestions.length == 0) {
+                clearDelivery();  
+            } else {
 
-Категория
-	- id
-	- название
-Продукт
-	- id
-	- название
-	- категория
-	- цена
-	- 
+              var cdek_id          = response.suggestions[0]['data']['cdek_id']
+              var postal_code      = suggestion['data']['postal_code']
+              var country_iso_code = suggestion['data']['country_iso_code']
+              var city             = suggestion['data']['city_with_type']
+              var address          = suggestion['unrestricted_value']
+              
+              console.log(cdek_id, postal_code, country_iso_code, city, address)
+
+              var tariffs_list = $("#tariffs_list")
+              tariffs_list.html(
+                '<div class="d-flex justify-content-center">\
+                  <div class="spinner-border spinner-border-sm" role="status">\
+                    <span class="sr-only">Loading...</span>\
+                  </div>\
+                </div>')
+
+              $.ajax({
+                url: TARIFFLIST_URL,
+                method: "GET",
+                data: {
+                    "cdek_id": cdek_id,
+                    "postal_code": postal_code,
+                    "country_iso_code": country_iso_code,
+                    "city": city,
+                    "address": address,
+                },
+                success: function(response) {},
+              }).done(function(response) {
+                try {
+                    var responseData = JSON.parse(response)
+                } catch(err) {
+                    console.info(err)
+                }
+                // !
+                console.log(responseData)
+                return
+
+              })
+            }
+          })
+          .fail(function() {
+            clearDelivery();
+          });
+        }
+
+        function clearDelivery() {
+            console.log("error clearDelivery")
+        }
+
+        function fetchDelivery(kladr_id) {
+          var serviceUrl = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/delivery";
+          var request = {
+            "query": kladr_id
+          };
+          var params = {
+            type: "POST",
+            contentType: "application/json",
+            headers: {
+              "Authorization": "Token " + token
+            },
+            data: JSON.stringify(request)
+          };
+            return $.ajax(serviceUrl, params);
+        }
+
+        $city.suggestions({
+          token: token,
+          type: "ADDRESS",
+          hint: false,
+          bounds: "region-settlement",
+          // constraints: {
+          //   locations: { country: "*" }
+          // },
+          onSelect: loadDelivery
+        });
+
+        function setDeliveryTax(standard) {
+            var currentElemRadio = $('input:radio:checked')
+            var csrf = $("input[name=csrfmiddlewaretoken]")
+            if (standard) {
+                var tariffCode = "standard"
+                var deliverySum = 0.00
+                var deliveryName = "standard"
+            } else {
+                var tariffCode = currentElemRadio.val()
+                var deliverySum = currentElemRadio.data("deliverySum")
+                var deliveryName = currentElemRadio.data("deliveryName")
+            }
+            $.ajax({
+                url: ADD_DELIVERY_TAX_URL,
+                method: "POST",
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                data: {
+                    "csrfmiddlewaretoken": csrf.val(),
+                    "tariff_code": tariffCode,
+                    "delivery_tax": deliverySum,
+                    "delivery_name": deliveryName,
+                },
+            })
+            .done(function(response) {
+                try {
+                    var responseData = JSON.parse(response)
+                } catch(err) {
+                    console.info('add delivery tax', err)
+                    return
+                }
+                console.log(responseData)
+                $(".GT").find("span").text(responseData.grand_total)
+            })
+            .fail(function() {
+
+            });
+        }
+
+        // перестчет по стандартному тарифу при загрузке странице или перезагрузке
+        if ($("#triffs_list") && $("#triffs_list li input").val() === "standard") {
+            if ($("#triffs_list li input").length === 1) {
+                // setDeliveryTax(true)
+                // $("#triffs_list li input").attr("checked", true)
+            }
+        }
+        // перестчет по иным тарифам
+        $("#triffs_list").on("change", function(e) {
+            // setDeliveryTax(false)
+        })

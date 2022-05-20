@@ -124,7 +124,6 @@
     <!-- Use the minified version files listed below for better performance and remove the files listed above  
 <script src="/static/shop/assets/js/vendor/vendor.min.js"></script>
 <script src="/static/shop/assets/js/plugins/plugins.min.js"></script>  -->
-
     <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
     <!-- Main JS -->
     <script>
@@ -137,165 +136,71 @@
     var NO_IMAGE_URL         = "{{ no_image }}"
     var CURRENCY             = "{{ currency }}"
 
+    var x = [ // get_city cdek
+        {
+            "code": 2549,
+            "city": "Карачаевск",
+            "kladr_code": "0900000200000",
+            "country_code": "RU",
+            "country": "Россия",
+            "region": "Карачаево-Черкесская респ.",
+            "region_code": 80,
+            "postal_codes": [
+                "369200",
+                "369211",
+                "369238",
+                "369204",
+                "369212",
+                "369213",
+                "369221",
+                "369241",
+                "369202"
+            ],
+            "longitude": 41.923404,
+            "latitude": 43.773603,
+            "time_zone": "Europe/Moscow",
+            "payment_limit": -1
+        }
+    ] 
+
     var token = "17a564feb19fabf1391ab53059b81a6a2012b9a9";
-    (function($) {
-        // страница корзины start
-        // калькулятор СДЕК
-        var $city = $("#city");
-        function loadDelivery(suggestion) {
-          var kladr_id = suggestion.data.kladr_id;
-          if (kladr_id.length > 13) {
-            // план. структура
-            kladr_id = kladr_id.substr(0, 11) + "00";
-          }
-          fetchDelivery(kladr_id)
-          .done(function(response) {
-            var errorMessage = "Данные по населенному пункту отсутствуют"
-            if (response.suggestions.length == 0) {
-                $("#search_city_err_msg").text(errorMessage)
-                clearDelivery();  
-            } else {
-              $("#search_city_err_msg").text("")
-              // console.log(response.suggestions[0]['data']['cdek_id']);
-              // console.log(suggestion)
-              var cdek_id          = response.suggestions[0]['data']['cdek_id']
-              var postal_code      = suggestion['data']['postal_code']
-              var country_iso_code = suggestion['data']['country_iso_code']
-              var city             = suggestion['data']['city_with_type']
-              var address          = suggestion['unrestricted_value']
-              var tariffs_list = $("#triffs_list")
-              tariffs_list.html(
-                "<div class='spinner-border spinner-border-sm text-center' role='status'>\
-                    <span class='sr-only'>Загрузка...</span>\
-                </div>")
-              $.ajax({
-                url: TARIFFLIST_URL,
-                method: "GET",
-                data: {
-                    "cdek_id": cdek_id,
-                    "postal_code": postal_code,
-                    "country_iso_code": country_iso_code,
-                    "city": city,
-                    "address": address,
-                },
-                success: function(response) {},
-              }).done(function(response) {
-                try {
-                    var responseData = JSON.parse(response)
-                } catch(err) {
-                    console.info(err)
-                }
-                
-                var tariffs = responseData['tariff_codes']
-                if (typeof tariffs === "undefined") {
-                    $("#search_city_err_msg").text(errorMessage)
-                    return
-                }
-                
-
-                console.log(tariffs)
-
-                var html = '<li><input data-delivery-sum="0" type="radio" name="tariff_code" value="standard"> Standard <span>'+CURRENCY+'0.00</span></li>'
-                for (var i = 0; i < tariffs.length; i++) {
-                    html += '<li><input data-delivery-sum="'+
-                    tariffs[i]["delivery_sum"]+'" type="radio" name="tariff_code" value=' +
-                    tariffs[i]["tariff_code"] +'> ' +
-                    '('+tariffs[i]["period_min"]+'-'+tariffs[i]["period_max"]+' дней) '+
-                    tariffs[i]["tariff_name"] + '<span>'+ CURRENCY + tariffs[i]["delivery_sum"] +'</span></li>'
-                }
-                tariffs_list.html(html)
-                // console.log(tariffs)
-              })
-              // console.log(cdek_id, postal_code, country_iso_code, city, address)
-              //
-            }
-          })
-          .fail(function() {
-            $("#search_city_err_msg").text(errorMessage)
-            clearDelivery();
-          });
-        }
-
-        function clearDelivery() {
-            console.log(errorMessage)
-        }
-
-        function fetchDelivery(kladr_id) {
-          var serviceUrl = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/delivery";
-          var request = {
-            "query": kladr_id
-          };
-          var params = {
-            type: "POST",
-            contentType: "application/json",
-            headers: {
-              "Authorization": "Token " + token
-            },
-            data: JSON.stringify(request)
-          };
-            return $.ajax(serviceUrl, params);
-        }
-
-        $city.suggestions({
+    $( function() {
+        
+        $("#city").suggestions({
           token: token,
           type: "ADDRESS",
           hint: false,
           bounds: "region-settlement",
-          // constraints: {
-          //   locations: { country: "*" }
-          // },
-          onSelect: loadDelivery
-        });
-
-        function setDeliveryTax(standard) {
-            var currentElemRadio = $('input:radio:checked')
-            var csrf = $("input[name=csrfmiddlewaretoken]")
-            if (standard) {
-                var tariffCode = "standard"
-                var deliverySum = 0.00
-            } else {
-                var tariffCode = currentElemRadio.val()
-                var deliverySum = currentElemRadio.data("deliverySum")
-            }
+          onSelect: function(suggestion) {
+            var city = suggestion["data"]["city_with_type"]
+            var country_iso_code = suggestion["data"]["country_iso_code"]
+            console.log(country_iso_code, city)
             $.ajax({
-                url: ADD_DELIVERY_TAX_URL,
-                method: "POST",
-                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                url: "{% url 'shop:get_city' %}",
                 data: {
-                    "csrfmiddlewaretoken": csrf.val(),
-                    "tariff_code": tariffCode,
-                    "delivery_tax": deliverySum,
+                    'city': city,
+                    'country_iso_code': country_iso_code,
                 },
             })
             .done(function(response) {
                 try {
-                    var responseData = JSON.parse(response)
+                    var response = JSON.parse(response)
+                    console.log(response)
                 } catch(err) {
-                    console.info('add delivery tax', err)
+                    console.error(err)
                     return
                 }
-                console.log(responseData)
-                $(".GT").find("span").text(responseData.grand_total)
             })
-            .fail(function() {
-
-            });
-        }
-
-        // перестчет по стандартному тарифу при загрузке странице или перезагрузке
-        if ($("#triffs_list") && $("#triffs_list li input").val() === "standard") {
-            setDeliveryTax(true)
-            $("#triffs_list li input").attr("checked", true)
-        }
-        // перестчет по иным тарифам
-        $("#triffs_list").on("change", function(e) {
-            setDeliveryTax(false)
-            console.log(tariffCode, deliverySum)
-        })
-        // страница корзины end
-        // калькулятор СДЕК end
-
-    })(jQuery);
+          },
+          constraints: {
+             locations: [
+                { country_iso_code: "RU" },
+                { country_iso_code: "BY" },
+                { country_iso_code: "KZ" },
+             ]
+          },
+        });
+    });
 
 
     // order create start

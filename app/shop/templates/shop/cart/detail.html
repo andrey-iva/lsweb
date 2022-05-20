@@ -129,15 +129,15 @@
                             </div>
                             <h5 id="sub_total">Подитог <span>{{ currency }}{{ cart.get_total_price }}</span></h5>
                             <div class="total-shipping">
-                                <h5>Стоимость доставки по России</h5>
-                                <div id="ser" class="pt-3 w-100">
+                                <h5>Стоимость доставки</h5>
+                                <div id="ser" class="mb-20 pt-3 w-100">
                                     <input maxlength="50" type="text" name="city" id="city" placeholder="Ваш город" required>
                                 </div>
                                 <div id="search_city_err_msg" class="bg-danger text-white text-center">
                                     <!-- error message -->
                                 </div>
-                                <ul id="triffs_list">
-                                    <li><input data-delivery-sum="0" type="radio" name="tariff_code" value="standard"> Standard <span>{{ currency }}0.00</span></li>
+                                <ul id="tariffs_list">
+                                    <li><input data-delivery-name="standard" data-delivery-sum="0" type="radio" name="tariff_code" value="standard"> Standard <span>{{ currency }}0.00</span></li>
                                 </ul>
                             </div>
                             <h4 id="grand_total" class="grand-totall-title GT">Итог <span>{{ currency }}{{ cart.get_grand_total_price }}</span></h4>

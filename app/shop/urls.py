@@ -48,6 +48,7 @@ urlpatterns = [
 	])),
 	path('cdek/', include([
 		path('tariffs/', cdek.tarifflist, name='tarifflist'),
+		path('city/', cdek.get_city, name='get_city'),
 	])),
 	path('404/', error.page_not_found),
 	path('400/', error.bad_request),
