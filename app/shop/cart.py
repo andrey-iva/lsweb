@@ -59,6 +59,7 @@ class Cart(object):
 
     def clear(self):
         del self.session[CART_SESSION_ID]
+        del self.session[GRAND_TOTAL_SESSION_ID]
         self.save()
 
     def get_total_price(self):

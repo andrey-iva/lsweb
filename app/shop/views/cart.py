@@ -10,6 +10,9 @@ from ..ctx_proc import currency
 
 import json
 
+def clear_grand_total(request):
+    if request.session.get(GRAND_TOTAL_SESSION_ID):
+        del request.session[GRAND_TOTAL_SESSION_ID]
 
 @require_POST
 def cart_add(request, product_id):
@@ -23,8 +26,7 @@ def cart_add(request, product_id):
         product = get_object_or_404(Product, id=product_id)
 
         if quantity > 0:
-            if request.session.get(GRAND_TOTAL_SESSION_ID):
-                del request.session[GRAND_TOTAL_SESSION_ID]
+            clear_grand_total(request)
             cart.add(product=product, quantity=quantity,
                      override_quantity=override)
 
@@ -53,7 +55,7 @@ def add_delivery_tax(request):
     tariff_code = request.POST.get('tariff_code')
     grand_total = 0
     cart = Cart(request)
-
+    print(delivery_tax, tariff_code)
     if delivery_tax and tariff_code:
         grand_total = cart.get_total_price() + Decimal(delivery_tax)
         request.session[GRAND_TOTAL_SESSION_ID]['total_price'] = str(grand_total)
@@ -74,8 +76,7 @@ def cart_remove(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     cart.remove(product)
 
-    if request.session.get(GRAND_TOTAL_SESSION_ID):
-        del request.session[GRAND_TOTAL_SESSION_ID]
+    clear_grand_total(request)
 
     if request.headers.get('X-Requested-With'):       
         sub_total = currency(
@@ -125,8 +126,7 @@ def cart_json(request):
 
 
 def cart_clear(request):
-    if request.session.get(GRAND_TOTAL_SESSION_ID):
-        del request.session[GRAND_TOTAL_SESSION_ID]
+    clear_grand_total(request)
     cart = Cart(request)
     cart.clear()
     return redirect('shop:product_list')

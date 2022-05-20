@@ -247,12 +247,16 @@
           onSelect: loadDelivery
         });
 
-        $("#triffs_list").on("change", function(e) {
+        function setDeliveryTax(standard) {
             var currentElemRadio = $('input:radio:checked')
-            var tariffCode = currentElemRadio.val()
-            var deliverySum = currentElemRadio.data("deliverySum")
             var csrf = $("input[name=csrfmiddlewaretoken]")
-
+            if (standard) {
+                var tariffCode = "standard"
+                var deliverySum = 0.00
+            } else {
+                var tariffCode = currentElemRadio.val()
+                var deliverySum = currentElemRadio.data("deliverySum")
+            }
             $.ajax({
                 url: ADD_DELIVERY_TAX_URL,
                 method: "POST",
@@ -276,8 +280,17 @@
             .fail(function() {
 
             });
+        }
 
-            console.log(csrf.attr("name"), tariffCode, deliverySum)
+        // перестчет по стандартному тарифу при загрузке странице или перезагрузке
+        if ($("#triffs_list") && $("#triffs_list li input").val() === "standard") {
+            setDeliveryTax(true)
+            $("#triffs_list li input").attr("checked", true)
+        }
+        // перестчет по иным тарифам
+        $("#triffs_list").on("change", function(e) {
+            setDeliveryTax(false)
+            console.log(tariffCode, deliverySum)
         })
         // страница корзины end
         // калькулятор СДЕК end
