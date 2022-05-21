@@ -131,10 +131,11 @@
     var PRODUCT_LIST_URL     = "{% url 'shop:product_list' %}"
     var CART_INFO_JSON_URL   = "{% url 'shop:cart_json' %}"
     var FILTER_URL           = "{% url 'shop:product_filter' %}"
-    var TARIFFLIST_URL       = "{% url 'shop:tarifflist' %}"
-    var ADD_DELIVERY_TAX_URL = "{% url 'shop:add_delivery_tax' %}"
     var NO_IMAGE_URL         = "{{ no_image }}"
     var CURRENCY             = "{{ currency }}"
+    var CDEK_CITY_URL             = "{% url 'shop:get_city' %}"
+    var CDEK_TARIFFLIST_URL       = "{% url 'shop:tarifflist' %}"
+    var CDEK_ADD_DELIVERY_TAX_URL = "{% url 'shop:add_delivery_tax' %}"
 
     var x = [ // get_city cdek
         {
@@ -165,19 +166,43 @@
 
     var token = "17a564feb19fabf1391ab53059b81a6a2012b9a9";
     $( function() {
+
+        // удаляет районы города и всё с 65 уровня
+        var defaultFormatResult = $.Suggestions.prototype.formatResult;
+
+        function formatResult(value, currentValue, suggestion, options) {
+          var newValue = suggestion.data.city;
+          suggestion.value = newValue;
+          return defaultFormatResult.call(this, newValue, currentValue, suggestion, options);
+        }
+
+        function formatSelected(suggestion) {
+          return suggestion.data.city;
+        }
         
         $("#city").suggestions({
           token: token,
           type: "ADDRESS",
           hint: false,
-          bounds: "region-settlement",
+          bounds: "city",
+          formatResult: formatResult,
+          formatSelected: formatSelected,
+          // type: "ADDRESS",
+          // hint: false,
+          // bounds: "region-settlement",
           onSelect: function(suggestion) {
+            var csrf = $("input[name=csrfmiddlewaretoken]")
             var city = suggestion["data"]["city_with_type"]
             var country_iso_code = suggestion["data"]["country_iso_code"]
+            
             console.log(country_iso_code, city)
+            // получаем данные о населенном пункте
             $.ajax({
-                url: "{% url 'shop:get_city' %}",
+                url: CDEK_CITY_URL,
+                method: "POST",
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
                 data: {
+                    "csrfmiddlewaretoken": csrf.val(),
                     'city': city,
                     'country_iso_code': country_iso_code,
                 },
@@ -186,18 +211,52 @@
                 try {
                     var response = JSON.parse(response)
                     console.log(response)
+                    if (response.length === 0) {
+                        console.log('показать сообщение, что ничего не найдено')
+                        return
+                    }
                 } catch(err) {
                     console.error(err)
                     return
                 }
+
+                var cdek_id = response[0]["code"]
+                city = response[0]["city"]
+                country_iso_code = response[0]["country_code"]
+
+                console.log(cdek_id, city, country_iso_code)
+                // получаем список тарифов
+                $.ajax({
+                    url: CDEK_TARIFFLIST_URL,
+                    method: "POST",
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    data: {
+                        "csrfmiddlewaretoken": csrf.val(),
+                        "cdek_id": cdek_id,
+                        "city": city,
+                        "country_iso_code": country_iso_code,
+                    },
+                })
+                .done(function(response) {
+                    try {
+                        var response = JSON.parse(response)
+                        console.log(response)
+                    } catch(err) {
+                        console.log(err)
+                        return
+                    }
+                })
+                .fail(function() {});
             })
+            .fail(function() {});
           },
           constraints: {
              locations: [
                 { country_iso_code: "RU" },
                 { country_iso_code: "BY" },
                 { country_iso_code: "KZ" },
-             ]
+             ],
+             // locations: { city_type_full: "город" }
           },
         });
     });
