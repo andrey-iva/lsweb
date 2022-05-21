@@ -171,13 +171,79 @@
         var defaultFormatResult = $.Suggestions.prototype.formatResult;
 
         function formatResult(value, currentValue, suggestion, options) {
-          var newValue = suggestion.data.city;
+          var newValue = suggestion.data.country+', '+suggestion.data.city;
           suggestion.value = newValue;
           return defaultFormatResult.call(this, newValue, currentValue, suggestion, options);
         }
 
         function formatSelected(suggestion) {
-          return suggestion.data.city;
+          return suggestion.data.country+', '+suggestion.data.city;
+        }
+
+        function fetchDelivery(kladr_id) {
+          var serviceUrl = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/delivery";
+          var request = {
+            "query": kladr_id
+          };
+          var params = {
+            type: "POST",
+            contentType: "application/json",
+            headers: {
+              "Authorization": "Token " + token
+            },
+            data: JSON.stringify(request)
+          };
+            return $.ajax(serviceUrl, params);
+        }
+
+// {
+//     "delivery_sum": 240,
+//     "period_min": 8,
+//     "period_max": 12,
+//     "calendar_min": 8,
+//     "calendar_max": 12,
+//     "weight_calc": 5000,
+//     "total_sum": 288,
+//     "currency": "RUB",
+//     "tariff_code": "136",
+//     "tariff_name": "Посылка склад-склад"
+// }
+        function printErr(message) {
+            $("#search_city_err_msg").text(message)
+            setTimeout(function() {
+                $("#search_city_err_msg").text("")
+            }, 3000)
+        }
+
+        function printTariffs(tariffs) {
+            var tariffs_list = $("#tariffs_list")
+
+            var htm = '<li><input data-delivery-name="standard" data-delivery-sum="0" type="radio" name="tariff_code" value="standard"> Cамовывоз или установка <span></span></li>'
+            for (var i = 0; i < tariffs.length; i++) {
+                // print tariff list
+                if (tariffs[i]["errors"]) {
+                    console.log(tariffs[i])
+                    continue 
+                }
+                
+                console.log(tariffs[i])
+
+                var tariffName  = tariffs[i]["tariff_name"] ? tariffs[i]["tariff_name"] : ''
+                var periodMin   = tariffs[i]["period_min"] ? tariffs[i]["period_min"] : ''
+                var periodMax   = tariffs[i]["period_max"] ? tariffs[i]["period_max"] : ''
+                var deliverySum = tariffs[i]["delivery_sum"] ? tariffs[i]["delivery_sum"] : ''
+
+                htm += '<li>\
+                <input \
+                data-delivery-name="standard"\
+                data-delivery-sum="0"\
+                type="radio"\
+                name="tariff_code"\
+                value="standard"\
+                >'+ tariffName +' (от '+ periodMin +' до '+ periodMax +' дней) \
+                <span>'+ CURRENCY + deliverySum +'</span></li>'
+            }
+            $("#tariffs_list").html(htm)
         }
         
         $("#city").suggestions({
@@ -191,64 +257,117 @@
           // hint: false,
           // bounds: "region-settlement",
           onSelect: function(suggestion) {
+            console.log("START:", suggestion)
+            $("#tariffs_list").html(
+            '<div class="d-flex justify-content-center">\
+                <div class="spinner-border spinner-border-sm" role="status">\
+                    <span class="sr-only">Loading...</span>\
+                </div>\
+            </div>')
+
             var csrf = $("input[name=csrfmiddlewaretoken]")
             var city = suggestion["data"]["city_with_type"]
             var country_iso_code = suggestion["data"]["country_iso_code"]
             
-            console.log(country_iso_code, city)
-            // получаем данные о населенном пункте
-            $.ajax({
-                url: CDEK_CITY_URL,
-                method: "POST",
-                headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                data: {
-                    "csrfmiddlewaretoken": csrf.val(),
-                    'city': city,
-                    'country_iso_code': country_iso_code,
-                },
-            })
-            .done(function(response) {
-                try {
-                    var response = JSON.parse(response)
-                    console.log(response)
-                    if (response.length === 0) {
-                        console.log('показать сообщение, что ничего не найдено')
+            var request = {
+                "csrfmiddlewaretoken": csrf.val(),
+                'city': city,
+                'country_iso_code': country_iso_code,
+            }
+            if (suggestion.data.kladr_id) {
+                fetchDelivery(suggestion.data.kladr_id)
+                .done(function(response) {
+
+                    if (response.suggestions.length === 0) {
+                        printErr("По данному Н/П Ничего не найдено.")
+                        console.log("ONLY RU: ничего не найдено")
                         return
                     }
-                } catch(err) {
-                    console.error(err)
-                    return
-                }
 
-                var cdek_id = response[0]["code"]
-                city = response[0]["city"]
-                country_iso_code = response[0]["country_code"]
+                    if (response.suggestions[0].data.cdek_id) {
+                        request['cdek_id'] = response.suggestions[0].data.cdek_id
+                        console.log("RU:", response.suggestions[0].data.cdek_id)
+                        // получаем список тарифов
+                        // ветка работает по России
+                        request["address"] = suggestion.value
+                        // получаем калькуляцию по тарифам
+                        $.ajax({
+                            url: CDEK_TARIFFLIST_URL,
+                            method: "POST",
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                            data: request,
+                        }).done(function(response) {
+                            try {
+                                var response = JSON.parse(response)
+                                // console.log("ONLY RU CALC RESULT:", response)
+                            } catch(err) {
+                                console.log(err)
+                                return
+                            }
+                            // получен результат в расчетом
+                            printTariffs(response)
+                        }).fail(function() {});
 
-                console.log(cdek_id, city, country_iso_code)
-                // получаем список тарифов
+                    }
+                })
+                .fail(function() {
+                    console.info("fetchDelivery: fail")
+                })
+            } else {
+
+                // пытаемся получить данные о населенном пункте
+                // страны RU, BY, KZ - только города, если не найден cdek_id
                 $.ajax({
-                    url: CDEK_TARIFFLIST_URL,
+                    url: CDEK_CITY_URL,
                     method: "POST",
                     headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                    data: {
-                        "csrfmiddlewaretoken": csrf.val(),
-                        "cdek_id": cdek_id,
-                        "city": city,
-                        "country_iso_code": country_iso_code,
-                    },
+                    data: request,
                 })
                 .done(function(response) {
                     try {
                         var response = JSON.parse(response)
-                        console.log(response)
+                        if (response.length !== 1) {
+                            printErr("По данному Н/П Ничего не найдено.")
+                            console.log("ONLY RU BY KZ: Ничего не найдено")
+                            return
+                        }
+                        // console.log("ONLY RU BY KZ", response)
                     } catch(err) {
-                        console.log(err)
+                        console.error(err)
                         return
                     }
+
+                    var cdek_id = response[0]["code"]
+                    city = response[0]["city"]
+                    country_iso_code = response[0]["country_code"]
+                    console.log("RU BY KZ", city, cdek_id)
+                    // получаем калькуляцию по тарифам
+                    $.ajax({
+                        url: CDEK_TARIFFLIST_URL,
+                        method: "POST",
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                        data: {
+                            "csrfmiddlewaretoken": csrf.val(),
+                            "cdek_id": cdek_id,
+                            "city": city,
+                            "country_iso_code": country_iso_code,
+                        },
+                    })
+                    .done(function(response) {
+                        try {
+                            var response = JSON.parse(response)
+                            // console.log("ONLY RU BY KZ: CALC RESULT", response)
+                        } catch(err) {
+                            console.log(err)
+                            return
+                        }
+                        // получен результат в расчетом
+                        printTariffs(response)
+                    })
+                    .fail(function() {});
                 })
                 .fail(function() {});
-            })
-            .fail(function() {});
+            }
           },
           constraints: {
              locations: [
