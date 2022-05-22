@@ -84,6 +84,12 @@
     .blog_post_detail_img_w100 p img {
         width: 100%;
     }
+
+    .help_text:hover:after {
+        font-style: oblique;
+        color: maroon;
+        content:" г. Москва, Солнцево, ул.Щорса, д.8 стр.1";
+    }
     </style>
 </head>
 
@@ -166,7 +172,6 @@
 
     var token = "17a564feb19fabf1391ab53059b81a6a2012b9a9";
     $( function() {
-
         // удаляет районы города и всё с 65 уровня
         var defaultFormatResult = $.Suggestions.prototype.formatResult;
 
@@ -207,18 +212,34 @@
 //     "currency": "RUB",
 //     "tariff_code": "136",
 //     "tariff_name": "Посылка склад-склад"
-// }
+// }    
+        
+        function firstElemTariffList() {
+            return "<h5 class='mt-0 pt-0 mb-4'>Доступные способы доставки</h5>"
+            +'<li class="help_text" title="г. Москва, Солнцево, ул.Щорса, д.8 стр.1">\
+            <input data-delivery-name="standard" data-delivery-sum="0" type="radio" name="tariff_code" value="standard">Cамовывоз или установка <tt class="text-info">?</tt></li>'
+        } 
+
         function printErr(message) {
-            $("#search_city_err_msg").text(message)
+            $(".search_city_err_msg").text(message)
             setTimeout(function() {
-                $("#search_city_err_msg").text("")
+                $(".search_city_err_msg").text("")
+                $(".tariffs_list").html(firstElemTariffList())
             }, 3000)
         }
 
         function printTariffs(tariffs) {
-            var tariffs_list = $("#tariffs_list")
+            console.log(tariffs)
+            var tariffs_list = $(".tariffs_list")
+            var deliveryPoints = tariffs.pop()
+            console.log(deliveryPoints)
 
-            var htm = '<li><input data-delivery-name="standard" data-delivery-sum="0" type="radio" name="tariff_code" value="standard"> Cамовывоз или установка <span></span></li>'
+            // if (tariffs["tariff_codes"]) {
+            //     tariffs = tariffs["tariff_codes"]
+            // }
+            var tariffListHTML = firstElemTariffList()
+
+            tariffs_loop:
             for (var i = 0; i < tariffs.length; i++) {
                 // print tariff list
                 if (tariffs[i]["errors"]) {
@@ -226,39 +247,56 @@
                     continue 
                 }
                 
-                console.log(tariffs[i])
+                if ("delivery_sum" in tariffs[i]) {
+                    var tariffName  = tariffs[i]["tariff_name"]
+                    var periodMin   = tariffs[i]["period_min"]
+                    var periodMax   = tariffs[i]["period_max"]
+                    var calendarMin = tariffs[i]["calendar_min"]
+                    var calendarMax = tariffs[i]["calendar_max"]
+                    var deliverySum = tariffs[i]["delivery_sum"]
+                    var weightCalc  = tariffs[i]["weight_calc"]
+                    var totalSum    = tariffs[i]["total_sum"]
+                    var currency    = tariffs[i]["currency"]
+                    var tariffCode  = tariffs[i]["tariff_code"]
 
-                var tariffName  = tariffs[i]["tariff_name"] ? tariffs[i]["tariff_name"] : ''
-                var periodMin   = tariffs[i]["period_min"] ? tariffs[i]["period_min"] : ''
-                var periodMax   = tariffs[i]["period_max"] ? tariffs[i]["period_max"] : ''
-                var deliverySum = tariffs[i]["delivery_sum"] ? tariffs[i]["delivery_sum"] : ''
-
-                htm += '<li>\
-                <input \
-                data-delivery-name="standard"\
-                data-delivery-sum="0"\
-                type="radio"\
-                name="tariff_code"\
-                value="standard"\
-                >'+ tariffName +' (от '+ periodMin +' до '+ periodMax +' дней) \
-                <span>'+ CURRENCY + deliverySum +'</span></li>'
+                    tariffListHTML += '<li>\
+                    <input \
+                    data-delivery-name="standard"\
+                    data-delivery-sum="0"\
+                    type="radio"\
+                    name="tariff_code"\
+                    value="standard"\
+                    >'+ tariffName +' (от '+ periodMin +' до '+ periodMax +' дней) \
+                    <span>'+ CURRENCY + deliverySum +'</span></li>'
+                }
             }
-            $("#tariffs_list").html(htm)
+            $(".tariffs_list").html(tariffListHTML)
+
+            var deliveryPointsHTML = '<select class="custom-select form-control-sm w-100">\
+            <option selected>Выбрать пункт</option>'
+            for (var i = 0; i < deliveryPoints.length; i++) {
+                deliveryPointsHTML += '<option value="'+ deliveryPoints[i]["code"] +'">'+
+                deliveryPoints[i]["location"]["address_full"] +'</option>'
+            }
+            deliveryPoints += "</select>"
+            $(".delivery_points_title").removeClass("d-none")
+            $(".delivery_points_list").html(deliveryPointsHTML)
         }
         
         $("#city").suggestions({
+          // token: token,
+          // type: "ADDRESS",
+          // hint: false,
+          // bounds: "city",
+          // formatResult: formatResult,
+          // formatSelected: formatSelected,
           token: token,
           type: "ADDRESS",
           hint: false,
-          bounds: "city",
-          formatResult: formatResult,
-          formatSelected: formatSelected,
-          // type: "ADDRESS",
-          // hint: false,
-          // bounds: "region-settlement",
+          bounds: "region-settlement",
           onSelect: function(suggestion) {
             console.log("START:", suggestion)
-            $("#tariffs_list").html(
+            $(".tariffs_list").html(
             '<div class="d-flex justify-content-center">\
                 <div class="spinner-border spinner-border-sm" role="status">\
                     <span class="sr-only">Loading...</span>\
@@ -275,11 +313,18 @@
                 'country_iso_code': country_iso_code,
             }
             if (suggestion.data.kladr_id) {
-                fetchDelivery(suggestion.data.kladr_id)
+
+                var kladr_id = suggestion.data.kladr_id;
+                if (kladr_id.length > 13) {
+                    // план. структура
+                    kladr_id = kladr_id.substr(0, 11) + "00";
+             
+                }
+                fetchDelivery(kladr_id)
                 .done(function(response) {
 
                     if (response.suggestions.length === 0) {
-                        printErr("По данному Н/П Ничего не найдено.")
+                        printErr("Данное направление в службе СДЕК отсутствует.")
                         console.log("ONLY RU: ничего не найдено")
                         return
                     }
@@ -289,7 +334,6 @@
                         console.log("RU:", response.suggestions[0].data.cdek_id)
                         // получаем список тарифов
                         // ветка работает по России
-                        request["address"] = suggestion.value
                         // получаем калькуляцию по тарифам
                         $.ajax({
                             url: CDEK_TARIFFLIST_URL,
@@ -310,9 +354,7 @@
 
                     }
                 })
-                .fail(function() {
-                    console.info("fetchDelivery: fail")
-                })
+                .fail(function() {})
             } else {
 
                 // пытаемся получить данные о населенном пункте
@@ -327,7 +369,7 @@
                     try {
                         var response = JSON.parse(response)
                         if (response.length !== 1) {
-                            printErr("По данному Н/П Ничего не найдено.")
+                            printErr("Данное направление в службе СДЕК отсутствует.")
                             console.log("ONLY RU BY KZ: Ничего не найдено")
                             return
                         }

@@ -4,7 +4,7 @@ from django.views.decorators.http import require_POST
 from pprint import pprint
 
 import requests as r
-import json
+import json, time
 
 PROD = False
 
@@ -25,11 +25,15 @@ SERVICES = [
 ]
 
 if PROD:
-	TARIFF_URL = 'https://api.cdek.ru/v2/calculator/tariff'
-	CITIES_URL = 'https://api.cdek.ru/v2/location/cities'
+	TARIFFS_URL         = 'https://api.cdek.ru/v2/calculator/tarifflist'
+	TARIFF_URL          = 'https://api.cdek.ru/v2/calculator/tariff'
+	CITIES_URL          = 'https://api.cdek.ru/v2/location/cities'
+	DELIVERY_POINTS_URL = 'https://api.cdek.ru/v2/deliverypoints'
 else:
-	TARIFF_URL = 'https://api.edu.cdek.ru/v2/calculator/tariff'
-	CITIES_URL = 'https://api.edu.cdek.ru/v2/location/cities'
+	TARIFFS_URL         = 'https://api.edu.cdek.ru/v2/calculator/tarifflist'
+	TARIFF_URL          = 'https://api.edu.cdek.ru/v2/calculator/tariff'
+	CITIES_URL          = 'https://api.edu.cdek.ru/v2/location/cities'
+	DELIVERY_POINTS_URL = 'https://api.edu.cdek.ru/v2/deliverypoints'
 
 
 def get_token_cdek():
@@ -79,7 +83,7 @@ def get_tarifflist(cdek_id, country_iso_code, city, address, packages):
 			'code': cdek_id,
 			'country_code': country_iso_code,
 			'city': city ,
-			'address': address
+			# 'address': address
 		},
 		'packages': packages,
 		# 'services': SERVICES
@@ -97,11 +101,14 @@ def get_tarifflist(cdek_id, country_iso_code, city, address, packages):
 			tariff['tariff_code'] = tariff_code
 			tariff['tariff_name'] = TARIFF_CODES[tariff_code]
 			tariffs.append( tariff )
+		time.sleep(0.2)
 	
 	if len(tariffs) == len(TARIFF_CODES):
 		return tariffs
+	# tariffs = r.post(TARIFFS_URL, json.dumps(data), headers=headers)
+	# if tariffs.status_code == 200:
+	# 	return tariffs.json()
 
-# cdek_id, country_code, city
 @require_POST
 def tarifflist(request):
 	''' калькулятор по тарифам '''
@@ -121,7 +128,7 @@ def tarifflist(request):
 		'cdek_id': cdek_id, 
 		'country_iso_code': country_iso_code, 
 		'city': city, 
-		'address': address, 
+		# 'address': address, 
 		'packages': packages})
 
 	if cdek_id:
@@ -133,5 +140,8 @@ def tarifflist(request):
 			packages=packages)
 		if tariffs:
 			pprint(tariffs)
+			delivery_points = r.get(DELIVERY_POINTS_URL, {'city_code': cdek_id}, headers=access_header())
+			if delivery_points.status_code == 200:
+				tariffs.append(delivery_points.json())
 			return HttpResponse(json.dumps(tariffs))
-	return HttpResponse(json.dumps({'error': 'tariffs is empty'}))
+	return HttpResponse(json.dumps({'error': 'tariffs empty'}))

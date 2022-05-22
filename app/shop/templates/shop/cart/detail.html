@@ -130,16 +130,23 @@
                             <h5 id="sub_total">Подитог <span>{{ currency }}{{ cart.get_total_price }}</span></h5>
                             <div class="total-shipping">
                                 <h5>Стоимость доставки</h5>
-                                <div id="search_city_err_msg" class="bg-danger mt-3 text-white text-center">
+                                <div class="bg-danger mt-3 text-white text-center search_city_err_msg">
                                     <!-- error message -->
                                 </div>
+                                <!-- ser to style.css -->
                                 <div id="ser" class="mb-20 pt-3 w-100">
-                                    <input maxlength="50" type="text" name="city" id="city" placeholder="Ваш город" required>
+                                    <input class="bg-light text-dark form-control" maxlength="50" type="text" name="city" id="city" placeholder="Ваш город">
                                 </div>
                                 
-                                <ul id="tariffs_list">
+                                <ul class="tariffs_list">
                                     <!-- <li><input data-delivery-name="standard" data-delivery-sum="0" type="radio" name="tariff_code" value="standard"> Standard <span>{{ currency }}0.00</span></li> -->
                                 </ul>
+                                <h5 class="mt-4 mb-4 d-none delivery_points_title">Пункты выдачи заказов</h5>
+                                <div class="delivery_points_list">
+                                  <!-- <select class="custom-select form-control-sm w-100">
+                                    <option selected>Выбрать пункт</option>
+                                  </select> -->
+                                </div>
                             </div>
                             <h4 id="grand_total" class="grand-totall-title GT">Итог <span>{{ currency }}{{ cart.get_grand_total_price }}</span></h4>
                             <a href="{% url 'shop:order_create' %}">Оформить заказ</a>
