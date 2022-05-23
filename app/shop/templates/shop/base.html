@@ -41,6 +41,12 @@
         outline: 0 none !important;
     }
 
+    .outline-none:focus {
+        border: 1px solid;
+        box-shadow: none !important;
+        outline: 0 none !important;
+    }
+
     .shop-topbar-wrapper .product-sorting-wrapper .shorting-style select {
         -moz-appearance: none;
         -webkit-appearance: none;
@@ -162,35 +168,70 @@
 
     var token = "17a564feb19fabf1391ab53059b81a6a2012b9a9";
     $( function() {
-
+        // вариации доставки
         $("input[name=delivery_name]").change(function(e) {
             var clientInfo = $("#client_info")
             var deliveryTypeInfoText = $("#delivery_type")
+            // hidden input
             var hiddenInputDeliveryType = $("input[name=delivery_type]")
+            
+            
+            clientInfo.attr("hidden", true)
+            $("#country").prop('required', false)
+            $("#client_info input").each(function() {
+                    this.required = false
+            });
+            $(".field_hidden").each(function() {
+                $(this).find("input").prop("required", true)
+                this.hidden = false
+            })
+
             // До адреса клиента
             if ( parseInt($(this).val()) === 1 ) {
                 clientInfo.attr("hidden", false)
                 deliveryTypeInfoText.text("До адреса клиента")
                 hiddenInputDeliveryType.val("До адреса клиента")
 
+                $("#country").prop('required',true)
                 $("#client_info input").each(function() {
                     this.required = true
                 });
-                console.log('До адреса клиента')
             }
             // Службой доставки СДЭК
+            $("#cdek_hidden").prop("hidden", true)
             if ( parseInt($(this).val()) === 2 ) {
+                clientInfo.attr("hidden", false)
+                $("#cdek_hidden").prop("hidden", false)
                 deliveryTypeInfoText.text("Службой доставки СДЭК")
                 hiddenInputDeliveryType.val("Службой доставки СДЭК")
 
-                console.log('Службой доставки СДЭК')
+                $("#country").prop('required', false)
+                $("#client_info input").each(function() {
+                    this.required = true
+                });
+
+                $(".field_hidden").each(function() {
+                    $(this).find("input").prop("required", false)
+                    this.hidden = true
+                })
             }
             // Самовывоз
+            $("#shoping_center").addClass("d-none")
             if ( parseInt($(this).val()) === 3 ) {
+                clientInfo.attr("hidden", false)
                 deliveryTypeInfoText.text("Самовывоз")
                 hiddenInputDeliveryType.val("Самовывоз")
-                
-                console.log('Самовывоз')
+                $("#shoping_center").removeClass("d-none")
+
+                $("#country").prop('required', false)
+                $("#client_info input").each(function() {
+                    this.required = true
+                });
+
+                $(".field_hidden").each(function() {
+                    $(this).find("input").prop("required", false)
+                    this.hidden = true
+                })
             }
         });
 
@@ -239,8 +280,6 @@
         
         function firstElemTariffList() {
             return "<h5 class='mt-0 pt-0 mb-4'>Доступные способы доставки</h5>"
-            +'<li class="help_text" title="г. Москва, Солнцево, ул.Щорса, д.8 стр.1">\
-            <input data-delivery-name="standard" data-delivery-sum="0" type="radio" name="tariff_code" value="standard">Cамовывоз или установка <tt class="text-info">?</tt></li>'
         } 
 
         function printErr(message) {
@@ -295,14 +334,17 @@
             }
             $(".tariffs_list").html(tariffListHTML)
 
-            var deliveryPointsHTML = '<select class="custom-select form-control-sm w-100">\
-            <option selected>Выбрать пункт</option>'
+            // Пункты выдачи заказов
+            var deliveryPointsHTML = 
+            '<label for="city">Пункты выдачи заказов <abbr style="color: red;" class="required" title="required">*</abbr></label>' 
+            + '<select class="w-100 form-control form-control-sm outline-none">\
+            <option></option>'
             for (var i = 0; i < deliveryPoints.length; i++) {
                 deliveryPointsHTML += '<option value="'+ deliveryPoints[i]["code"] +'">'+
                 deliveryPoints[i]["location"]["address_full"] +'</option>'
             }
             deliveryPoints += "</select>"
-            $(".delivery_points_title").removeClass("d-none")
+            $(".delivery_points_list").removeClass("d-none")
             $(".delivery_points_list").html(deliveryPointsHTML)
         }
         

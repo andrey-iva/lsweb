@@ -25,27 +25,55 @@
         <div class="checkout-wrap pt-30">
             <div class="row">
                 <div class="grand-totall w-100 p-0 ml-15 mr-3 mb-3 border-0" style="background-color: #fff;">
-                    <div class="delivery-title">
+                    <div class="delivery-title border-0">
                         <h3>Доставка</h3>
                     </div>
-                    <div class="total-shipping">
-                        <h5>Тип доставки</h5>
-                        <ul>
-                            <li><input type="radio" name="delivery_name" value="1"> До адреса клиента <span></span></li> 
-                            <li><input type="radio" name="delivery_name" value="2"> Службой доставки СДЭК <span></span></li> 
-                            <li><input type="radio" name="delivery_name" value="3"> Самовывоз <span></span></li> 
-                        </ul>
+                    <div class="row">
+                        <div class="total-shipping border-0 col-lg-4 col-12">
+                            <h5>Тип доставки</h5>
+                            <ul>
+                                <li><input type="radio" name="delivery_name" value="1"> До адреса клиента <span></span></li> 
+                                <li><input type="radio" name="delivery_name" value="2"> Службой доставки СДЭК <span></span></li> 
+                                <li class="help_text"><input type="radio" name="delivery_name" value="3"> Самовывоз <tt class="text-info">?</tt></li> 
+                            </ul>
 
+                            
 
+                            <div id="cdek_hidden" class="mt-20" hidden>
+                                <div class="bg-danger mt-3 text-white text-center search_city_err_msg">
+                                    <!-- error message -->
+                                </div>
+                                <!-- ser to style.css -->
+                                <div id="ser" class="billing-info mb-20 pt-3 w-100">
+                                    <label for="city">Точтка назначения <abbr style="color: red;" class="required" title="required">*</abbr></label>
+                                    <input class="bg-light text-dark form-control form-control-sm outline-none" maxlength="50" type="text" name="city" id="city" placeholder="Ваш город">
+                                </div>
+                                <div class="delivery_points_list d-none">
+<!--                                   <label for="city">Пункты выдачи заказов <abbr style="color: red;" class="required" title="required">*</abbr></label>
+                                  <select class="w-100 form-control form-control-sm outline-none">
+                                    <option selected>Выбрать пункт</option>
+                                  </select> -->
+                                </div>
+                                <ul class="tariffs_list">
+                                    <!-- <li><input data-delivery-name="standard" data-delivery-sum="0" type="radio" name="tariff_code" value="standard"> Standard <span>{{ currency }}0.00</span></li> -->
+                                </ul>
+                                <!-- <h5 class="mt-4 mb-4 d-none delivery_points_title">Пункты выдачи заказов</h5> -->
+                                
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+            <div id="shoping_center" class="alert border h6 text-center text-danger d-none" role="alert">
+               Товар можно забрать по адресу: г.Москва, ул.Щорса, д.8 стр.1 - автокомплекс<span class="h5"> "Buncar"</span>
+            </div>
             <form id="order_create" action="{% url 'shop:order_create' %}" method="post" class="row">
                 {% csrf_token %}
-                <input type="hidden" name="delivery_type">
+                <input type="hidden" maxlength="100" name="delivery_type">
                 <div class="col-lg-7">
                     <div class="billing-info-wrap mr-50">
                         <h3>ДЕТАЛИ ОПЛАТЫ</h3>
+                        
                         <div id="client_info" class="row" hidden>
                             <div class="col-lg-6 col-md-6">
                                 <div class="billing-info mb-20">
@@ -59,31 +87,31 @@
                                     <input maxlength="50" type="text" name="last_name" id="last_name" placeholder="Ваша фамилия">
                                 </div>
                             </div>
-                            <div class="col-lg-12">
+                            <div class="col-lg-12 field_hidden">
                                 <div class="billing-info mb-20">
                                     <label for="country">Страна <abbr class="required" title="required">*</abbr></label>
-                                    <select name="country" id="country" class="border-bottom border-light">
+                                    <select name="country" id="country" class="border-bottom border-secondary">
                                         <option value="">---</option>
-                                        <option value="RU">Россия</option>
-                                        <option value="BY">Беларусь</option>
-                                        <option value="KZ">Казахстан</option>
+                                        <option>Россия</option>
+                                        <option>Беларусь</option>
+                                        <option>Казахстан</option>
                                     </select>
                                     <!-- <input maxlength="50" type="text" name="country" id="country" placeholder="Страна" required> -->
                                 </div>
                             </div>
-                            <div class="col-lg-12 col-md-12">
+                            <div class="col-lg-12 col-md-12 field_hidden">
                                 <div class="billing-info mb-20">
                                     <label for="region">Регион / район <abbr class="required" title="required">*</abbr></label>
                                     <input maxlength="100" type="text" name="region" id="region" placeholder="Пример: Приморский край">
                                 </div>
                             </div>
-                            <div class="col-lg-12">
+                            <div class="col-lg-12 field_hidden">
                                 <div class="billing-info mb-20">
                                     <label for="address">Адресс / Город, улица, дом, квартира <abbr class="required" title="required">*</abbr></label>
                                     <input maxlength="250" type="text" name="address" id="address" placeholder="Пример: г Владивосток, ул Авиаторов, д 2, кв 34">
                                 </div>
                             </div>
-                            <div class="col-lg-12 col-md-12">
+                            <div class="col-lg-12 col-md-12 field_hidden">
                                 <div class="billing-info mb-20">
                                     <label for="postal_code">Почтовый индекс <abbr class="required" title="required">*</abbr></label>
                                     <input maxlength="20" type="text" name="postal_code" id="postal_code">
@@ -102,9 +130,10 @@
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="additional-info-wrap">
                             <label>Примечания к заказу</label>
-                            <textarea maxlength="1000" type="text" name="notes" placeholder="Ваше сообщение"></textarea>
+                            <textarea maxlength="1000" type="text" name="notes" placeholder="Примечания"></textarea>
                         </div>
                     </div>
                 </div>
@@ -173,7 +202,7 @@
                             </div>
                         </div>
                         <div class="Place-order">
-                            <button type="submit" class="btn btn-danger w-100 text-uppercase p-3">Оформить заказ</button>
+                            <button type="submit" class="btn btn-danger bg-black btn-outline-none border-0 w-100 text-uppercase p-3">Оформить заказ</button>
                         </div>
                     </div>
                 </div>
@@ -182,11 +211,8 @@
     </div>
 </div>
 <script type="text/javascript">
-    // var inputs = document.querySelectorAll("input")
-    // for (var i = 0; i < inputs.length; i++) {
-    //     inputs[i].onclick = function(e) {
-    //         this.value = ""
-    //     }
-    // }
+    document.querySelector("#order_create").onsubmit = function(e) {
+        // e.preventDefault()
+    }
 </script>
 {% endblock %}

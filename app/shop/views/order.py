@@ -10,7 +10,7 @@ from ..models import OrderItem, Order
 class OrderCreateForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ['first_name', 'last_name', 'country', 'region',
+        fields = ['delivery_type', 'first_name', 'last_name', 'country', 'region',
         'address', 'postal_code', 'phone', 'email', 'notes']
 
 
