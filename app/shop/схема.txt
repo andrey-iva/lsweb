@@ -1,3 +1,28 @@
+<div class="total-shipping">
+                                <h5>Стоимость доставки</h5>
+                                <div class="bg-danger mt-3 text-white text-center search_city_err_msg">
+                                    <!-- error message -->
+                                </div>
+                                <!-- ser to style.css -->
+                                <div id="ser" class="mb-20 pt-3 w-100">
+                                    <input class="bg-light text-dark form-control" maxlength="50" type="text" name="city" id="city" placeholder="Ваш город">
+                                </div>
+                                
+                                <ul class="tariffs_list">
+                                    <li><input data-delivery-name="standard" data-delivery-sum="0" type="radio" name="tariff_code" value="standard"> Standard <span>{{ currency }}0.00</span></li>
+                                </ul>
+                                <h5 class="mt-4 mb-4 d-none delivery_points_title">Пункты выдачи заказов</h5>
+                                <div class="delivery_points_list">
+                                  <select class="custom-select form-control-sm w-100">
+                                    <option selected>Выбрать пункт</option>
+                                  </select>
+                                </div>
+                            </div>
+
+
+
+
+
         // страница корзины start
         // калькулятор СДЕК
         var $city = $("#city");

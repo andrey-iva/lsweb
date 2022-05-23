@@ -59,15 +59,10 @@ class Cart(object):
 
     def clear(self):
         del self.session[CART_SESSION_ID]
-        del self.session[GRAND_TOTAL_SESSION_ID]
         self.save()
 
     def get_total_price(self):
         return sum(Decimal(item['price']) * item['quantity'] for item in self.cart.values())
 
     def get_grand_total_price(self):
-        if self.session.get(GRAND_TOTAL_SESSION_ID):
-            price = self.session.get(GRAND_TOTAL_SESSION_ID)
-            return price['total_price']
-        else:
-            return sum(Decimal(item['price']) * item['quantity'] for item in self.cart.values())
+        return sum(Decimal(item['price']) * item['quantity'] for item in self.cart.values())

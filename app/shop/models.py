@@ -112,15 +112,15 @@ class ProductImage(models.Model):
 
 
 class Order(models.Model):
-    first_name = models.CharField(max_length=50, verbose_name='имя')
-    last_name = models.CharField(max_length=50, verbose_name='фамилия')
-    country = models.CharField(max_length=100, verbose_name='страна')
-    region = models.CharField(max_length=100, verbose_name='регион')
+    first_name = models.CharField(max_length=50, blank=True, verbose_name='имя')
+    last_name = models.CharField(max_length=50, blank=True, verbose_name='фамилия')
+    country = models.CharField(max_length=100, blank=True, verbose_name='страна')
+    region = models.CharField(max_length=100, blank=True, verbose_name='регион')
     # city = models.CharField(max_length=100, verbose_name='город')
-    address = models.CharField(max_length=250, verbose_name='адрес')
-    postal_code = models.CharField(max_length=20, verbose_name='индекс')
-    phone = models.CharField(max_length=100, verbose_name='телефон')
-    email = models.EmailField()
+    address = models.CharField(max_length=250, blank=True, verbose_name='адрес')
+    postal_code = models.CharField(max_length=20, blank=True, verbose_name='индекс')
+    phone = models.CharField(max_length=100, blank=True, verbose_name='телефон')
+    email = models.EmailField(blank=True)
     notes = models.TextField(max_length=500, blank=True,
                              verbose_name='примечание к заказу')
     created = models.DateTimeField(auto_now_add=True)

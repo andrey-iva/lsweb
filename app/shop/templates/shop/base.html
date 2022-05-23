@@ -90,6 +90,23 @@
         color: maroon;
         content:" г. Москва, Солнцево, ул.Щорса, д.8 стр.1";
     }
+    .delivery-title h3 {
+      font-size: 20px;
+      font-weight: 600;
+      position: relative;
+      margin: 0 0 45px;
+      text-transform: uppercase;
+    }
+
+    .delivery-title h3:before {
+      position: absolute;
+      content: "";
+      left: 0;
+      bottom: -12px;
+      background-color: #ff2f2f;
+      width: 50px;
+      height: 2px;
+    }
     </style>
 </head>
 
@@ -143,35 +160,41 @@
     var CDEK_TARIFFLIST_URL       = "{% url 'shop:tarifflist' %}"
     var CDEK_ADD_DELIVERY_TAX_URL = "{% url 'shop:add_delivery_tax' %}"
 
-    var x = [ // get_city cdek
-        {
-            "code": 2549,
-            "city": "Карачаевск",
-            "kladr_code": "0900000200000",
-            "country_code": "RU",
-            "country": "Россия",
-            "region": "Карачаево-Черкесская респ.",
-            "region_code": 80,
-            "postal_codes": [
-                "369200",
-                "369211",
-                "369238",
-                "369204",
-                "369212",
-                "369213",
-                "369221",
-                "369241",
-                "369202"
-            ],
-            "longitude": 41.923404,
-            "latitude": 43.773603,
-            "time_zone": "Europe/Moscow",
-            "payment_limit": -1
-        }
-    ] 
-
     var token = "17a564feb19fabf1391ab53059b81a6a2012b9a9";
     $( function() {
+
+        $("input[name=delivery_name]").change(function(e) {
+            var clientInfo = $("#client_info")
+            var deliveryTypeInfoText = $("#delivery_type")
+            var hiddenInputDeliveryType = $("input[name=delivery_type]")
+            // До адреса клиента
+            if ( parseInt($(this).val()) === 1 ) {
+                clientInfo.attr("hidden", false)
+                deliveryTypeInfoText.text("До адреса клиента")
+                hiddenInputDeliveryType.val("До адреса клиента")
+
+                $("#client_info input").each(function() {
+                    this.required = true
+                });
+                console.log('До адреса клиента')
+            }
+            // Службой доставки СДЭК
+            if ( parseInt($(this).val()) === 2 ) {
+                deliveryTypeInfoText.text("Службой доставки СДЭК")
+                hiddenInputDeliveryType.val("Службой доставки СДЭК")
+
+                console.log('Службой доставки СДЭК')
+            }
+            // Самовывоз
+            if ( parseInt($(this).val()) === 3 ) {
+                deliveryTypeInfoText.text("Самовывоз")
+                hiddenInputDeliveryType.val("Самовывоз")
+                
+                console.log('Самовывоз')
+            }
+        });
+
+        // cdek start
         // удаляет районы города и всё с 65 уровня
         var defaultFormatResult = $.Suggestions.prototype.formatResult;
 
@@ -417,69 +440,85 @@
                 { country_iso_code: "BY" },
                 { country_iso_code: "KZ" },
              ],
-             // locations: { city_type_full: "город" }
           },
         });
+        // cdek end
+    
+
+
+        // order create start
+        // Инициализирует подсказки по ФИО на указанном элементе
+        function init($surname, $name) {
+          var self = {};
+          self.$surname = $surname;
+          self.$name = $name;
+          
+          var fioParts = ["NAME", "SURNAME"];
+          $.each([$surname, $name], function(index, $el) {
+            var sgt = $el.suggestions({
+              token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
+              type: "NAME",
+              triggerSelectOnSpace: false,
+              hint: "",
+              noCache: true,
+              params: {
+                // каждому полю --- соответствующая подсказка
+                parts: [fioParts[index]]
+              },
+            });
+          });
+        };
+
+
+        init($("#first_name"), $("#last_name"));
+
+        // // Город, улица, дом, квартира
+        $("#address").suggestions({
+          token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
+          type: "ADDRESS",
+          onSelect: function(suggestion) {
+            $("#postal_code").val(suggestion['data']['postal_code'])
+          },
+          constraints: {
+             locations: [
+                { country_iso_code: "RU" },
+                { country_iso_code: "BY" },
+                { country_iso_code: "KZ" },
+             ],
+          },
+        });
+
+        // $("#country").suggestions({
+        //     token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
+        //     type: "country",
+        //     onSelect: function(suggestion) {}
+        // });
+
+        $("#region").suggestions({
+            token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
+            type: "ADDRESS",
+            onSelect: function(suggestion) {},
+            constraints: {
+             locations: [
+                { country_iso_code: "RU" },
+                { country_iso_code: "BY" },
+                { country_iso_code: "KZ" },
+             ],
+          },
+        });
+
+        $("#postal_code").suggestions({
+            token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
+            type: "postal_unit"
+        });
+
+        $("#email").suggestions({
+            token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
+            type: "EMAIL",
+            onSelect: function(suggestion) {}
+        });
+        // order create end
     });
-
-
-    // order create start
-    // Инициализирует подсказки по ФИО на указанном элементе
-    // function init($surname, $name) {
-    //   var self = {};
-    //   self.$surname = $surname;
-    //   self.$name = $name;
-      
-    //   var fioParts = ["NAME", "SURNAME"];
-    //   $.each([$surname, $name], function(index, $el) {
-    //     var sgt = $el.suggestions({
-    //       token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
-    //       type: "NAME",
-    //       triggerSelectOnSpace: false,
-    //       hint: "",
-    //       noCache: true,
-    //       params: {
-    //         // каждому полю --- соответствующая подсказка
-    //         parts: [fioParts[index]]
-    //       },
-    //     });
-    //   });
-    // };
-
-
-    // init($("#first_name"), $("#last_name"));
-
-    // // Город, улица, дом, квартира
-    // $("#address").suggestions({
-    //   token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
-    //   type: "ADDRESS",
-    //   onSelect: function(suggestion) {
-    //     $("#postal_code").val(suggestion['data']['postal_code'])
-    //   }
-    // });
-
-    // $("#country").suggestions({
-    //     token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
-    //     type: "country",
-    //     onSelect: function(suggestion) {}
-    // });
-
-    // $("#region").suggestions({
-    //     token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
-    //     type: "ADDRESS",
-    //     onSelect: function(suggestion) {}
-    // });
-
-    // $("#postal_code").suggestions({
-    //     token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
-    //     type: "postal_unit"
-    // });
-    // $("#email").suggestions({
-    //     token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
-    //     type: "EMAIL",
-    //     onSelect: function(suggestion) {}
-    // });
-    // order create end
     </script>
     <script src="/static/shop/assets/js/main.js"></script>
 </body>
