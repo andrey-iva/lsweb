@@ -154,6 +154,7 @@
 <script src="/static/shop/assets/js/vendor/vendor.min.js"></script>
 <script src="/static/shop/assets/js/plugins/plugins.min.js"></script>  -->
     <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
+    <script src="https://maps.api.2gis.ru/2.0/loader.js?pkg=full"></script>
     <!-- Main JS -->
     <script>
     var CSRF_TOKEN           = '{% csrf_token %}';
@@ -168,13 +169,18 @@
 
     var token = "17a564feb19fabf1391ab53059b81a6a2012b9a9";
     $( function() {
+        // $("#map").eq(0).css("all", "initial")
+        // 55.645664,37.403028
+        
         // вариации доставки
         $("input[name=delivery_name]").change(function(e) {
+
             var clientInfo = $("#client_info")
             var deliveryTypeInfoText = $("#delivery_type")
             // hidden input
             var hiddenInputDeliveryType = $("input[name=delivery_type]")
             
+            $(".maps").addClass("d-none");
             
             clientInfo.attr("hidden", true)
             $("#country").prop('required', false)
@@ -204,6 +210,8 @@
                 $("#cdek_hidden").prop("hidden", false)
                 deliveryTypeInfoText.text("Службой доставки СДЭК")
                 hiddenInputDeliveryType.val("Службой доставки СДЭК")
+
+                $(".maps").removeClass("d-none");
 
                 $("#country").prop('required', false)
                 $("#client_info input").each(function() {
@@ -279,14 +287,14 @@
 // }    
         
         function firstElemTariffList() {
-            return "<h5 class='mt-0 pt-0 mb-4'>Доступные способы доставки</h5>"
+            return "<h5 class='mt-0 pt-0 mb-4'>Cпособы доставки</h5>"
         } 
 
         function printErr(message) {
             $(".search_city_err_msg").text(message)
             setTimeout(function() {
                 $(".search_city_err_msg").text("")
-                $(".tariffs_list").html(firstElemTariffList())
+                $(".tariffs_list").html("<p>Ничего не найдено</p>")
             }, 3000)
         }
 
@@ -332,21 +340,92 @@
                     <span>'+ CURRENCY + deliverySum +'</span></li>'
                 }
             }
-            $(".tariffs_list").html(tariffListHTML)
+            if (deliveryPoints.length) {
+                $(".tariffs_list").html(tariffListHTML)
 
-            // Пункты выдачи заказов
-            var deliveryPointsHTML = 
-            '<label for="city">Пункты выдачи заказов <abbr style="color: red;" class="required" title="required">*</abbr></label>' 
-            + '<select class="w-100 form-control form-control-sm outline-none">\
-            <option></option>'
-            for (var i = 0; i < deliveryPoints.length; i++) {
-                deliveryPointsHTML += '<option value="'+ deliveryPoints[i]["code"] +'">'+
-                deliveryPoints[i]["location"]["address_full"] +'</option>'
+                // Пункты выдачи заказов
+                var points = []
+                var locations = []
+
+                var deliveryPointsHTML = 
+                '<label for="city">Пункты выдачи заказов <abbr style="color: red;" class="required" title="required">*</abbr></label>' 
+                + '<select id="delivery_points" class="w-100 form-control form-control-sm outline-none">\
+                <option></option>'
+                for (var i = 0; i < deliveryPoints.length; i++) {
+                    deliveryPointsHTML += '<option value="'+ deliveryPoints[i]["code"] +'">'+
+                    deliveryPoints[i]["location"]["address_full"] +'</option>'
+
+                    latitude = deliveryPoints[i]["location"]["latitude"]
+                    longitude = deliveryPoints[i]["location"]["longitude"]
+                    
+                    points.push([latitude, longitude])
+                    locations.push(deliveryPoints[i]["location"]["address_full"])
+                }
+                deliveryPointsHTML += "</select>"
+                $(".delivery_points_list").removeClass("d-none")
+                $(".delivery_points_list").html(deliveryPointsHTML)
+
+                $(".maps").empty();
+                $(".maps").append('<h4 class="pt-20 pb-10 text-center">Пункты выдачи заказов</h4><div id="map"></div>')
+                
+                if (points.length > 0) {
+                    DG.then(function () {
+                        var map, group;
+                        var markers = []    
+                        
+                        map = DG.map('map', {
+                            center: points[0],
+                            zoom: 10
+                        });
+
+                        
+                        for (var i = 0; i < points.length; i++) {
+                            if (points.length === locations.length) {
+                                markers.push(DG.marker(points[i]).addTo(map).bindLabel(locations[i]))
+                            } else {
+                                markers.push(DG.marker(points[i]).addTo(map))
+                            }
+                        }
+
+                        group = DG.featureGroup(markers);
+                        group.addTo(map);
+                        group.on('click', function(e) {
+                            map.setView([e.latlng.lat, e.latlng.lng]);
+                            console.log(map)
+                        });
+                    });
+
+                    $("#delivery_points").change(function(e) {
+                        for (var i = 0; i < deliveryPoints.length; i++) {
+                            if (deliveryPoints[i]["code"] === $(this).val()) {
+                                $(".maps").empty();
+                                $(".maps").append('<h4 class="pt-20 pb-10 text-center">Пункты выдачи заказов</h4><div id="map"></div>')
+
+                                latitude = deliveryPoints[i]["location"]["latitude"]
+                                longitude = deliveryPoints[i]["location"]["longitude"]
+
+                                DG.then(function() {
+                                    var map = DG.map('map', {
+                                        center: [latitude, longitude],
+                                        zoom: 15
+                                    });
+
+                                    DG.marker([latitude, longitude])
+                                    .addTo(map)
+                                    .bindPopup(deliveryPoints[i]["location"]["address_full"]);
+                                });
+                                break
+                            }
+                        }
+                    })
+                }
+
+            } else {
+                $(".tariffs_list").html("<p>Ничего не найдено</p>")
             }
-            deliveryPoints += "</select>"
-            $(".delivery_points_list").removeClass("d-none")
-            $(".delivery_points_list").html(deliveryPointsHTML)
         }
+
+
         
         $("#city").suggestions({
           // token: token,
@@ -367,6 +446,7 @@
                     <span class="sr-only">Loading...</span>\
                 </div>\
             </div>')
+            $(".delivery_points_list").addClass("d-none")
 
             var csrf = $("input[name=csrfmiddlewaretoken]")
             var city = suggestion["data"]["city_with_type"]

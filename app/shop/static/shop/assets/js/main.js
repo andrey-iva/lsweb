@@ -10,12 +10,21 @@
               if (countryCode === "RU") {
                 $('#phone').mask('000 000-00-00')
               }
+
+              if (countryCode === "BY") {
+                $('#phone').mask('00 000-00-00')
+              }
+
+              if (countryCode === "KZ") {
+                $('#phone').mask('000 000 0000')
+              }
               
             });
         },
         initialCountry: "auto",
         preferredCountries: ["ru"],
         separateDialCode: true,
+        onlyCountries: ["ru", "by", "kz"],
         utilsScript: "/static/shop/assets/js/inttel/js/utils.js",
     })
 
