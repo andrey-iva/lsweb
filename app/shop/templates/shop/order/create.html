@@ -23,9 +23,9 @@
 <div class="checkout-main-area pt-120 pb-120">
     <div class="container">        
         <div class="checkout-wrap pt-30">
-            <div class="row pb-40">
-                <div class="grand-totall col-lg-5 col-12 border-0" style="background-color: #fff;">
-                    <div class="delivery-title border-0">
+            <div class="row pb-10 border-bottom border-dark">
+                <div class="grand-totall col-lg-6 col-12 border-0 pt-0 pb-0" style="background-color: #fff;">
+                    <div class="delivery-title border-0 pt-1">
                         <h3>Доставка</h3>
                     </div>
                     <div>
@@ -42,7 +42,7 @@
                                 </div>
                                 <!-- ser to style.css -->
                                 <div id="ser" class="billing-info mb-20 pt-3 w-100">
-                                    <label for="city">Точтка назначения <abbr style="color: red;" class="required" title="required">*</abbr></label>
+                                    <label for="city">Точка назначения <abbr style="color: red;" class="required" title="required">*</abbr></label>
                                     <input class="bg-light text-dark form-control form-control-sm outline-none" maxlength="50" type="text" name="city" id="city" placeholder="Ваш город">
                                 </div>
                                 <div class="delivery_points_list d-none"></div>
@@ -51,18 +51,20 @@
                         </div>  
                     </div>
                 </div>
-                <div class="col-lg-7 col-12">
+                <div class="col-lg-6 col-12">
                     <!-- map -->
                     <div class="maps"></div>
+                    <div class="delivery_info"></div>
                 </div>
                 
             </div>
             <div id="shoping_center" class="alert border h6 text-center text-danger d-none" role="alert">
-               Товар можно забрать по адресу: г.Москва, ул.Щорса, д.8 стр.1 - автокомплекс<span class="h5"> "Buncar"</span>
+               Товар можно забрать по адресу: г.Москва, ул.Щорса, д.8 стр.1 - автокомплекс<span class="h5"> "Buncar", ежедневно с 10 до 20, по предварительному согласованию.</span>
             </div>
-            <form id="order_create" action="{% url 'shop:order_create' %}" method="post" class="row">
+            <form id="order_create" action="{% url 'shop:order_create' %}" method="post" class="row mt-20">
                 {% csrf_token %}
                 <input type="hidden" maxlength="100" name="delivery_type">
+                <input type="hidden" maxlength="100" name="grand_total">
                 <div class="col-lg-7">
                     <div class="billing-info-wrap mr-50">
                         <h3>ДЕТАЛИ ОПЛАТЫ</h3>
@@ -158,13 +160,14 @@
                                     </ul>
                                 </div>
                                 <div class="your-order-info order-total">
+                                    <div id="hidden_gtand_total" hidden>{{cart.get_total_price}}</div>
                                     <ul>
-                                        <li>Итог <span>{{currency}}{{cart.get_total_price}} </span></li>
+                                        <li>Итог <span id="order_grand_total">{{currency}}{{cart.get_total_price}} </span></li>
                                     </ul>
                                 </div>
                             </div>
                             <div class="payment-method">
-<!--                                 <div class="pay-top sin-payment">
+                                <div class="pay-top sin-payment">
                                     <input id="payment_method_1" class="input-radio" type="radio" value="cheque" checked="checked" name="payment_method">
                                     <label for="payment_method_1"> Direct Bank Transfer </label>
                                     <div class="payment-box payment_method_bacs">
@@ -191,11 +194,11 @@
                                     <div class="payment-box payment_method_bacs">
                                         <p>Make your payment directly into our bank account. Please use your Order ID as the payment reference.</p>
                                     </div>
-                                </div> -->
+                                </div>
                             </div>
                         </div>
                         <div class="Place-order">
-                            <button type="submit" class="btn btn-danger bg-black btn-outline-none border-0 w-100 text-uppercase p-3">Оформить заказ</button>
+                            <button id="Place-order" type="submit" class="btn btn-danger bg-black btn-outline-none border-0 w-100 text-uppercase p-3 d-none">Оформить заказ</button>
                         </div>
                     </div>
                 </div>

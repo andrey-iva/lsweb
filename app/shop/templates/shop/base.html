@@ -165,12 +165,15 @@
     var CURRENCY             = "{{ currency }}"
     var CDEK_CITY_URL             = "{% url 'shop:get_city' %}"
     var CDEK_TARIFFLIST_URL       = "{% url 'shop:tarifflist' %}"
-    var CDEK_ADD_DELIVERY_TAX_URL = "{% url 'shop:add_delivery_tax' %}"
 
     var token = "17a564feb19fabf1391ab53059b81a6a2012b9a9";
     $( function() {
         // $("#map").eq(0).css("all", "initial")
         // 55.645664,37.403028
+
+        $("#Place-order").submit(function(e) {
+
+        })
         
         // вариации доставки
         $("input[name=delivery_name]").change(function(e) {
@@ -181,6 +184,7 @@
             var hiddenInputDeliveryType = $("input[name=delivery_type]")
             
             $(".maps").addClass("d-none");
+            $("#Place-order").removeClass("d-none")
             
             clientInfo.attr("hidden", true)
             $("#country").prop('required', false)
@@ -241,6 +245,12 @@
                     this.hidden = true
                 })
             }
+
+            $("input[name=delivery_name]").each(function() {
+                if (!this.checked) {
+                    this.parentElement.hidden = true
+                }
+            });
         });
 
         // cdek start
@@ -286,9 +296,9 @@
 //     "tariff_name": "Посылка склад-склад"
 // }    
         
-        function firstElemTariffList() {
-            return "<h5 class='mt-0 pt-0 mb-4'>Cпособы доставки</h5>"
-        } 
+        // function firstElemTariffList() {
+        //     return "<h6 class='mt-0 pt-0 mb-4'>Cпособы доставки</h6>"
+        // } 
 
         function printErr(message) {
             $(".search_city_err_msg").text(message)
@@ -307,7 +317,7 @@
             // if (tariffs["tariff_codes"]) {
             //     tariffs = tariffs["tariff_codes"]
             // }
-            var tariffListHTML = firstElemTariffList()
+            var tariffListHTML = "<h6 class='mt-0 pt-0 mb-2 text-danger'>Выбрать тип доставки</h6>"
 
             tariffs_loop:
             for (var i = 0; i < tariffs.length; i++) {
@@ -334,9 +344,9 @@
                     data-delivery-name="standard"\
                     data-delivery-sum="0"\
                     type="radio"\
-                    name="tariff_code"\
-                    value="standard"\
-                    >'+ tariffName +' (от '+ periodMin +' до '+ periodMax +' дней) \
+                    name="tariff"\
+                    value="'+ deliverySum +'"\
+                    >'+ tariffName +' (до '+ periodMax +' дней) \
                     <span>'+ CURRENCY + deliverySum +'</span></li>'
                 }
             }
@@ -350,7 +360,7 @@
                 var deliveryPointsHTML = 
                 '<label for="city">Пункты выдачи заказов <abbr style="color: red;" class="required" title="required">*</abbr></label>' 
                 + '<select id="delivery_points" class="w-100 form-control form-control-sm outline-none">\
-                <option></option>'
+                <option>Выберите пункт</option>'
                 for (var i = 0; i < deliveryPoints.length; i++) {
                     deliveryPointsHTML += '<option value="'+ deliveryPoints[i]["code"] +'">'+
                     deliveryPoints[i]["location"]["address_full"] +'</option>'
@@ -365,8 +375,15 @@
                 $(".delivery_points_list").removeClass("d-none")
                 $(".delivery_points_list").html(deliveryPointsHTML)
 
+
                 $(".maps").empty();
-                $(".maps").append('<h4 class="pt-20 pb-10 text-center">Пункты выдачи заказов</h4><div id="map"></div>')
+                // $(".maps").append('<h4 class="pt-20 pb-10 text-center">Пункты выдачи заказов</h4><div id="map"></div>')
+                $(".maps").append(
+                    "<div class='delivery-title border-0'>\
+                        <h3>Пункты выдачи заказов</h3>\
+                        <div id=\"map\"></div>\
+                    </div>"
+                )
                 
                 if (points.length > 0) {
                     DG.then(function () {
@@ -399,7 +416,13 @@
                         for (var i = 0; i < deliveryPoints.length; i++) {
                             if (deliveryPoints[i]["code"] === $(this).val()) {
                                 $(".maps").empty();
-                                $(".maps").append('<h4 class="pt-20 pb-10 text-center">Пункты выдачи заказов</h4><div id="map"></div>')
+                                // $(".maps").append('<h4 class="pt-20 pb-10 text-center">Пункты выдачи заказов</h4><div id="map"></div>')
+                                $(".maps").append(
+                                    "<div class='delivery-title border-0'>\
+                                        <h3>Пункты выдачи заказов</h3>\
+                                        <div id=\"map\"></div>\
+                                    </div>"
+                                )
 
                                 latitude = deliveryPoints[i]["location"]["latitude"]
                                 longitude = deliveryPoints[i]["location"]["longitude"]
@@ -407,17 +430,50 @@
                                 DG.then(function() {
                                     var map = DG.map('map', {
                                         center: [latitude, longitude],
-                                        zoom: 15
+                                        zoom: 18
                                     });
 
                                     DG.marker([latitude, longitude])
                                     .addTo(map)
                                     .bindPopup(deliveryPoints[i]["location"]["address_full"]);
                                 });
+
+                                var infoListHTML = "<ul class='ist-group list-group-flush mt-20 mb-20'>"
+                                var fli = "<li class='list-group-item'>"
+                                if ("location" in deliveryPoints[i]) {
+                                    if ("address_full" in deliveryPoints[i]["location"]) {
+                                        infoListHTML += fli+ deliveryPoints[i]["location"]["address_full"] +"</li>"
+                                    }
+                                }
+                                if ("address_comment" in deliveryPoints[i]) {
+                                    infoListHTML += fli+ deliveryPoints[i]["address_comment"] +"</li>"
+                                }
+
+                                if ("phones" in deliveryPoints[i]) {
+                                    for (var p = 0; p < deliveryPoints[i]["phones"].length; p++) {
+                                        infoListHTML += fli +"тел "+ deliveryPoints[i]["phones"][p]["number"] +"</li>"
+                                    }
+                                }
+
+                                if ("work_time" in deliveryPoints[i]) {
+                                    infoListHTML += fli+ deliveryPoints[i]["work_time"] +"</li>"
+                                }
+
+                                infoListHTML += "</ul>"
+                                $(".delivery_info").html(infoListHTML)
                                 break
                             }
                         }
-                    })
+                    });
+
+                    $("input[name=tariff]").change(function(e) {
+                        var grandTotal = $("#order_grand_total")
+                        var total = parseFloat($("#hidden_gtand_total").text()) + parseFloat($(this).val())
+                        total = total.toFixed(2)
+
+                        $("input[name=grand_total]").val(total)
+                        grandTotal.text(CURRENCY + total.toString())
+                    });
                 }
 
             } else {
@@ -425,6 +481,7 @@
             }
         }
 
+        
 
         
         $("#city").suggestions({
@@ -442,7 +499,7 @@
             console.log("START:", suggestion)
             $(".tariffs_list").html(
             '<div class="d-flex justify-content-center">\
-                <div class="spinner-border spinner-border-sm" role="status">\
+                <div class="spinner-grow" role="status">\
                     <span class="sr-only">Loading...</span>\
                 </div>\
             </div>')

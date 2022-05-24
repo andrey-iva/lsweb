@@ -1,5 +1,5 @@
 from decimal import Decimal
-from . import CART_SESSION_ID, GRAND_TOTAL_SESSION_ID
+from . import CART_SESSION_ID
 from .models import Product
 
 

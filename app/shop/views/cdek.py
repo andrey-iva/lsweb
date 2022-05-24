@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
-from pprint import pprint
+# from pprint import pprint
 
 import requests as r
 import json, time
@@ -22,10 +22,11 @@ TARIFF_CODES = {
 	'483': 'Экспресс склад-склад',
 	'485': 'Экспресс дверь-постамат',
 	'486': 'Экспресс склад-постамат',
+	'136': 'Посылка склад-склад',
 }
 
 SERVICES = [
-	# {'code': 'INSURANCE', 'parameter': '2'},
+	{'code': 'INSURANCE', 'parameter': '2'},
 ]
 
 if PROD:
@@ -90,7 +91,7 @@ def get_tarifflist(cdek_id, country_iso_code, city, address, packages):
 			# 'address': address
 		},
 		'packages': packages,
-		# 'services': SERVICES
+		'services': SERVICES
 	}
 	
 	headers = access_header()
@@ -120,20 +121,20 @@ def tarifflist(request):
 
 	for product in request.session['cart'].values():
 		for i in range(0, int(product['quantity'])):
-			packages.append({'weight': 1})
+			packages.append({'weight': 4000})
 
 	cdek_id          = request.POST.get('cdek_id')
 	country_iso_code = request.POST.get('country_iso_code')
 	city             = request.POST.get('city')
 	address          = request.POST.get('address')
 
-	pprint({
-		'cdek': 'def tarifflist',
-		'cdek_id': cdek_id, 
-		'country_iso_code': country_iso_code, 
-		'city': city, 
-		# 'address': address, 
-		'packages': packages})
+	# pprint({
+	# 	'cdek': 'def tarifflist',
+	# 	'cdek_id': cdek_id, 
+	# 	'country_iso_code': country_iso_code, 
+	# 	'city': city, 
+	# 	# 'address': address, 
+	# 	'packages': packages})
 
 	if cdek_id:
 		tariffs = get_tarifflist(
@@ -143,8 +144,11 @@ def tarifflist(request):
 			address=address, 
 			packages=packages)
 		if tariffs:
-			pprint(tariffs)
-			delivery_points = r.get(DELIVERY_POINTS_URL, {'city_code': cdek_id}, headers=access_header())
+			# pprint(tariffs)
+			delivery_points = r.get(DELIVERY_POINTS_URL, {
+				'city_code': cdek_id,
+				'type': 'ALL',
+			}, headers=access_header())
 			if delivery_points.status_code == 200:
 				tariffs.append(delivery_points.json())
 			return HttpResponse(json.dumps(tariffs))
