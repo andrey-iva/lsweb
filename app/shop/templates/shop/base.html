@@ -166,6 +166,7 @@
     var CDEK_CITY_URL             = "{% url 'shop:get_city' %}"
     var CDEK_TARIFFLIST_URL       = "{% url 'shop:tarifflist' %}"
     var CART_ADD_DELIVERY_TAX_URL = "{% url 'shop:add_delivery_tax' %}"
+    var CART_ADD_PERCENT_URL      = "{% url 'shop:add_percent' %}"
 
     var token = "17a564feb19fabf1391ab53059b81a6a2012b9a9";
     $( function() {
@@ -175,6 +176,43 @@
         $("#Place-order").submit(function(e) {
             // add input grand total + field db
         })
+
+        $("input[name=payment_method]").change(function(e) {
+
+            function addPercent(percent) {
+                // проценты к итоговой цене при оплате
+                $.ajax({
+                    url: CART_ADD_PERCENT_URL,
+                    method: "POST",
+                    data: {
+                        "percent": percent,
+                        "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+                    },
+                }).done(function(response) {
+                    var response = JSON.parse(response)
+
+                    if ("grand_total" in response) {
+                        $("#order_grand_total").text(response["grand_total"])
+                        console.log(response["grand_total"])
+                    }
+
+                    if ("error" in response) {
+                        console.log(response["error"])
+                    }
+                })
+            }
+
+            $(".payment_method_bacs").addClass("payment-box")
+
+            $(this).next().next().removeClass("payment-box")
+
+            var val = parseInt($(this).val())
+            if (val === 5) {
+                addPercent(val)
+            } else {
+                addPercent(0)
+            }
+        })
         
         // вариации доставки
         $("input[name=delivery_name]").change(function(e) {
@@ -183,11 +221,33 @@
             var deliveryTypeInfoText = $("#delivery_type")
             // hidden input
             var hiddenInputDeliveryType = $("input[name=delivery_type]")
+
+            // стартовая итоговоя цена
+            $.ajax({
+                url: CART_ADD_DELIVERY_TAX_URL,
+                method: "POST",
+                data: {
+                    "delivery_tax": 0,
+                    "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+                },
+            }).done(function(response) {
+                var response = JSON.parse(response)
+
+                if ("grand_total" in response) {
+                    $("#order_grand_total").text(response["grand_total"])
+                    console.log(response["grand_total"])
+                }
+
+                if ("error" in response) {
+                    console.log(response["error"])
+                }
+            })
             
             $(".maps").addClass("d-none");
             $("#Place-order").removeClass("d-none")
             
             clientInfo.attr("hidden", true)
+
             $("#country").prop('required', false)
             $("#client_info input").each(function() {
                     this.required = false
@@ -200,6 +260,7 @@
             // До адреса клиента
             if ( parseInt($(this).val()) === 1 ) {
                 clientInfo.attr("hidden", false)
+
                 deliveryTypeInfoText.text("До адреса клиента")
                 hiddenInputDeliveryType.val("До адреса клиента")
 
@@ -213,6 +274,7 @@
             if ( parseInt($(this).val()) === 2 ) {
                 clientInfo.attr("hidden", false)
                 $("#cdek_hidden").prop("hidden", false)
+
                 deliveryTypeInfoText.text("Службой доставки СДЭК")
                 hiddenInputDeliveryType.val("Службой доставки СДЭК")
 
@@ -232,9 +294,10 @@
             $("#shoping_center").addClass("d-none")
             if ( parseInt($(this).val()) === 3 ) {
                 clientInfo.attr("hidden", false)
+                $("#shoping_center").removeClass("d-none")
+                
                 deliveryTypeInfoText.text("Самовывоз")
                 hiddenInputDeliveryType.val("Самовывоз")
-                $("#shoping_center").removeClass("d-none")
 
                 $("#country").prop('required', false)
                 $("#client_info input").each(function() {
@@ -296,10 +359,6 @@
 //     "tariff_code": "136",
 //     "tariff_name": "Посылка склад-склад"
 // }    
-        
-        // function firstElemTariffList() {
-        //     return "<h6 class='mt-0 pt-0 mb-4'>Cпособы доставки</h6>"
-        // } 
 
         function printErr(message) {
             $(".search_city_err_msg").text(message)
@@ -444,6 +503,7 @@
                         }
                     });
 
+                    // итоговая цена с учетом доставки
                     $("input[name=tariff]").change(function(e) {
                         var cdekDeliveryTax = this.value
                         var csrf = $("input[name=csrfmiddlewaretoken]")
@@ -455,8 +515,7 @@
                                 "delivery_tax": cdekDeliveryTax,
                                 "csrfmiddlewaretoken": csrf.val(),
                             },
-                        })
-                        .done(function(response) {
+                        }).done(function(response) {
                             var response = JSON.parse(response)
 
                             if ("grand_total" in response) {

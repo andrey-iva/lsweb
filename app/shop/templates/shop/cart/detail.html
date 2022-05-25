@@ -81,51 +81,15 @@
                 </div>
                 </form>
                 <div class="row">                 
-                    <div class="col-md-6">
-<!--                         <div class="cart-tax">
-                            <div class="title-wrap">
-                                <h4 class="cart-bottom-title section-bg-gray">Стоимость доставки</h4>
-                            </div>
-                            <div class="tax-wrapper">
-                                <p>Введите пункт назначения, чтобы рассчитать стоимость доставки.</p>
-                                <div class="tax-select-wrapper">
-                                    <div class="tax-select">
-                                        <label>
-                                            * Город
-                                        </label>
-                                        <input maxlength="50" type="text" name="city" id="city" placeholder="Ваш город" required>
-                                    </div>
-                                    <div class="tax-select">
-                                        <label>
-                                            * Region / State
-                                        </label>
-                                        <select class="email s-email s-wid">
-                                            <option>Bangladesh</option>
-                                            <option>Albania</option>
-                                            <option>Åland Islands</option>
-                                            <option>Afghanistan</option>
-                                            <option>Belgium</option>
-                                        </select>
-                                    </div>
-                                    <div class="tax-select">
-                                        <label>
-                                            * Zip/Postal Code
-                                        </label>
-                                        <input type="text">
-                                    </div>
-                                    <button class="cart-btn-2" type="submit">Get A Quote</button>
-                                </div>
-                            </div>
-                        </div> -->
+                    <div class="col-md-7">
+                        <!-- ... -->
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-5">
                         <div class="grand-totall">
                             <div class="title-wrap mb-50">
                                 <h4 class="cart-bottom-title section-bg-gary-cart">Итого</h4>
                             </div>
-                            <!-- <h5 id="sub_total">Подитог <span>{{ currency }}{{ cart.get_total_price }}</span></h5> -->
-
                             <h4 id="grand_total" class="grand-totall-title GT">Подитог <span>{{ currency }}{{ cart.get_total_price }}</span></h4>
                             <a href="{% url 'shop:order_create' %}">Оформить заказ</a>
                         </div>

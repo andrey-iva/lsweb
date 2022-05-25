@@ -4,15 +4,20 @@ from django.http import HttpResponse
 from django import forms
 from ..cart import Cart
 from ..models import OrderItem, Order
+from .. import GRAND_TOTAL_ID
 # from ..tasks import order_created
 
 
 class OrderCreateForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ['delivery_type', 'first_name', 'last_name', 'country', 'region',
+        fields = ['delivery_type', 'grand_total', 'first_name', 'last_name', 'country', 'region',
         'address', 'postal_code', 'phone', 'email', 'notes']
 
+def clear_grand_total(request):
+    if request.session.get(GRAND_TOTAL_ID):
+        del request.session[GRAND_TOTAL_ID]
+        request.session.modified = True
 
 def order_create(request):
     cart = Cart(request)
@@ -21,7 +26,12 @@ def order_create(request):
 
     errorMessage = None
     if request.method == 'POST':
-        form = OrderCreateForm(request.POST)
+        request_post = request.POST.copy()
+
+        if request.session.get(GRAND_TOTAL_ID):
+            request_post['grand_total'] = str(request.session[GRAND_TOTAL_ID]['price'])
+        
+        form = OrderCreateForm(request_post)
         if form.is_valid():
             order = form.save()
             for item in cart:
@@ -30,10 +40,15 @@ def order_create(request):
                                          price=item['price'],
                                          quantity=item['quantity'])
             cart.clear()
+            clear_grand_total(request)
             # send mail
             return redirect('shop:order_created', order.id)
         else:
             errorMessage = 'Проверте введенные данные!'
+    
+    if request.session.get(GRAND_TOTAL_ID):
+        request.session[GRAND_TOTAL_ID].clear()
+        # request.session.modified = True
 
     return render(request, 'shop/order/create.html', {
         'cart': cart,

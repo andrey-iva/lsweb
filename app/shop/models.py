@@ -122,7 +122,7 @@ class Order(models.Model):
     phone = models.CharField(max_length=100, blank=True, verbose_name='телефон')
     email = models.EmailField(blank=True)
     delivery_type = models.CharField(max_length=100, verbose_name="доставка")
-    # delivery_point = models.CharField(max_length=20, verbose_name="UUID пункта выдачи заказов")
+    grand_total = models.CharField(max_length=20, verbose_name="итого")
     notes = models.TextField(max_length=500, blank=True,
                              verbose_name='примечание к заказу')
     created = models.DateTimeField(auto_now_add=True)

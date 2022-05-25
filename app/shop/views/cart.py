@@ -10,10 +10,6 @@ from ..ctx_proc import currency
 
 import json
 
-def clear_grand_total(request):
-    if request.session.get(GRAND_TOTAL_SESSION_ID):
-        del request.session[GRAND_TOTAL_SESSION_ID]
-
 @require_POST
 def cart_add(request, product_id):
     try:
@@ -51,20 +47,50 @@ def add_delivery_tax(request):
     request.session[GRAND_TOTAL_ID] = {}
 
     delivery_tax = request.POST.get('delivery_tax')
+    percent = request.POST.get('percent')
     grand_total = 0
     cart = Cart(request)
-    
+
     if delivery_tax:
-        grand_total = cart.get_total_price() + Decimal(delivery_tax)
-        request.session[GRAND_TOTAL_ID]['price'] = str(grand_total)
-        request.session.modified = True
+        if int(delivery_tax) >= 0:
+            grand_total = cart.get_total_price() + Decimal(delivery_tax)
+            request.session[GRAND_TOTAL_ID]['price'] = str(grand_total)
+            request.session.modified = True
 
-        return HttpResponse(json.dumps({
-                'grand_total': currency(request)['currency'] + str(grand_total)
-            }))
-    
-    return HttpResponse(json.dumps({'error': 'add delivery tax!'}))
+            return HttpResponse(json.dumps({
+                    'grand_total': currency(request)['currency'] + str(grand_total)
+                }))
 
+    return HttpResponse(json.dumps({'error': 'fail add delivery tax!'}))
+
+@require_POST
+def add_percent(request):
+    percent = request.POST.get('percent')
+    grand_total = 0
+
+    if percent and request.session.get(GRAND_TOTAL_ID):
+        if int(percent) > 0:
+            percent = (Decimal(request.session[GRAND_TOTAL_ID]['price']) / Decimal(100)) * Decimal(percent)
+            grand_total = Decimal(request.session[GRAND_TOTAL_ID]['price']) + percent
+            
+            request.session[GRAND_TOTAL_ID]['old_price'] = request.session[GRAND_TOTAL_ID]['price']
+            request.session[GRAND_TOTAL_ID]['price'] = str(grand_total)
+            request.session.modified = True
+
+            return HttpResponse(json.dumps({
+                    'grand_total': currency(request)['currency'] + str(grand_total)
+                }))
+        else:
+            grand_total = request.session[GRAND_TOTAL_ID]['old_price']
+            request.session[GRAND_TOTAL_ID]['price'] = request.session[GRAND_TOTAL_ID]['old_price']
+            request.session.modified = True
+            
+            return HttpResponse(json.dumps({
+                    'grand_total': currency(request)['currency'] + str(grand_total)
+                }))
+
+
+    return HttpResponse(json.dumps({'error': 'fail add percent!'}))
 
 @require_POST
 def cart_remove(request, product_id):
