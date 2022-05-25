@@ -36,7 +36,7 @@ urlpatterns = [
 		path('add/<int:product_id>/', cart.cart_add, name='cart_add'),
 		# /cart/remove/id - прописан жестко в JS 1-раз
 		path('remove/<int:product_id>/', cart.cart_remove, name='cart_remove'),
-		# path('add/delivery/tax/', cart.add_delivery_tax, name='add_delivery_tax'),
+		path('add/delivery/tax/', cart.add_delivery_tax, name='add_delivery_tax'),
 	])),
 	path('order/', include([
 		path('create/', order.order_create, name='order_create'),

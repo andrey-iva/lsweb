@@ -3,7 +3,7 @@ from django.views.decorators.http import require_POST
 from django.http import HttpResponse
 from decimal import Decimal
 
-from .. import CART_SESSION_ID, NO_IMAGE_PATH
+from .. import CART_SESSION_ID, NO_IMAGE_PATH, GRAND_TOTAL_ID
 from ..models import Product
 from ..cart import Cart
 from ..ctx_proc import currency
@@ -46,29 +46,24 @@ def cart_add(request, product_id):
     return redirect('shop:cart_detail')
 
 
-# @require_POST
-# def add_delivery_tax(request):
-#     request.session[GRAND_TOTAL_SESSION_ID] = {}
+@require_POST
+def add_delivery_tax(request):
+    request.session[GRAND_TOTAL_ID] = {}
 
-#     delivery_tax = request.POST.get('delivery_tax')
-#     tariff_code = request.POST.get('tariff_code')
-#     delivery_name = request.POST.get('delivery_name')
-#     grand_total = 0
-#     cart = Cart(request)
+    delivery_tax = request.POST.get('delivery_tax')
+    grand_total = 0
+    cart = Cart(request)
     
-#     if delivery_tax and tariff_code and delivery_name:
-#         grand_total = cart.get_total_price() + Decimal(delivery_tax)
-#         request.session[GRAND_TOTAL_SESSION_ID]['total_price'] = str(grand_total)
-#         request.session[GRAND_TOTAL_SESSION_ID]['tariff_code'] = str(tariff_code)
-#         request.session[GRAND_TOTAL_SESSION_ID]['tariff_name'] = str(delivery_name)
-#         request.session.modified = True
+    if delivery_tax:
+        grand_total = cart.get_total_price() + Decimal(delivery_tax)
+        request.session[GRAND_TOTAL_ID]['price'] = str(grand_total)
+        request.session.modified = True
 
-#         return HttpResponse(json.dumps({
-#                 'ok': True,
-#                 'grand_total': currency(request)['currency'] + str(grand_total)
-#             }))
+        return HttpResponse(json.dumps({
+                'grand_total': currency(request)['currency'] + str(grand_total)
+            }))
     
-#     return HttpResponse(json.dumps({'error': 'add delivery tax!'}))
+    return HttpResponse(json.dumps({'error': 'add delivery tax!'}))
 
 
 @require_POST

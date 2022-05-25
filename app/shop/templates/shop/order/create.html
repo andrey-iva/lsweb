@@ -23,7 +23,7 @@
 <div class="checkout-main-area pt-120 pb-120">
     <div class="container">        
         <div class="checkout-wrap pt-30">
-            <div class="row pb-10 border-bottom border-dark">
+            <div class="row pb-10 border-0">
                 <div class="grand-totall col-lg-6 col-12 border-0 pt-0 pb-0" style="background-color: #fff;">
                     <div class="delivery-title border-0 pt-1">
                         <h3>Доставка</h3>
@@ -54,7 +54,6 @@
                 <div class="col-lg-6 col-12">
                     <!-- map -->
                     <div class="maps"></div>
-                    <div class="delivery_info"></div>
                 </div>
                 
             </div>
@@ -64,7 +63,6 @@
             <form id="order_create" action="{% url 'shop:order_create' %}" method="post" class="row mt-20">
                 {% csrf_token %}
                 <input type="hidden" maxlength="100" name="delivery_type">
-                <input type="hidden" maxlength="100" name="grand_total">
                 <div class="col-lg-7">
                     <div class="billing-info-wrap mr-50">
                         <h3>ДЕТАЛИ ОПЛАТЫ</h3>

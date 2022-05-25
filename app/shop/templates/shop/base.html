@@ -165,6 +165,7 @@
     var CURRENCY             = "{{ currency }}"
     var CDEK_CITY_URL             = "{% url 'shop:get_city' %}"
     var CDEK_TARIFFLIST_URL       = "{% url 'shop:tarifflist' %}"
+    var CART_ADD_DELIVERY_TAX_URL = "{% url 'shop:add_delivery_tax' %}"
 
     var token = "17a564feb19fabf1391ab53059b81a6a2012b9a9";
     $( function() {
@@ -172,7 +173,7 @@
         // 55.645664,37.403028
 
         $("#Place-order").submit(function(e) {
-
+            // add input grand total + field db
         })
         
         // вариации доставки
@@ -438,41 +439,34 @@
                                     .bindPopup(deliveryPoints[i]["location"]["address_full"]);
                                 });
 
-                                var infoListHTML = "<ul class='ist-group list-group-flush mt-20 mb-20'>"
-                                var fli = "<li class='list-group-item'>"
-                                if ("location" in deliveryPoints[i]) {
-                                    if ("address_full" in deliveryPoints[i]["location"]) {
-                                        infoListHTML += fli+ deliveryPoints[i]["location"]["address_full"] +"</li>"
-                                    }
-                                }
-                                if ("address_comment" in deliveryPoints[i]) {
-                                    infoListHTML += fli+ deliveryPoints[i]["address_comment"] +"</li>"
-                                }
-
-                                if ("phones" in deliveryPoints[i]) {
-                                    for (var p = 0; p < deliveryPoints[i]["phones"].length; p++) {
-                                        infoListHTML += fli +"тел "+ deliveryPoints[i]["phones"][p]["number"] +"</li>"
-                                    }
-                                }
-
-                                if ("work_time" in deliveryPoints[i]) {
-                                    infoListHTML += fli+ deliveryPoints[i]["work_time"] +"</li>"
-                                }
-
-                                infoListHTML += "</ul>"
-                                $(".delivery_info").html(infoListHTML)
                                 break
                             }
                         }
                     });
 
                     $("input[name=tariff]").change(function(e) {
-                        var grandTotal = $("#order_grand_total")
-                        var total = parseFloat($("#hidden_gtand_total").text()) + parseFloat($(this).val())
-                        total = total.toFixed(2)
+                        var cdekDeliveryTax = this.value
+                        var csrf = $("input[name=csrfmiddlewaretoken]")
 
-                        $("input[name=grand_total]").val(total)
-                        grandTotal.text(CURRENCY + total.toString())
+                        $.ajax({
+                            url: CART_ADD_DELIVERY_TAX_URL,
+                            method: "POST",
+                            data: {
+                                "delivery_tax": cdekDeliveryTax,
+                                "csrfmiddlewaretoken": csrf.val(),
+                            },
+                        })
+                        .done(function(response) {
+                            var response = JSON.parse(response)
+
+                            if ("grand_total" in response) {
+                                $("#order_grand_total").text(response["grand_total"])
+                            }
+
+                            if ("error" in response) {
+                                console.log(response["error"])
+                            }
+                        })
                     });
                 }
 
