@@ -42,6 +42,7 @@ urlpatterns = [
 	path('order/', include([
 		path('create/', order.order_create, name='order_create'),
 		path('created/<int:order_id>/', order.order_created, name='order_created'),
+		path('del/grand/total/session/', order.del_grand_total_session, name='del_grand_total_session'),
 	])),
 	path('blog/', include([
 		path('', blog.post_list, name='post_list'),

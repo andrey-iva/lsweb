@@ -81,16 +81,23 @@ def add_percent(request):
                     'grand_total': currency(request)['currency'] + str(grand_total)
                 }))
         else:
-            grand_total = request.session[GRAND_TOTAL_ID]['old_price']
-            request.session[GRAND_TOTAL_ID]['price'] = request.session[GRAND_TOTAL_ID]['old_price']
-            request.session.modified = True
-            
-            return HttpResponse(json.dumps({
-                    'grand_total': currency(request)['currency'] + str(grand_total)
-                }))
+            if request.session[GRAND_TOTAL_ID].get('old_price'):
+                grand_total = request.session[GRAND_TOTAL_ID]['old_price']
+                request.session[GRAND_TOTAL_ID]['price'] = request.session[GRAND_TOTAL_ID]['old_price']
+                request.session.modified = True
+                
+                return HttpResponse(json.dumps({
+                        'grand_total': currency(request)['currency'] + str(grand_total)
+                    }))
 
 
-    return HttpResponse(json.dumps({'error': 'fail add percent!'}))
+    return HttpResponse(json.dumps({'error': 'no add percent!'}))
+
+# @require_POST
+# def clear_grand_total(request):
+#     if request.session.get(GRAND_TOTAL_ID):
+#         del request.session[GRAND_TOTAL_ID]
+#         request.session.modified = True
 
 @require_POST
 def cart_remove(request, product_id):

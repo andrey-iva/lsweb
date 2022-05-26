@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
-# from pprint import pprint
+from pprint import pprint
 
 import requests as r
 import json, time
@@ -36,6 +36,22 @@ else:
 	CITIES_URL          = 'https://api.edu.cdek.ru/v2/location/cities'
 	DELIVERY_POINTS_URL = 'https://api.edu.cdek.ru/v2/deliverypoints'
 
+DATA = {
+	'type': 1,
+	'currency': 1,
+	'lang': 'rus',
+	'from_location': FROM_LOCATION,
+	'to_location': {
+		# 'code': '',
+		# 'country_code': '',
+		# 'city': '',
+		# 'address': address
+	},
+	# 'packages': [{}],
+	'services': [
+		{'code': 'INSURANCE', 'parameter': '2'},
+	],
+}
 
 def get_token_cdek():
     response = r.post('https://api.edu.cdek.ru/v2/oauth/token?parameters', {
@@ -75,40 +91,47 @@ def get_city(request):
 def get_tarifflist(cdek_id, country_iso_code, city, address, packages):
 	''' калькулятор по тарифам '''
 	# data параметры тарифа
-	data = {
-		'type': 1,
-		'currency': 1,
-		'lang': 'rus',
-		'from_location': FROM_LOCATION,
-		'to_location': {
-			'code': cdek_id,
-			'country_code': country_iso_code,
-			'city': city ,
-			# 'address': address
-		},
-		'packages': packages,
-		'services': SERVICES
+	# data = {
+	# 	'type': 1,
+	# 	'currency': 1,
+	# 	'lang': 'rus',
+	# 	'from_location': FROM_LOCATION,
+	# 	'to_location': {
+	# 		'code': cdek_id,
+	# 		'country_code': country_iso_code,
+	# 		'city': city ,
+	# 		# 'address': address
+	# 	},
+	# 	'packages': packages,
+	# 	'services': SERVICES
+	# }
+	DATA['to_location'] = {
+		'code': cdek_id,
+		'country_code': country_iso_code,
+		'city': city,
 	}
+	DATA['packages'] = packages
 	
 	headers = access_header()
 	headers['Content-type'] = 'application/json'
 
 	tariffs = []
-	for tariff_code in TARIFF_CODES:
-		data['tariff_code'] = tariff_code
-		tariff = r.post(TARIFF_URL, json.dumps(data), headers=headers)
-		if tariff.status_code == 200:
-			tariff = tariff.json()
-			tariff['tariff_code'] = tariff_code
-			tariff['tariff_name'] = TARIFF_CODES[tariff_code]
-			tariffs.append( tariff )
-		time.sleep(0.2)
+	# for tariff_code in TARIFF_CODES:
+	# 	data['tariff_code'] = tariff_code
+	# 	tariff = r.post(TARIFF_URL, json.dumps(data), headers=headers)
+	# 	if tariff.status_code == 200:
+	# 		tariff = tariff.json()
+	# 		tariff['tariff_code'] = tariff_code
+	# 		tariff['tariff_name'] = TARIFF_CODES[tariff_code]
+	# 		tariffs.append( tariff )
+	# 	time.sleep(0.2)
 	
-	if len(tariffs) == len(TARIFF_CODES):
-		return tariffs
-	# tariffs = r.post(TARIFFS_URL, json.dumps(data), headers=headers)
-	# if tariffs.status_code == 200:
-	# 	return tariffs.json()
+	# if len(tariffs) == len(TARIFF_CODES):
+	# 	return tariffs
+	tariffs = r.post(TARIFFS_URL, json.dumps(DATA), headers=headers)
+	if tariffs.status_code == 200:
+		tariffs = tariffs.json()
+		return tariffs['tariff_codes']
 
 @require_POST
 def tarifflist(request):
@@ -148,4 +171,4 @@ def tarifflist(request):
 			if delivery_points.status_code == 200:
 				tariffs.append(delivery_points.json())
 			return HttpResponse(json.dumps(tariffs))
-	return HttpResponse(json.dumps({'error': 'tariffs empty'}))
+	return HttpResponse(json.dumps([]))

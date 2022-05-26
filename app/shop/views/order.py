@@ -2,6 +2,7 @@ import json
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django import forms
+from django.views.decorators.http import require_POST
 from ..cart import Cart
 from ..models import OrderItem, Order
 from .. import GRAND_TOTAL_ID
@@ -18,6 +19,11 @@ def clear_grand_total(request):
     if request.session.get(GRAND_TOTAL_ID):
         del request.session[GRAND_TOTAL_ID]
         request.session.modified = True
+
+@require_POST
+def del_grand_total_session(request):
+    clear_grand_total(request)
+    return HttpResponse(json.dumps({'info': 'del GRAND_TOTAL_ID'}))
 
 def order_create(request):
     cart = Cart(request)
@@ -45,10 +51,6 @@ def order_create(request):
             return redirect('shop:order_created', order.id)
         else:
             errorMessage = 'Проверте введенные данные!'
-    
-    if request.session.get(GRAND_TOTAL_ID):
-        request.session[GRAND_TOTAL_ID].clear()
-        # request.session.modified = True
 
     return render(request, 'shop/order/create.html', {
         'cart': cart,
