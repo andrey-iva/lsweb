@@ -174,7 +174,7 @@
         // $("#map").eq(0).css("all", "initial")
         // 55.645664,37.403028
         
-        // не работают проценты до адреса клиента!
+        var PERCENT = 5
 
         // удаляет районы города и всё с 65 уровня
         var defaultFormatResult = $.Suggestions.prototype.formatResult;
@@ -209,6 +209,7 @@
             $(".tariffs_list").html("<p class='text-danger'>"+ err["statusText"] +"</p>")
         };
 
+        
         function addPercent(percent) {
             // проценты к итоговой цене при оплате
             $.ajax({
@@ -461,8 +462,9 @@
         };
 
         $("#order_create").submit(function(e) {
-            // e.preventDefault()
-            var delivery = ""
+            e.preventDefault()
+
+            var delivery = 0
             var varrios = {
                 "1": "До адреса клиента",
                 "2": "Службой доставки СДЭК",
@@ -470,7 +472,7 @@
             };
             $("input[name=delivery_name]").each(function() {
                 if (this.checked) {
-                    delivery = varrios[this.value]
+                    delivery = this.value
                 }
             });
             var deliveryCity  = $("input[name=city]").val()
@@ -481,13 +483,19 @@
 
             var firstName = $("input[name=first_name]").val()
             var lastName  = $("input[name=last_name]").val()
-            var country   = $("input[name=country]").val()
+            var country   = $("select[name=country]").val()
             var region    = $("input[name=region]").val()
             var address   = $("input[name=address]").val()
             var postalCode= $("input[name=postal_code]").val()
             var phone     = $("input[name=phone]").val()
             var email     = $("input[name=email]").val()
-            var paymentMethod = ""
+            
+            var paymentMethod = 0
+            var paymentVarios = {
+                "0": "Картой или наличными при самовывозе",
+                "5": "Картой или наличными при получении товара (+5%) от стоимости товара",
+                "paynow": "Банковской картой при оформлении заказа",
+            }
             $("input[name=payment_method]").each(function() {
                 if (this.checked) {
                     paymentMethod = this.value
@@ -499,24 +507,11 @@
                     deliverySum = this.value
                 }
             });
-            
-            console.log("Подтвердите данные",
-                delivery,
-                deliveryCity,
-                deliveryPoint,
-                deliverySum,
-                firstName,
-                lastName,
-                country,
-                region,
-                address,
-                postalCode,
-                phone,
-                email,
-                paymentMethod)
 
-            // console.log($("input"))
-        })
+            if ( parseInt(paymentMethod) === PERCENT || parseInt(deliverySum) > 0 ) {
+                //
+            }
+        });
 
         $("input[name=payment_method]").change(function(e) {
             var val = parseInt($(this).val())
@@ -526,7 +521,7 @@
 
             $("input[name=tariff]").each(function() {
                 if (this.checked) {
-                    if (val === 5) {
+                    if (val === PERCENT) {
                         addPercent(val)
                     } else {
                         addPercent(0)
@@ -604,7 +599,7 @@
                         $("#order_grand_total").text(response["grand_total"])
                         $("input[name=payment_method]").change(function(e) {
                             var val = parseInt(this.value)
-                            if (val === 5) {
+                            if (val === PERCENT) {
                                 addPercent(val)
                             } else {
                                 addPercent(0)

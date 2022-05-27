@@ -93,12 +93,6 @@ def add_percent(request):
 
     return HttpResponse(json.dumps({'error': 'no add percent!'}))
 
-# @require_POST
-# def clear_grand_total(request):
-#     if request.session.get(GRAND_TOTAL_ID):
-#         del request.session[GRAND_TOTAL_ID]
-#         request.session.modified = True
-
 @require_POST
 def cart_remove(request, product_id):
     cart = Cart(request)
@@ -152,6 +146,9 @@ def cart_json(request):
         return HttpResponse(json.dumps({'cart': 'empty'}))
     return redirect('shop:product_list')
 
+@require_POST
+def calc_grand_total(request):
+    pass
 
 def cart_clear(request):
     cart = Cart(request)

@@ -26,12 +26,18 @@ SERVICES = [
 ]
 
 if PROD:
+	GRANT_TYPE          = 'client_credentials'
+	CLIENT_ID           = ''
+	CLIENT_SECRET       = ''
 	CDEK                = 'https://api.cdek.ru/v2/oauth/token?parameters'
 	TARIFFS_URL         = 'https://api.cdek.ru/v2/calculator/tarifflist'
 	TARIFF_URL          = 'https://api.cdek.ru/v2/calculator/tariff'
 	CITIES_URL          = 'https://api.cdek.ru/v2/location/cities'
 	DELIVERY_POINTS_URL = 'https://api.cdek.ru/v2/deliverypoints'
 else:
+	GRANT_TYPE          = 'client_credentials'
+	CLIENT_ID           = 'EMscd6r9JnFiQ3bLoyjJY6eM78JrJceI'
+	CLIENT_SECRET       = 'PjLZkKBHEiLK3YsjtNrt3TGNG0ahs3kG'
 	CDEK                = 'https://api.edu.cdek.ru/v2/oauth/token?parameters'
 	TARIFFS_URL         = 'https://api.edu.cdek.ru/v2/calculator/tarifflist'
 	TARIFF_URL          = 'https://api.edu.cdek.ru/v2/calculator/tariff'
@@ -50,16 +56,16 @@ DATA = {
 		# 'address': address
 	},
 	# 'packages': [{}],
-	'services': [
-		{'code': 'INSURANCE', 'parameter': '2'},
-	],
+	# 'services': [
+	# 	{'code': 'INSURANCE', 'parameter': '2'},
+	# ],
 }
 
 def get_token_cdek():
     response = r.post(CDEK, {
-		'grant_type': 'client_credentials',
-		'client_id': 'EMscd6r9JnFiQ3bLoyjJY6eM78JrJceI',
-		'client_secret': 'PjLZkKBHEiLK3YsjtNrt3TGNG0ahs3kG',})
+		'grant_type': GRANT_TYPE,
+		'client_id': CLIENT_ID,
+		'client_secret': CLIENT_SECRET,})
 
     if response.status_code == 200:
         return response.json()
@@ -117,10 +123,10 @@ def get_tarifflist(cdek_id, country_iso_code, city, address, packages):
 	headers = access_header()
 	headers['Content-type'] = 'application/json'
 
-	tariffs = []
+	# tariffs = []
 	# for tariff_code in TARIFF_CODES:
-	# 	data['tariff_code'] = tariff_code
-	# 	tariff = r.post(TARIFF_URL, json.dumps(data), headers=headers)
+	# 	DATA['tariff_code'] = tariff_code
+	# 	tariff = r.post(TARIFF_URL, json.dumps(DATA), headers=headers)
 	# 	if tariff.status_code == 200:
 	# 		tariff = tariff.json()
 	# 		tariff['tariff_code'] = tariff_code
@@ -142,7 +148,7 @@ def tarifflist(request):
 
 	for product in request.session['cart'].values():
 		for i in range(0, int(product['quantity'])):
-			packages.append({'weight': 4000})
+			packages.append({'weight': 5000})
 
 	cdek_id          = request.POST.get('cdek_id')
 	country_iso_code = request.POST.get('country_iso_code')
