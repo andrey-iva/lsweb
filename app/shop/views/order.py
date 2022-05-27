@@ -6,13 +6,14 @@ from django.views.decorators.http import require_POST
 from ..cart import Cart
 from ..models import OrderItem, Order
 from .. import GRAND_TOTAL_ID
+from pprint import pprint
 # from ..tasks import order_created
 
 
 class OrderCreateForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ['delivery_type', 'grand_total', 'first_name', 'last_name', 'country', 'region',
+        fields = ['delivery_type', 'delivery_point', 'grand_total', 'first_name', 'last_name', 'country', 'region',
         'address', 'postal_code', 'phone', 'email', 'notes']
 
 def clear_grand_total(request):
@@ -36,7 +37,7 @@ def order_create(request):
 
         if request.session.get(GRAND_TOTAL_ID):
             request_post['grand_total'] = str(request.session[GRAND_TOTAL_ID]['price'])
-        
+        pprint(request_post)
         form = OrderCreateForm(request_post)
         if form.is_valid():
             order = form.save()

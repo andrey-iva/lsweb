@@ -173,6 +173,8 @@
     $( function() {
         // $("#map").eq(0).css("all", "initial")
         // 55.645664,37.403028
+        
+        // не работают проценты до адреса клиента!
 
         // удаляет районы города и всё с 65 уровня
         var defaultFormatResult = $.Suggestions.prototype.formatResult;
@@ -232,7 +234,7 @@
             });
         };
 
-        function setDefaultPrice() {
+        function resetCheckedPayment() {
             $(".payment_method_bacs").addClass("payment-box")
             $("input[name=payment_method]").each(function(e) {
                 this.checked = false
@@ -336,10 +338,10 @@
 
                 var deliveryPointsHTML = 
                 '<label for="city">Пункты выдачи заказов <abbr style="color: red;" class="required" title="required">*</abbr></label>' 
-                + '<select id="delivery_points" class="w-100 form-control form-control-sm outline-none">\
+                + '<select id="delivery_points" name="delivery_points" class="w-100 form-control form-control-sm outline-none">\
                 <option>Выберите пункт</option>'
                 for (var i = 0; i < deliveryPoints.length; i++) {
-                    deliveryPointsHTML += '<option value="'+ deliveryPoints[i]["code"] +'">'+
+                    deliveryPointsHTML += '<option value="'+ deliveryPoints[i]["location"]["address_full"] +'">'+
                     deliveryPoints[i]["location"]["address_full"] +'</option>'
 
                     latitude = deliveryPoints[i]["location"]["latitude"]
@@ -458,8 +460,62 @@
             }
         };
 
-        $("#Place-order").submit(function(e) {
-            // add input grand total + field db
+        $("#order_create").submit(function(e) {
+            // e.preventDefault()
+            var delivery = ""
+            var varrios = {
+                "1": "До адреса клиента",
+                "2": "Службой доставки СДЭК",
+                "3": "Самовывоз",
+            };
+            $("input[name=delivery_name]").each(function() {
+                if (this.checked) {
+                    delivery = varrios[this.value]
+                }
+            });
+            var deliveryCity  = $("input[name=city]").val()
+            var deliveryPoint = $("select[name=delivery_points]").val()
+            if (deliveryPoint) {
+                $("input[name=delivery_point]").val(deliveryPoint)
+            }
+
+            var firstName = $("input[name=first_name]").val()
+            var lastName  = $("input[name=last_name]").val()
+            var country   = $("input[name=country]").val()
+            var region    = $("input[name=region]").val()
+            var address   = $("input[name=address]").val()
+            var postalCode= $("input[name=postal_code]").val()
+            var phone     = $("input[name=phone]").val()
+            var email     = $("input[name=email]").val()
+            var paymentMethod = ""
+            $("input[name=payment_method]").each(function() {
+                if (this.checked) {
+                    paymentMethod = this.value
+                }
+            });
+            var deliverySum = 0
+            $("input[name=tariff]").each(function() {
+                if (this.checked) {
+                    deliverySum = this.value
+                }
+            });
+            
+            console.log("Подтвердите данные",
+                delivery,
+                deliveryCity,
+                deliveryPoint,
+                deliverySum,
+                firstName,
+                lastName,
+                country,
+                region,
+                address,
+                postalCode,
+                phone,
+                email,
+                paymentMethod)
+
+            // console.log($("input"))
         })
 
         $("input[name=payment_method]").change(function(e) {
@@ -489,10 +545,9 @@
             // hidden input
             var hiddenInputDeliveryType = $("input[name=delivery_type]")
 
-            // стартовая итоговоя цена
-            setDefaultPrice()
+            resetCheckedPayment()
 
-            // del grand tottal start or reload page
+            // del grand tottal session start or reload page
             $.ajax({
                 url: DEL_GRAND_TOTAL_SESSION_URL,
                 method: "POST",
@@ -519,6 +574,7 @@
                 $(this).find("input").prop("required", true)
                 this.hidden = false
             })
+            $("#additional-info").removeClass("d-none")
 
             // До адреса клиента
             if ( parseInt($(this).val()) === 1 ) {
@@ -533,6 +589,37 @@
                 });
 
                 $(".payment_method_1").addClass('d-none')
+
+                $.ajax({
+                    url: CART_ADD_DELIVERY_TAX_URL,
+                    method: "POST",
+                    data: {
+                        "delivery_tax": 0,
+                        "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+                    },
+                }).done(function(response) {
+                    var response = JSON.parse(response)
+
+                    if ("grand_total" in response) {
+                        $("#order_grand_total").text(response["grand_total"])
+                        $("input[name=payment_method]").change(function(e) {
+                            var val = parseInt(this.value)
+                            if (val === 5) {
+                                addPercent(val)
+                            } else {
+                                addPercent(0)
+                            }
+                        });
+                        console.log(response["grand_total"])
+                    }
+
+                    if ("error" in response) {
+                        console.log(response["error"])
+                    }
+                }).fail(function(err) {
+                    serverError(err)
+                });
+                
             }
             // Службой доставки СДЭК
             $("#cdek_hidden").prop("hidden", true)
@@ -576,6 +663,28 @@
                     this.hidden = true
                 })
                 $(".payment-method-2").addClass("d-none")
+
+                $.ajax({
+                    url: CART_ADD_DELIVERY_TAX_URL,
+                    method: "POST",
+                    data: {
+                        "delivery_tax": 0,
+                        "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+                    },
+                }).done(function(response) {
+                    var response = JSON.parse(response)
+
+                    if ("grand_total" in response) {
+                        $("#order_grand_total").text(response["grand_total"])
+                        console.log(response["grand_total"])
+                    }
+
+                    if ("error" in response) {
+                        console.log(response["error"])
+                    }
+                }).fail(function(err) {
+                    serverError(err)
+                });
             }
 
             $("input[name=delivery_name]").each(function() {
@@ -598,8 +707,7 @@
           hint: false,
           bounds: "region-settlement",
           onSelect: function(suggestion) {
-            // стартовая итоговоя цена
-            setDefaultPrice()
+            resetCheckedPayment()
             console.log("START:", suggestion)
             $(".tariffs_list").html(
             '<div class="d-flex justify-content-center">\

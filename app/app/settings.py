@@ -136,6 +136,15 @@ STATIC_ROOT = './static/'
 MEDIA_ROOT = './media/'
 MEDIA_URL = '/media/'
 
+CORS_ALLOWED_ORIGINS = [
+    'https://suggestions.dadata.ru',
+    'https://api.cdek.ru',
+    'https://api.edu.cdek.ru',
+    'https://www.youtube.com',
+    'https://cdn.jsdelivr.net',
+    'https://maps.api.2gis.ru',
+]
+
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 SUMMERNOTE_THEME = 'bs4'
 SUMMERNOTE_CONFIG = {

@@ -121,6 +121,7 @@ class Order(models.Model):
     postal_code = models.CharField(max_length=20, blank=True, verbose_name='индекс')
     phone = models.CharField(max_length=100, blank=True, verbose_name='телефон')
     email = models.EmailField(blank=True)
+    delivery_point = models.CharField(max_length=100, blank=True, verbose_name="пункт выдачи")
     delivery_type = models.CharField(max_length=100, verbose_name="доставка")
     grand_total = models.CharField(max_length=20, verbose_name="итого")
     notes = models.TextField(max_length=500, blank=True,

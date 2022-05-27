@@ -26,11 +26,13 @@ SERVICES = [
 ]
 
 if PROD:
+	CDEK                = 'https://api.cdek.ru/v2/oauth/token?parameters'
 	TARIFFS_URL         = 'https://api.cdek.ru/v2/calculator/tarifflist'
 	TARIFF_URL          = 'https://api.cdek.ru/v2/calculator/tariff'
 	CITIES_URL          = 'https://api.cdek.ru/v2/location/cities'
 	DELIVERY_POINTS_URL = 'https://api.cdek.ru/v2/deliverypoints'
 else:
+	CDEK                = 'https://api.edu.cdek.ru/v2/oauth/token?parameters'
 	TARIFFS_URL         = 'https://api.edu.cdek.ru/v2/calculator/tarifflist'
 	TARIFF_URL          = 'https://api.edu.cdek.ru/v2/calculator/tariff'
 	CITIES_URL          = 'https://api.edu.cdek.ru/v2/location/cities'
@@ -54,7 +56,7 @@ DATA = {
 }
 
 def get_token_cdek():
-    response = r.post('https://api.edu.cdek.ru/v2/oauth/token?parameters', {
+    response = r.post(CDEK, {
 		'grant_type': 'client_credentials',
 		'client_id': 'EMscd6r9JnFiQ3bLoyjJY6eM78JrJceI',
 		'client_secret': 'PjLZkKBHEiLK3YsjtNrt3TGNG0ahs3kG',})
