@@ -143,6 +143,8 @@ CORS_ALLOWED_ORIGINS = [
     'https://www.youtube.com',
     'https://cdn.jsdelivr.net',
     'https://maps.api.2gis.ru',
+    'https://i12n.r2r.space',
+    'https://api-maps.yandex.ru',
 ]
 
 IMPORT_EXPORT_USE_TRANSACTIONS = True

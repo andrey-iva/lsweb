@@ -16,9 +16,9 @@ FROM_LOCATION = {
 }
 
 TARIFF_CODES = {
-	'482': 'Экспресс склад-дверь',
-	'483': 'Экспресс склад-склад',
+	'137': 'Посылка склад-дверь',
 	'136': 'Посылка склад-склад',
+	'482': 'Экспресс склад-дверь',
 }
 
 SERVICES = [
@@ -123,23 +123,23 @@ def get_tarifflist(cdek_id, country_iso_code, city, address, packages):
 	headers = access_header()
 	headers['Content-type'] = 'application/json'
 
-	# tariffs = []
-	# for tariff_code in TARIFF_CODES:
-	# 	DATA['tariff_code'] = tariff_code
-	# 	tariff = r.post(TARIFF_URL, json.dumps(DATA), headers=headers)
-	# 	if tariff.status_code == 200:
-	# 		tariff = tariff.json()
-	# 		tariff['tariff_code'] = tariff_code
-	# 		tariff['tariff_name'] = TARIFF_CODES[tariff_code]
-	# 		tariffs.append( tariff )
-	# 	time.sleep(0.2)
+	tariffs = []
+	for tariff_code in TARIFF_CODES:
+		DATA['tariff_code'] = tariff_code
+		tariff = r.post(TARIFF_URL, json.dumps(DATA), headers=headers)
+		if tariff.status_code == 200:
+			tariff = tariff.json()
+			tariff['tariff_code'] = tariff_code
+			tariff['tariff_name'] = TARIFF_CODES[tariff_code]
+			tariffs.append( tariff )
+		time.sleep(0.2)
 	
-	# if len(tariffs) == len(TARIFF_CODES):
-	# 	return tariffs
-	tariffs = r.post(TARIFFS_URL, json.dumps(DATA), headers=headers)
-	if tariffs.status_code == 200:
-		tariffs = tariffs.json()
-		return tariffs['tariff_codes']
+	if len(tariffs) == len(TARIFF_CODES):
+		return tariffs
+	# tariffs = r.post(TARIFFS_URL, json.dumps(DATA), headers=headers)
+	# if tariffs.status_code == 200:
+	# 	tariffs = tariffs.json()
+	# 	return tariffs['tariff_codes']
 
 @require_POST
 def tarifflist(request):

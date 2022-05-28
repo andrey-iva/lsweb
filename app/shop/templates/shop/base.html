@@ -129,6 +129,7 @@
         {% include 'shop/includes/modal.html' %}
         <!-- Modal end -->
     </div>
+
     <!-- All JS is here
 ============================================ -->
     <!-- <script src="/static/shop/assets/js/vendor/modernizr-3.6.0.min.js"></script> -->
@@ -154,7 +155,9 @@
 <script src="/static/shop/assets/js/vendor/vendor.min.js"></script>
 <script src="/static/shop/assets/js/plugins/plugins.min.js"></script>  -->
     <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
-    <script src="https://maps.api.2gis.ru/2.0/loader.js?pkg=full"></script>
+    <!-- <script src="https://maps.api.2gis.ru/2.0/loader.js?pkg=full"></script> -->
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=38f393c8-f1fa-4b1a-a356-b8d9752ff229&amp;&lang=ru_RU" type="text/javascript">
+    </script>
     <!-- Main JS -->
     <script>
     var CSRF_TOKEN           = '{% csrf_token %}';
@@ -168,6 +171,8 @@
     var CART_ADD_DELIVERY_TAX_URL = "{% url 'shop:add_delivery_tax' %}"
     var CART_ADD_PERCENT_URL      = "{% url 'shop:add_percent' %}"
     var DEL_GRAND_TOTAL_SESSION_URL = "{% url 'shop:del_grand_total_session' %}"
+
+    
 
     var token = "17a564feb19fabf1391ab53059b81a6a2012b9a9";
     $( function() {
@@ -284,7 +289,7 @@
             }, 3000)
         };
 
-        function printTariffs(tariffs) {
+        function printTariffs(tariffs, s) {
             console.log(tariffs)
             if (!tariffs.length) {
                 $(".tariffs_list").html("<p>Ничего не найдено</p>")
@@ -342,7 +347,7 @@
                 + '<select id="delivery_points" name="delivery_points" class="w-100 form-control form-control-sm outline-none">\
                 <option>Выберите пункт</option>'
                 for (var i = 0; i < deliveryPoints.length; i++) {
-                    deliveryPointsHTML += '<option value="'+ deliveryPoints[i]["location"]["address_full"] +'">'+
+                    deliveryPointsHTML += '<option value="'+ deliveryPoints[i]["code"] +'">'+
                     deliveryPoints[i]["location"]["address_full"] +'</option>'
 
                     latitude = deliveryPoints[i]["location"]["latitude"]
@@ -366,37 +371,49 @@
                 )
                 
                 if (points.length > 0) {
-                    DG.then(function () {
-                        var map, group;
-                        var markers = []    
-                        
-                        map = DG.map('map', {
-                            center: points[0],
-                            zoom: 10
-                        });
+                    p = {
+                        "type": "FeatureCollection",
+                        "features": [],
+                    }
+                    for (var i = 0; i < points.length; i++) {
+                        p["features"].push({
+                            "type": "Feature",
+                            "id": i,
+                            "geometry": {"type": "Point", "coordinates": points[i]}
+                        })
+                    }
+                    console.log(JSON.stringify(p))
+                    ymaps.ready(init);
 
-                        
-                        for (var i = 0; i < points.length; i++) {
-                            if (points.length === locations.length) {
-                                markers.push(DG.marker(points[i]).addTo(map).bindLabel(locations[i]))
-                            } else {
-                                markers.push(DG.marker(points[i]).addTo(map))
-                            }
-                        }
+                    function init () {
+                        var myMap = new ymaps.Map('map', {
+                                center: [s["data"]["geo_lat"], s["data"]["geo_lon"]],
+                                zoom: 10
+                            }, {
+                                searchControlProvider: 'yandex#search'
+                            }),
+                            objectManager = new ymaps.ObjectManager({
+                                // Чтобы метки начали кластеризоваться, выставляем опцию.
+                                clusterize: true,
+                                // ObjectManager принимает те же опции, что и кластеризатор.
+                                gridSize: 32,
+                                clusterDisableClickZoom: true
+                            });
 
-                        group = DG.featureGroup(markers);
-                        group.addTo(map);
-                        group.on('click', function(e) {
-                            map.setView([e.latlng.lat, e.latlng.lng]);
-                            console.log(map)
-                        });
-                    });
+                        // Чтобы задать опции одиночным объектам и кластерам,
+                        // обратимся к дочерним коллекциям ObjectManager.
+                        objectManager.objects.options.set('preset', 'islands#greenDotIcon');
+                        objectManager.clusters.options.set('preset', 'islands#greenClusterIcons');
+                        myMap.geoObjects.add(objectManager);
+                        
+                        objectManager.add(JSON.stringify(p));
+
+                    }
 
                     $("#delivery_points").change(function(e) {
                         for (var i = 0; i < deliveryPoints.length; i++) {
                             if (deliveryPoints[i]["code"] === $(this).val()) {
                                 $(".maps").empty();
-                                // $(".maps").append('<h4 class="pt-20 pb-10 text-center">Пункты выдачи заказов</h4><div id="map"></div>')
                                 $(".maps").append(
                                     "<div class='delivery-title border-0'>\
                                         <h3>Пункты выдачи заказов</h3>\
@@ -407,21 +424,89 @@
                                 latitude = deliveryPoints[i]["location"]["latitude"]
                                 longitude = deliveryPoints[i]["location"]["longitude"]
 
-                                DG.then(function() {
-                                    var map = DG.map('map', {
+                                ymaps.ready(function() {
+                                    // Создание карты.
+                                    var myMap = new ymaps.Map("map", {
+                                        // Координаты центра карты.
+                                        // Порядок по умолчанию: «широта, долгота».
+                                        // Чтобы не определять координаты центра карты вручную,
+                                        // воспользуйтесь инструментом Определение координат.
                                         center: [latitude, longitude],
-                                        zoom: 18
+                                        // Уровень масштабирования. Допустимые значения:
+                                        // от 0 (весь мир) до 19.
+                                        zoom: 15
                                     });
 
-                                    DG.marker([latitude, longitude])
-                                    .addTo(map)
-                                    .bindPopup(deliveryPoints[i]["location"]["address_full"]);
+                                    myMap.geoObjects.add(new ymaps.Placemark([latitude, longitude], {
+                                        balloonContent: deliveryPoints[i]["location"]["address_full"]
+                                    }, {
+                                        preset: 'islands#icon',
+                                        iconColor: 'green'
+                                    }))
+
                                 });
 
                                 break
                             }
                         }
                     });
+
+
+                    // DG.then(function () {
+                    //     var map, group;
+                    //     var markers = []    
+                        
+                    //     map = DG.map('map', {
+                    //         center: points[0],
+                    //         zoom: 10
+                    //     });
+
+                        
+                    //     for (var i = 0; i < points.length; i++) {
+                    //         if (points.length === locations.length) {
+                    //             markers.push(DG.marker(points[i]).addTo(map).bindLabel(locations[i]))
+                    //         } else {
+                    //             markers.push(DG.marker(points[i]).addTo(map))
+                    //         }
+                    //     }
+
+                    //     group = DG.featureGroup(markers);
+                    //     group.addTo(map);
+                    //     group.on('click', function(e) {
+                    //         map.setView([e.latlng.lat, e.latlng.lng]);
+                    //         console.log(map)
+                    //     });
+                    // });
+
+                    // $("#delivery_points").change(function(e) {
+                    //     for (var i = 0; i < deliveryPoints.length; i++) {
+                    //         if (deliveryPoints[i]["code"] === $(this).val()) {
+                    //             $(".maps").empty();
+                    //             $(".maps").append(
+                    //                 "<div class='delivery-title border-0'>\
+                    //                     <h3>Пункты выдачи заказов</h3>\
+                    //                     <div id=\"map\"></div>\
+                    //                 </div>"
+                    //             )
+
+                    //             latitude = deliveryPoints[i]["location"]["latitude"]
+                    //             longitude = deliveryPoints[i]["location"]["longitude"]
+
+                    //             DG.then(function() {
+                    //                 var map = DG.map('map', {
+                    //                     center: [latitude, longitude],
+                    //                     zoom: 18
+                    //                 });
+
+                    //                 DG.marker([latitude, longitude])
+                    //                 .addTo(map)
+                    //                 .bindPopup(deliveryPoints[i]["location"]["address_full"]);
+                    //             });
+
+                    //             break
+                    //         }
+                    //     }
+                    // });
 
                     // итоговая цена с учетом доставки
                     $("input[name=tariff]").change(function(e) {
@@ -758,7 +843,7 @@
                                 return
                             }
                             // получен результат в расчетом
-                            printTariffs(response)
+                            printTariffs(response, suggestion)
                         }).fail(function(err) {
                             serverError(err)
                         });
@@ -817,7 +902,7 @@
                             return
                         }
                         // получен результат в расчетом
-                        printTariffs(response)
+                        printTariffs(response, suggestion)
                     })
                     .fail(function(err) {
                         serverError(err)
