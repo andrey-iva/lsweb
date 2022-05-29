@@ -39,7 +39,7 @@
                             <h5>Тип доставки</h5>
                             <ul id="delivery_v">
                                 <li><input type="radio" name="delivery_name" value="1"> До адреса клиента <span></span></li> 
-                                <li><input type="radio" name="delivery_name" value="2"> Службой доставки СДЭК <span></span></li> 
+                                <li><input type="radio" name="delivery_name" value="2"> До пункта выдачи СДЭК <span></span></li> 
                                 <li class="help_text"><input type="radio" name="delivery_name" value="3"> Самовывоз <tt class="text-info">?</tt></li> 
                             </ul>
                             <div id="cdek_hidden" class="mt-20" hidden>
@@ -66,7 +66,7 @@
             <div id="shoping_center" class="alert border h6 text-center text-danger d-none h5" role="alert">
                Товар можно забрать по адресу: г.Москва, ул.Щорса, д.8 стр.1 - автокомплекс "Buncar", ежедневно с 10 до 20, по предварительному согласованию.
             </div>
-            <form id="order_create" action="{% url 'shop:order_create' %}" method="post" class="row mt-20">
+            <form id="order_create" action="{% url 'shop:order_create' %}" method="post" class="row mt-20 d-none">
                 {% csrf_token %}
                 <input type="hidden" maxlength="100" name="delivery_type">
                 <input type="hidden" maxlength="100" name="delivery_point">
@@ -216,4 +216,9 @@
         // e.preventDefault()
     }
 </script>
+{% endblock %}
+{% block orderjs %}
+<script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
+<script src="https://api-maps.yandex.ru/2.1/?apikey=38f393c8-f1fa-4b1a-a356-b8d9752ff229&amp;&lang=ru_RU" type="text/javascript"></script>
+<script src="/static/shop/assets/js/order.js"></script>
 {% endblock %}

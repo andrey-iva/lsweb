@@ -44,16 +44,14 @@ def cart_add(request, product_id):
 
 @require_POST
 def add_delivery_tax(request):
-    request.session[GRAND_TOTAL_ID] = {}
-
     delivery_tax = request.POST.get('delivery_tax')
-    percent = request.POST.get('percent')
     grand_total = 0
+
     cart = Cart(request)
 
-    if delivery_tax:
+    if delivery_tax and request.session.get(GRAND_TOTAL_ID):
         if int(delivery_tax) >= 0:
-            grand_total = cart.get_total_price() + Decimal(delivery_tax)
+            grand_total = Decimal(request.session[GRAND_TOTAL_ID]['price']) + Decimal(delivery_tax)
             request.session[GRAND_TOTAL_ID]['price'] = str(grand_total)
             request.session.modified = True
 
@@ -65,30 +63,23 @@ def add_delivery_tax(request):
 
 @require_POST
 def add_percent(request):
+    request.session[GRAND_TOTAL_ID] = {}
     percent = request.POST.get('percent')
     grand_total = 0
 
-    if percent and request.session.get(GRAND_TOTAL_ID):
-        if int(percent) > 0:
-            percent = (Decimal(request.session[GRAND_TOTAL_ID]['price']) / Decimal(100)) * Decimal(percent)
-            grand_total = Decimal(request.session[GRAND_TOTAL_ID]['price']) + percent
+    cart = Cart(request)
+
+    if percent is not None:
+        if int(percent) >= 0:
+            percent = (cart.get_total_price() / Decimal(100)) * Decimal(percent)
+            grand_total = cart.get_total_price() + percent
             
-            request.session[GRAND_TOTAL_ID]['old_price'] = request.session[GRAND_TOTAL_ID]['price']
             request.session[GRAND_TOTAL_ID]['price'] = str(grand_total)
             request.session.modified = True
 
             return HttpResponse(json.dumps({
                     'grand_total': currency(request)['currency'] + str(grand_total)
                 }))
-        else:
-            if request.session[GRAND_TOTAL_ID].get('old_price'):
-                grand_total = request.session[GRAND_TOTAL_ID]['old_price']
-                request.session[GRAND_TOTAL_ID]['price'] = request.session[GRAND_TOTAL_ID]['old_price']
-                request.session.modified = True
-                
-                return HttpResponse(json.dumps({
-                        'grand_total': currency(request)['currency'] + str(grand_total)
-                    }))
 
 
     return HttpResponse(json.dumps({'error': 'no add percent!'}))
@@ -147,8 +138,10 @@ def cart_json(request):
     return redirect('shop:product_list')
 
 @require_POST
-def calc_grand_total(request):
-    pass
+def get_grand_total(request):
+    if request.session.get(GRAND_TOTAL_ID):
+        return HttpResponse(json.dumps({'grand_total': request.session.get(GRAND_TOTAL_ID)}))
+    return HttpResponse(json.dumps({'error': 'error get_grand_total'}))
 
 def cart_clear(request):
     cart = Cart(request)

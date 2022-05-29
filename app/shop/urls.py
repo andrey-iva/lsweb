@@ -38,6 +38,7 @@ urlpatterns = [
 		path('remove/<int:product_id>/', cart.cart_remove, name='cart_remove'),
 		path('add/delivery/tax/', cart.add_delivery_tax, name='add_delivery_tax'),
 		path('add/percent/', cart.add_percent, name='add_percent'),
+		path('get/grand/total/', cart.get_grand_total, name='get_grand_total'),
 	])),
 	path('order/', include([
 		path('create/', order.order_create, name='order_create'),

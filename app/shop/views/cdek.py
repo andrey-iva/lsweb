@@ -7,7 +7,7 @@ import requests as r
 import json, time
 
 PROD = False
-
+# 55.645283, 37.403216
 FROM_LOCATION = {
 	'code': 44,
 	'country_code': 'RU',
@@ -16,14 +16,10 @@ FROM_LOCATION = {
 }
 
 TARIFF_CODES = {
-	'137': 'Посылка склад-дверь',
+	# '137': 'Посылка склад-дверь',
 	'136': 'Посылка склад-склад',
-	'482': 'Экспресс склад-дверь',
+	# '482': 'Экспресс склад-дверь',
 }
-
-SERVICES = [
-	{'code': 'INSURANCE', 'parameter': '2'},
-]
 
 if PROD:
 	GRANT_TYPE          = 'client_credentials'
@@ -56,9 +52,10 @@ DATA = {
 		# 'address': address
 	},
 	# 'packages': [{}],
-	# 'services': [
-	# 	{'code': 'INSURANCE', 'parameter': '2'},
-	# ],
+	'services': [
+		# {'code': 'WASTE_PAPER', 'parameter': '1'},
+		# {'code': 'INSURANCE', 'parameter': '2'},
+	],
 }
 
 def get_token_cdek():
@@ -98,21 +95,6 @@ def get_city(request):
 
 def get_tarifflist(cdek_id, country_iso_code, city, address, packages):
 	''' калькулятор по тарифам '''
-	# data параметры тарифа
-	# data = {
-	# 	'type': 1,
-	# 	'currency': 1,
-	# 	'lang': 'rus',
-	# 	'from_location': FROM_LOCATION,
-	# 	'to_location': {
-	# 		'code': cdek_id,
-	# 		'country_code': country_iso_code,
-	# 		'city': city ,
-	# 		# 'address': address
-	# 	},
-	# 	'packages': packages,
-	# 	'services': SERVICES
-	# }
 	DATA['to_location'] = {
 		'code': cdek_id,
 		'country_code': country_iso_code,
@@ -127,7 +109,7 @@ def get_tarifflist(cdek_id, country_iso_code, city, address, packages):
 	for tariff_code in TARIFF_CODES:
 		DATA['tariff_code'] = tariff_code
 		tariff = r.post(TARIFF_URL, json.dumps(DATA), headers=headers)
-		if tariff.status_code == 200:
+		if tariff.status_code == 200 and len(tariff.json()):
 			tariff = tariff.json()
 			tariff['tariff_code'] = tariff_code
 			tariff['tariff_name'] = TARIFF_CODES[tariff_code]
@@ -140,6 +122,7 @@ def get_tarifflist(cdek_id, country_iso_code, city, address, packages):
 	# if tariffs.status_code == 200:
 	# 	tariffs = tariffs.json()
 	# 	return tariffs['tariff_codes']
+	return tariffs
 
 @require_POST
 def tarifflist(request):
@@ -148,7 +131,12 @@ def tarifflist(request):
 
 	for product in request.session['cart'].values():
 		for i in range(0, int(product['quantity'])):
-			packages.append({'weight': 5000})
+			packages.append({
+				'weight': 1500,
+				'length': 50,
+				'width': 20,
+				'height': 10
+			})
 
 	cdek_id          = request.POST.get('cdek_id')
 	country_iso_code = request.POST.get('country_iso_code')
