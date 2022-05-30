@@ -5,6 +5,12 @@ $( function() {
     
     var PERCENT = 5
 
+    if (document.getElementById("delivery_title_scroll")) {
+        $([document.documentElement, document.body]).animate({
+            scrollTop: $("#delivery_title_scroll").offset().top
+        }, 1000);
+    }
+
     // удаляет районы города и всё с 65 уровня
     var defaultFormatResult = $.Suggestions.prototype.formatResult;
 
@@ -175,7 +181,8 @@ $( function() {
 
             var deliveryPointsHTML = 
             '<label for="city">Пункты выдачи заказов <abbr style="color: red;" class="required" title="required">*</abbr></label>' 
-            + '<select id="delivery_points" name="delivery_points" class="w-100 form-control form-control-sm outline-none">\
+            + '<select id="delivery_points" name="delivery_points" \
+            class="form-control form-control-sm bg-light outline-none border border-secondary rounded-0">\
             <option>Выберите пункт</option>'
             for (var i = 0; i < deliveryPoints.length; i++) {
                 deliveryPointsHTML += '<option value="'+ deliveryPoints[i]["code"] +'">'+
