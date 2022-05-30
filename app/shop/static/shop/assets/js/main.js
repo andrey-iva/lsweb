@@ -1648,10 +1648,12 @@
                                             </a>\
                                         </div>\
                                         <div class='cart-title'>\
-                                            <h4><a href='" + responseData[k]["product_url"] + "'>" + responseData[k]["name"] + "</a></h4>\
-                                            <span> " + responseData[k]["quantity"] + " × " +
-                                    responseData[k]["price"] +
-                                    "</span>\
+                                            <h4 class='pb-0 mb-1'><a href='" + responseData[k]["product_url"] + "'>" + responseData[k]["name"] + "</a></h4>\
+                                            <span style='font-size: 12px ;'>(" + 
+                                            responseData[k]["quantity"] + " × " + 
+                                            responseData[k]["price"]    + ") + (" + 
+                                            responseData[k]["quantity"] + " × " + 
+                                            responseData[k]["price_install"] + ")</span>\
                                         </div>\
                                         <div class='cart-delete'>\
                                             <form action='/cart/remove/" + k + "/' method='post'>\

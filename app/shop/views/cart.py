@@ -15,6 +15,12 @@ def cart_add(request, product_id):
     try:
         quantity = int(request.POST.get('quantity'))
         override = int(request.POST.get('override'))
+        # тут запятая decimal.InvalidOperation: [<class 'decimal.ConversionSyntax'>]
+        price_install = request.POST.get('price_install')
+        if (price_install):
+            price_install = price_install.replace(',', '.')
+        else:
+            price_install = 0
     except Exception as e:
         print(e)
     else:
@@ -22,8 +28,10 @@ def cart_add(request, product_id):
         product = get_object_or_404(Product, id=product_id)
 
         if quantity > 0:
-            cart.add(product=product, quantity=quantity,
-                     override_quantity=override)
+            cart.add(product=product, 
+                    quantity=quantity,
+                    override_quantity=override,
+                    price_install=price_install)
 
             if request.headers.get('X-Requested-With'):
                 price = Decimal(cart.cart[str(product_id)]['price']) * quantity
@@ -36,7 +44,7 @@ def cart_add(request, product_id):
                     'result': 'update',
                     'total_price': total_price,
                     'sub_total': sub_total,
-                    'cart_length': len(cart)
+                    'cart_length': len(cart),
                 }))
 
     return redirect('shop:cart_detail')
@@ -128,6 +136,7 @@ def cart_json(request):
                 'total_price': currency(request)['currency'] + str(item['total_price']),
                 'quantity': item['quantity'],
                 'product_url': product.get_absolute_url(),
+                'price_install': currency(request)['currency'] + str(item['price_install'])
             }
         response_data['sub_total'] = currency(
             request)['currency'] + str(cart.get_total_price())

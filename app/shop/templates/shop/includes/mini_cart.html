@@ -15,8 +15,10 @@
                         </a>
                     </div>
                     <div class="cart-title">
-                        <h4><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h4>
-                        <span> {{ item.quantity }} × {{ currency }}{{ item.price }}</span>
+                        <h4 class="pb-0 mb-1"><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h4>
+                        <span style="font-size: 12px;">
+                        ({{ item.quantity }} × {{ currency }}{{ item.price }}) + ({{item.quantity }} × {{currency}}{{ item.price_install }})
+                        </span>
                     </div>
                     <div class="cart-delete">
                         <form action="{% url 'shop:cart_remove' product.id %}" method="post">

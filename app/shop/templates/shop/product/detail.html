@@ -1,5 +1,6 @@
 {% extends 'shop/base.html' %}
 {% load static %}
+{% load is_key %}
 {% block title %}{{ product.seo_title }}{% endblock %}
 {% block description %}{{ product.seo_desc }}{% endblock %}
 {% block keywords %}{{ product.seo_key }}{% endblock %}
@@ -66,6 +67,11 @@
             </div>
             <div class="col-lg-6 col-md-6">
                 <div class="product-details-content pro-details-content-mrg">
+                    {% if request.session.cart|get_key:product.id %}
+                        <div class="w-100 p-2 h4 bg-danger text-white text-center">
+                            Товар уже был добавлен.
+                        </div>
+                    {% endif %}
                     <h2 class="bd-highlight">{{ product.name }}</h2>
                     <div class="product-ratting-review-wrap">
                         <p>{{ product.description_short }}</p>
@@ -101,15 +107,43 @@
                             </li>
                             <li>
                                 <span>Устновка: </span>
-                                {{currency}}{{ product.price_install }}
-                                <input class="form-check-input" type="checkbox" style="zoom: 0.4;">
+                                {% if request.session.cart|get_install_price:product.id %}
+                                <span class="badge badge-danger">{{currency}}{{ product.price_install }}</span>
+                                <input id="ch" checked class="form-check-input ml-5" type="checkbox" name="price_install" value="{{ product.price_install }}" style="
+                                    width: 40px;
+                                    zoom: 0.4;">
+                                {% else %}
+                                <span class="badge badge-info">{{currency}}{{ product.price_install }}</span>
+                                <input id="ch" class="form-check-input ml-5" type="checkbox" name="price_install" value="{{ product.price_install }}" style="
+                                    width: 40px;
+                                    zoom: 0.4;">
+                                {% endif %}
                             </li>
                         </ul>
+                        <span class="font-weight-bold">
+                            Петля для якорного крепления:
+                            <input class="form-check-input ml-5" type="checkbox" name="" value="" style="
+                                width: 40px;
+                                zoom: 0.4;">
+                        </span>
                     </div>
+<script type="text/javascript">
+    document.getElementById("ch").onchange = function() {
+        var title = document.querySelector(".badge")
+        if (this.checked) {
+            title.classList.remove("badge-info")
+            title.classList.add("badge-danger")
+        } else {
+            title.classList.remove("badge-danger")
+            title.classList.add("badge-info")
+        }
+    }
+</script>
                     <div class="pro-details-action-wrap">
-                        <div class="pro-details-add-to-cart">
-                            <!-- <a id="product_detail_add_to_cart" href="{% url 'shop:cart_add' product.id %}">Добавить в корзину</a> -->
-                            <button type="submit" class="btn btn-danger bg-black p-3 border-0 btn-outline-none">Добавить в корзину</button>
+                        <div class="pro-details-add-to-cart">                            
+                            <button type="submit" class="btn btn-danger bg-black p-3 border-0 btn-outline-none">
+                                Добавить в корзину
+                            </button>
                         </div>
 <!--                         <div class="pro-details-action">
                             <a class="social" title="Social" href="#"><i class="icon-share"></i></a>
