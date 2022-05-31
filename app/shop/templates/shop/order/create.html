@@ -150,7 +150,8 @@
                                 <div class="your-order-middle">
                                     <ul>
                                         {% for item in cart %}
-                                        <li data-toggle="tooltip" data-placement="top" title="{{item.product.name}}">{{ item.product.name|truncatewords:3 }} <b>({{item.quantity}})</b> <span>{{currency}}{{item.total_price}}</span></li>
+                                        <li data-toggle="tooltip" data-placement="top" title="{{item.product.name}}">{{ item.product.name|truncatewords:2 }} 
+                                            <b>({{item.quantity}})</b><span>{{currency}}{{item.total_price}} + {{currency}}{{item.price_install}}</span></li>
                                         {% endfor %}
                                     </ul>
                                 </div>

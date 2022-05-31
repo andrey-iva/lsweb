@@ -108,28 +108,39 @@
                             <li>
                                 <span>Устновка: </span>
                                 {% if request.session.cart|get_install_price:product.id %}
-                                <span class="badge badge-danger">{{currency}}{{ product.price_install }}</span>
-                                <input id="ch" checked class="form-check-input ml-5" type="checkbox" name="price_install" value="{{ product.price_install }}" style="
-                                    width: 40px;
-                                    zoom: 0.4;">
-                                {% else %}
-                                <span class="badge badge-info">{{currency}}{{ product.price_install }}</span>
+                                <span class="b1 badge badge-danger">{{currency}}{{ product.price_install }}</span>
                                 <input id="ch" class="form-check-input ml-5" type="checkbox" name="price_install" value="{{ product.price_install }}" style="
                                     width: 40px;
-                                    zoom: 0.4;">
+                                    zoom: 0.4;
+                                    cursor: pointer;
+                                ">
+                                {% else %}
+                                <span class="b1 badge badge-info">{{currency}}{{ product.price_install }}</span>
+                                <input id="ch" class="form-check-input ml-5" type="checkbox" name="price_install" value="{{ product.price_install }}" style="
+                                    width: 40px;
+                                    zoom: 0.4;
+                                    cursor: pointer;
+                                ">
                                 {% endif %}
                             </li>
                         </ul>
+                        {% if product.id != 33 %}
                         <span class="font-weight-bold">
                             Петля для якорного крепления:
-                            <input class="form-check-input ml-5" type="checkbox" name="" value="" style="
+                            <input id="add_anchor" class="form-check-input ml-5" type="checkbox" name="" value="33" 
+                            data-url="{% url 'shop:cart_add' 33 %}"
+                            data-url-remove="{% url 'shop:cart_remove' 33 %}"
+                            style="
                                 width: 40px;
-                                zoom: 0.4;">
+                                zoom: 0.4;
+                                cursor: pointer;
+                            ">
                         </span>
+                        {% endif %}
                     </div>
 <script type="text/javascript">
     document.getElementById("ch").onchange = function() {
-        var title = document.querySelector(".badge")
+        var title = document.querySelector(".b1")
         if (this.checked) {
             title.classList.remove("badge-info")
             title.classList.add("badge-danger")

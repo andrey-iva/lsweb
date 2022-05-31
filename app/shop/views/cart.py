@@ -12,6 +12,7 @@ import json
 
 @require_POST
 def cart_add(request, product_id):
+    print(product_id)
     try:
         quantity = int(request.POST.get('quantity'))
         override = int(request.POST.get('override'))

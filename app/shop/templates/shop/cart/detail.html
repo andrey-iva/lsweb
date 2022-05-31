@@ -21,7 +21,6 @@
         }
     }
 </style>
-{{ request.session.grand_total }}
 <div class="cart-main-area pt-115 pb-120">
     <div class="container" id="cart-container">
         {% if cart|length %}
@@ -37,6 +36,7 @@
                                 <th>За единицу</th>
                                 <th>Кол-во</th>
                                 <th>Итого</th>
+                                <th>Установка</th>
                                 <th>Действие</th>
                             </tr>
                         </thead>
@@ -54,12 +54,26 @@
                                         <input class="cart-plus-minus-box" type="text" name="qtybutton" value="{{ item.quantity }}" disabled>
                                     </div>
                                 </td>
-                                <td class="product-subtotal text-center">{{ currency }}{{ item.total_price }}</td>
+                                <td class="product-subtotal text-center">
+                                    {{ currency }}{{ item.total_price }}
+                                </td>
+                                <td>
+                                    {% if item.price_install %}
+                                        {{ currency }}{{ item.price_install }}
+                                    {% else %}
+                                        {{ currency }}0
+                                    {% endif %}
+                                </td>
                                 <td class="product-remove">
                                     <form action="{% url 'shop:cart_add' product.id %}" method="post" class="d-flex justify-content-center">
                                         {% csrf_token %}
                                         <input type="text" name="override" value="1" hidden>
                                         <input type="text" name="quantity" value="{{ item.quantity }}" hidden>
+                                        {% if item.price_install %}
+                                            <input checked type="checkbox" name="price_install" value="{{ item.price_install }}" hidden>
+                                        {% else %}
+                                            <input checked type="checkbox" name="price_install" value="0" hidden>
+                                        {% endif %}
 
                                         <div class="m-1">
                                             <button title="обновить" type="submit" class="btn_update btn btn-success pb-1 border-0 btn-outline-none" data-update-url="{% url 'shop:cart_add' product.id %}">

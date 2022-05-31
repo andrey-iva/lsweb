@@ -45,7 +45,7 @@ class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
         'description_full', 'seo_title', 'seo_key', 'seo_desc', 'full_url',
         # 'created', 'updated',
     ]
-    list_filter = ['product_type', 'service_type', 'available', 'brand_car']
+    list_filter = ['category', 'service_type', 'available', 'brand_car']
     list_editable = [
         'category', 'name', 'slug', 'price', 'price_install',
         'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type',

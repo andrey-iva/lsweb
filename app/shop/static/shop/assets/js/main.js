@@ -1673,4 +1673,36 @@
             error: function() { console.error(this.url) },
         });
     });
+
+    $("#add_anchor").change(function() {
+        if (this.checked) {
+            $.ajax({
+                url: $(this).data("url"),
+                method: "POST",
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                data: {
+                    "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+                    "quantity": 1,
+                    "override": 0,
+                }
+            }).done(function(response) {
+                console.log("add_anchor", response)
+            }).fail(function(err) {
+                console.log("add_anchor", err)
+            })
+        } else {
+            $.ajax({
+                url: $(this).data("urlRemove"),
+                method: "POST",
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                data: {
+                    "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+                }
+            }).done(function(response) {
+                console.log("add_anchor", response)
+            }).fail(function(err) {
+                console.log("add_anchor", err)
+            })
+        }
+    });
 })(jQuery);

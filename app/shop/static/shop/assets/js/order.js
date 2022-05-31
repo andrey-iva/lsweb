@@ -127,7 +127,8 @@ $( function() {
     };
 
     function printTariffs(tariffs, s) {
-        console.log(tariffs)
+        console.log(">>>", tariffs)
+        return
         if (!tariffs.length) {
             $(".tariffs_list").html("<p>Ничего не найдено</p>")
             return
