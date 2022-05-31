@@ -58,21 +58,25 @@ DATA = {
 	],
 }
 
-def get_token_cdek():
-    response = r.post(CDEK, {
-		'grant_type': GRANT_TYPE,
-		'client_id': CLIENT_ID,
-		'client_secret': CLIENT_SECRET,})
+ATTEMPTS = 3
 
-    if response.status_code == 200:
-        return response.json()
+def get_token_cdek():
+	for i in range(0, ATTEMPTS):
+	    response = r.post(CDEK, {
+			'grant_type': GRANT_TYPE,
+			'client_id': CLIENT_ID,
+			'client_secret': CLIENT_SECRET,})
+	    if response.status_code == 200:
+	        return response.json()
+	    time.sleep(0.2)
+
 
 
 def access_header():
-	response = get_token_cdek()
-	if response:
-		access_token = response['access_token']
-		token_type = response['token_type']
+	TOKEN_CDEK = get_token_cdek()
+	if TOKEN_CDEK:
+		access_token = TOKEN_CDEK['access_token']
+		token_type = TOKEN_CDEK['token_type']
 		return {'Authorization': token_type + ' ' + access_token}
 
 @require_POST
@@ -82,14 +86,16 @@ def get_city(request):
 	country_iso_code = request.POST.get('country_iso_code')
 	city = request.POST.get('city')
 
-	if country_iso_code and city:
-		response = r.get(CITIES_URL, {
-			'country_codes': [country_iso_code], 
-			'city': [city]
-		}, headers=access_header())
+	for i in range(0, ATTEMPTS):
+		if country_iso_code and city:
+			response = r.get(CITIES_URL, {
+				'country_codes': [country_iso_code], 
+				'city': [city]
+			}, headers=access_header())
 
-		if response.status_code == 200:
-			return HttpResponse(response.text)
+			if response.status_code == 200:
+				return HttpResponse(response.text)
+		time.sleep(0.2)
 
 	return HttpResponse(json.dumps([]))
 
@@ -108,12 +114,17 @@ def get_tarifflist(cdek_id, country_iso_code, city, address, packages):
 	tariffs = []
 	for tariff_code in TARIFF_CODES:
 		DATA['tariff_code'] = tariff_code
-		tariff = r.post(TARIFF_URL, json.dumps(DATA), headers=headers)
-		if tariff.status_code == 200 and len(tariff.json()):
-			tariff = tariff.json()
-			tariff['tariff_code'] = tariff_code
-			tariff['tariff_name'] = TARIFF_CODES[tariff_code]
-			tariffs.append( tariff )
+
+		for i in range(0, ATTEMPTS):
+			tariff = r.post(TARIFF_URL, json.dumps(DATA), headers=headers)
+			if tariff.status_code == 200 and len(tariff.json()):
+				tariff = tariff.json()
+				tariff['tariff_code'] = tariff_code
+				tariff['tariff_name'] = TARIFF_CODES[tariff_code]
+				tariffs.append( tariff )
+				break
+
+			time.sleep(0.2)
 		time.sleep(0.2)
 	
 	if len(tariffs) == len(TARIFF_CODES):
@@ -160,11 +171,14 @@ def tarifflist(request):
 			packages=packages)
 		if tariffs:
 			# pprint(tariffs)
-			delivery_points = r.get(DELIVERY_POINTS_URL, {
-				'city_code': cdek_id,
-				'type': 'ALL',
-			}, headers=access_header())
-			if delivery_points.status_code == 200:
-				tariffs.append(delivery_points.json())
-			return HttpResponse(json.dumps(tariffs))
+			for i in range(0, ATTEMPTS):
+				delivery_points = r.get(DELIVERY_POINTS_URL, {
+					'city_code': cdek_id,
+					'type': 'ALL',
+				}, headers=access_header())
+				
+				if delivery_points.status_code == 200:
+					tariffs.append(delivery_points.json())
+				return HttpResponse(json.dumps(tariffs))
+
 	return HttpResponse(json.dumps([]))

@@ -163,8 +163,9 @@ def product_list(request, category_slug=None):
 
 # "{0}://{1}{2}".format(request.scheme, request.get_host(), request.path)
 def product_detail(request, slug):
-    product = get_object_or_404(Product,
-                                slug=slug)
+    product = get_object_or_404(Product, slug=slug)
+    product33 = get_object_or_404(Product, id=33)
+
     # как-то проверить есть ли
     product.full_url = "{0}://{1}{2}".format(request.scheme, request.get_host(), request.path)
     product.save()
@@ -181,8 +182,8 @@ def product_detail(request, slug):
     return render(request, 'shop/product/detail.html', {
         'product': product,
         'images': images,
+        'product33': product33,
     })
-
 
 @require_POST
 def product_filter(request):

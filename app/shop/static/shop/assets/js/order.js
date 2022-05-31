@@ -127,8 +127,6 @@ $( function() {
     };
 
     function printTariffs(tariffs, s) {
-        console.log(">>>", tariffs)
-        return
         if (!tariffs.length) {
             $(".tariffs_list").html("<p>Ничего не найдено</p>")
             return
@@ -321,7 +319,7 @@ $( function() {
             }
 
         } else {
-            $(".tariffs_list").html("<p>Ничего не найдено</p>")
+            $(".tariffs_list").html("<p>Пункты выдачи закозов не найдены.</p>")
         }
     };
 

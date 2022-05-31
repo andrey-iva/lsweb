@@ -1495,6 +1495,10 @@
                 "<div class='spinner-border spinner-border-sm' role='status'>\
                     <span class='sr-only'>Загрузка...</span>\
                 </div>")
+            parentElem.find("td.product-subtotal-install").html(
+                "<div class='spinner-border spinner-border-sm' role='status'>\
+                    <span class='sr-only'>Загрузка...</span>\
+                </div>")
             // $("#triffs_list").html('<li><input data-delivery-name="standard" data-delivery-sum="0" type="radio" name="tariff_code" value="standard"> Standard <span>'+CURRENCY+'0.00</span></li>')
             // $("#ser").html('<input maxlength="50" type="text" name="city" id="city" placeholder="Ваш город" required>')
             $.ajax({
@@ -1512,8 +1516,9 @@
                     console.info(this.url, "remove||update main cart:", responseData)
                     // product-subtotal
                     if (responseData.result === "update") {
-
+                        // console.log('=======>', responseData)
                         parentElem.find("td.product-subtotal").text(responseData.total_price)
+                        parentElem.find("td.product-subtotal-install").text(responseData.total_price_install)
                         changeCartLengthSubTotal(responseData)
 
                     } else if (responseData.result === "remove") {
@@ -1578,9 +1583,64 @@
     }
     removeItemMiniCart()
 
+    function printCart() {
+        // Запрос на содержимое корзины товаров, /cart/json/
+        $.ajax({
+            url: CART_INFO_JSON_URL,
+            method: "GET",
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            success: function(response) {
+                try {
+                    var responseData = JSON.parse(response)
+                } catch (err) {
+                    console.info("ПОЛУЧЕНИЕ ДАННЫХ КОРЗИНЫ, ОШИБКА ПРИ РАЗБОРЕ ПОЛУЧЕННЫХ ДАННЫХ:", err)
+                    return
+                }
+                console.info(this.url, "get info", responseData)
+                // счетчики корзины на странице
+                $(".cart_info").html("<i class='icon-basket-loaded'></i><span class='black'>" + responseData.cart_length + "</span>" + responseData.sub_total)
+                $(".cart_middle").html("<i class='icon-basket-loaded'></i><span class='pro-count black'>" + responseData.cart_length + "</span>")
+                // цена товаров в мини корзине
+                $("#cart-mini-sub-total").text(responseData.sub_total)
+
+                var htm = ""
+                
+                for (var k in responseData) {
+                    if (k === "sub_total" || k === 'cart_length') { continue }
+
+                    htm += "<li class='single-product-cart cart-detail-mini-delete'>\
+                            <div class='cart-img'>\
+                                <a href='" + responseData[k]["product_url"] + "'>\
+                                    <img src='" + responseData[k]["image"] + "'>\
+                                </a>\
+                            </div>\
+                            <div class='cart-title'>\
+                                <h4 class='pb-0 mb-1'><a href='" + responseData[k]["product_url"] + "'>" + responseData[k]["name"] + "</a></h4>\
+                                <span style='font-size: 12px ;'>(" + 
+                                responseData[k]["quantity"] + " × " + 
+                                responseData[k]["price"]    + ") + (" + 
+                                responseData[k]["quantity"] + " × " + 
+                                responseData[k]["price_install"] + ")</span>\
+                            </div>\
+                            <div class='cart-delete'>\
+                                <form action='/cart/remove/" + k + "/' method='post'>\
+                                " + CSRF_TOKEN + "\
+                                    <button class='btn btn-link btn-outline-none' type='submit'>×</button>\
+                                </form>\
+                            </div>\
+                            </li>"
+                }
+                $("#cart_mini_content").html(htm)
+                removeItemMiniCart()
+            },
+            error: function() { console.error(this.url) },
+        });
+    }
+
     // Все кнопки добавить в корзину добовление товаров в корзину
     $(".product_list_add_to_cart").submit(function(e) {
         e.preventDefault()
+        var formElem = $(this)
 
         $.ajax({
             url: $(this).attr("action"),
@@ -1617,64 +1677,39 @@
                         "<li class='spinner-border spinner-border-sm text-center' role='status'>\
                         <span class='sr-only'>Загрузка...</span>\
                     </li>")
-                    // Запрос на содержимое корзины товаров, /cart/json/
-                    $.ajax({
-                        url: CART_INFO_JSON_URL,
-                        method: "GET",
-                        headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                        success: function(response) {
-                            try {
-                                var responseData = JSON.parse(response)
-                            } catch (err) {
-                                console.info("ПОЛУЧЕНИЕ ДАННЫХ КОРЗИНЫ, ОШИБКА ПРИ РАЗБОРЕ ПОЛУЧЕННЫХ ДАННЫХ:", err)
-                                return
+                    // product 33
+                    if (formElem.find("#add_anchor").prop("checked")) {
+                        $.ajax({
+                            url: formElem.find("#add_anchor").data("url"),
+                            method: "POST",
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                            data: {
+                                "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+                                "quantity": 1,
+                                "override": 0,
+                                "price_install": $("input[name=price_install]").prop("checked") ? 
+                                formElem.find("#add_anchor").data("priceInstall") : 0
                             }
-                            console.info(this.url, "get info", responseData)
-                            // счетчики корзины на странице
-                            $(".cart_info").html("<i class='icon-basket-loaded'></i><span class='black'>" + responseData.cart_length + "</span>" + responseData.sub_total)
-                            $(".cart_middle").html("<i class='icon-basket-loaded'></i><span class='pro-count black'>" + responseData.cart_length + "</span>")
-                            // цена товаров в мини корзине
-                            $("#cart-mini-sub-total").text(responseData.sub_total)
+                        }).done(function(response) {
+                            console.log("add_anchor", response)
+                            printCart()
+                        }).fail(function(err) {
+                            console.log("add_anchor", err)
+                        })
+                    } else {
+                        printCart()
+                    }
 
-                            var htm = ""
-                            
-                            for (var k in responseData) {
-                                if (k === "sub_total" || k === 'cart_length') { continue }
 
-                                htm += "<li class='single-product-cart cart-detail-mini-delete'>\
-                                        <div class='cart-img'>\
-                                            <a href='" + responseData[k]["product_url"] + "'>\
-                                                <img src='" + responseData[k]["image"] + "'>\
-                                            </a>\
-                                        </div>\
-                                        <div class='cart-title'>\
-                                            <h4 class='pb-0 mb-1'><a href='" + responseData[k]["product_url"] + "'>" + responseData[k]["name"] + "</a></h4>\
-                                            <span style='font-size: 12px ;'>(" + 
-                                            responseData[k]["quantity"] + " × " + 
-                                            responseData[k]["price"]    + ") + (" + 
-                                            responseData[k]["quantity"] + " × " + 
-                                            responseData[k]["price_install"] + ")</span>\
-                                        </div>\
-                                        <div class='cart-delete'>\
-                                            <form action='/cart/remove/" + k + "/' method='post'>\
-                                            " + CSRF_TOKEN + "\
-                                                <button class='btn btn-link btn-outline-none' type='submit'>×</button>\
-                                            </form>\
-                                        </div>\
-                                        </li>"
-                            }
-                            $("#cart_mini_content").html(htm)
-                            removeItemMiniCart()
-                        },
-                        error: function() { console.error(this.url) },
-                    });
                 }
             },
             error: function() { console.error(this.url) },
         });
     });
 
-    $("#add_anchor").change(function() {
+    $("#add_anchor---x").change(function() {
+        var install = $("input[name=price_install]")
+        
         if (this.checked) {
             $.ajax({
                 url: $(this).data("url"),
@@ -1684,6 +1719,7 @@
                     "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
                     "quantity": 1,
                     "override": 0,
+                    "price_install": install.prop("checked") ? $(this).data("priceInstall") : 0
                 }
             }).done(function(response) {
                 console.log("add_anchor", response)

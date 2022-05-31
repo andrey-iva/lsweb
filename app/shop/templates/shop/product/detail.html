@@ -107,29 +107,21 @@
                             </li>
                             <li>
                                 <span>Устновка: </span>
-                                {% if request.session.cart|get_install_price:product.id %}
-                                <span class="b1 badge badge-danger">{{currency}}{{ product.price_install }}</span>
-                                <input id="ch" class="form-check-input ml-5" type="checkbox" name="price_install" value="{{ product.price_install }}" style="
-                                    width: 40px;
-                                    zoom: 0.4;
-                                    cursor: pointer;
-                                ">
-                                {% else %}
                                 <span class="b1 badge badge-info">{{currency}}{{ product.price_install }}</span>
                                 <input id="ch" class="form-check-input ml-5" type="checkbox" name="price_install" value="{{ product.price_install }}" style="
                                     width: 40px;
                                     zoom: 0.4;
                                     cursor: pointer;
                                 ">
-                                {% endif %}
                             </li>
                         </ul>
                         {% if product.id != 33 %}
                         <span class="font-weight-bold">
                             Петля для якорного крепления:
-                            <input id="add_anchor" class="form-check-input ml-5" type="checkbox" name="" value="33" 
-                            data-url="{% url 'shop:cart_add' 33 %}"
-                            data-url-remove="{% url 'shop:cart_remove' 33 %}"
+                            <input id="add_anchor" class="form-check-input ml-5" type="checkbox" name="" value="{{ product33.id }}" 
+                            data-url="{% url 'shop:cart_add' product33.id %}"
+                            data-url-remove="{% url 'shop:cart_remove' product33.id %}"
+                            data-price-install="{{ product33.price_install }}"
                             style="
                                 width: 40px;
                                 zoom: 0.4;

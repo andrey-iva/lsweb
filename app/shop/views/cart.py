@@ -36,7 +36,11 @@ def cart_add(request, product_id):
 
             if request.headers.get('X-Requested-With'):
                 price = Decimal(cart.cart[str(product_id)]['price']) * quantity
+                price_install = Decimal(cart.cart[str(product_id)]['price_install']) * quantity
+
                 total_price = currency(request)['currency'] + str(price)
+                total_price_install = currency(request)['currency'] + str(price_install)
+                
                 sub_total = currency(
                     request)['currency'] + str(cart.get_total_price())
 
@@ -44,6 +48,7 @@ def cart_add(request, product_id):
                     'product_id': product_id,
                     'result': 'update',
                     'total_price': total_price,
+                    'total_price_install': total_price_install,
                     'sub_total': sub_total,
                     'cart_length': len(cart),
                 }))

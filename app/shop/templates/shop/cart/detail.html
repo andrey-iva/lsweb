@@ -30,14 +30,15 @@
                 <div class="table-content table-responsive cart-table-content">
                     <table>
                         <thead>
-                            <tr class="text-white" id="fadeshow" style="background: #000;">
-                                <th>IMG</th>
-                                <th>Наименование</th>
-                                <th>За единицу</th>
-                                <th>Кол-во</th>
-                                <th>Итого</th>
-                                <th>Установка</th>
-                                <th>Действие</th>
+                            <tr class="text-light" id="fadeshow" style="background: #000; font-size: 12px;">
+                                <th style="font-size: 12px;">Фото</th>
+                                <th style="font-size: 12px;">Название</th>
+                                <th style="font-size: 12px;">За 1</th>
+                                <th style="font-size: 12px;">Кол-во</th>
+                                <th style="font-size: 12px;">Итого</th>
+                                <th style="font-size: 12px;">Установка 1</th>
+                                <th style="font-size: 12px;">Установка Итого</th>
+                                <th style="font-size: 12px;">Действие</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -47,22 +48,43 @@
                                 <td class="product-thumbnail p-1">
                                     <a href="{{ product.get_absolute_url }}"><img class="w-100" src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}" alt=""></a>
                                 </td>
-                                <td class="product-name text-center"><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></td>
-                                <td class="product-price-cart text-center"><span class="amount">{{ currency }}{{ item.price }}</span></td>
+                                <td class="product-name">
+                                    <a style="font-size: 12px; line-height: 0.9;" href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+                                </td>
+                                <td class="product-price-cart text-center">
+                                    <span class="amount" data-toggle="tooltip" data-placement="top" title="За еденицу">
+                                    {{ currency }}{{ item.price }}
+                                </span>
+                                </td>
                                 <td class="product-quantity pro-details-quality text-center">
                                     <div class="cart-plus-minus">
                                         <input class="cart-plus-minus-box" type="text" name="qtybutton" value="{{ item.quantity }}" disabled>
                                     </div>
                                 </td>
+                                
                                 <td class="product-subtotal text-center">
+                                    <span data-toggle="tooltip" data-placement="top" title="Итого за колличество">
                                     {{ currency }}{{ item.total_price }}
+                                    </span>
                                 </td>
-                                <td>
+
+                                <td class="text-center">
+                                    <span data-toggle="tooltip" data-placement="top" title="За установку">
                                     {% if item.price_install %}
                                         {{ currency }}{{ item.price_install }}
                                     {% else %}
                                         {{ currency }}0
                                     {% endif %}
+                                    </span>
+                                </td>
+                                <td class="product-subtotal-install text-center">
+                                    <span data-toggle="tooltip" data-placement="top" title="Итого за все установки">
+                                    {% if item.price_install %}
+                                        {{ currency }}{{ item.total_price_install }}
+                                    {% else %}
+                                        {{ currency }}0
+                                    {% endif %}
+                                    </span>
                                 </td>
                                 <td class="product-remove">
                                     <form action="{% url 'shop:cart_add' product.id %}" method="post" class="d-flex justify-content-center">
@@ -76,13 +98,13 @@
                                         {% endif %}
 
                                         <div class="m-1">
-                                            <button title="обновить" type="submit" class="btn_update btn btn-success pb-1 border-0 btn-outline-none" data-update-url="{% url 'shop:cart_add' product.id %}">
+                                            <button data-toggle="tooltip" data-placement="top" title="обновить" type="submit" class="btn_update btn btn-success pb-1 border-0 btn-outline-none" data-update-url="{% url 'shop:cart_add' product.id %}">
                                                 <i class="icon-refresh"></i>
                                             </button>
                                         </div>
 
                                         <div class="m-1">
-                                            <button title="удалить" type="submit" class="btn_remove btn btn-danger pb-1 border-0 btn-outline-none" data-delete-url="{% url 'shop:cart_remove' product.id %}">
+                                            <button data-toggle="tooltip" data-placement="top" title="удалить" type="submit" class="btn_remove btn btn-danger pb-1 border-0 btn-outline-none" data-delete-url="{% url 'shop:cart_remove' product.id %}">
                                                 <i class="icon-close"></i>
                                             </button>
                                         </div>
