@@ -1491,11 +1491,11 @@
             e.preventDefault()
             // action="" по умолчанию /cart/add/id/ override=1 устанавливает в зависимости от нажатой кнопки
             // В parentElem.find("button").click(function(e) {}
-            parentElem.find("td.product-subtotal").html(
+            parentElem.find("span.product-subtotal").html(
                 "<div class='spinner-border spinner-border-sm' role='status'>\
                     <span class='sr-only'>Загрузка...</span>\
                 </div>")
-            parentElem.find("td.product-subtotal-install").html(
+            parentElem.find("span.product-subtotal-install").html(
                 "<div class='spinner-border spinner-border-sm' role='status'>\
                     <span class='sr-only'>Загрузка...</span>\
                 </div>")
@@ -1509,6 +1509,7 @@
                 success: function(response) {
                     try {
                         var responseData = JSON.parse(response)
+                        console.log('>>>>', responseData)
                     } catch (err) {
                         console.info("ОБНОВЛЕНИЕ И УДАЛЕНИЕ ТОВАРОВ, ОШИБКА ПРИ РАЗБОРЕ ПОЛУЧЕННЫХ ДАННЫХ:", err)
                         return
@@ -1517,12 +1518,11 @@
                     // product-subtotal
                     if (responseData.result === "update") {
                         // console.log('=======>', responseData)
-                        parentElem.find("td.product-subtotal").text(responseData.total_price)
-                        parentElem.find("td.product-subtotal-install").text(responseData.total_price_install)
+                        parentElem.find("span.product-subtotal").text(responseData.total_price)
+                        parentElem.find("span.product-subtotal-install").text(responseData.total_price_install)
                         changeCartLengthSubTotal(responseData)
 
                     } else if (responseData.result === "remove") {
-
                         parentElem.addClass("d-none")
                         if (parseInt(responseData.cart_length) === 0) {
                             $("#cart-container").html("<h3 class=\"text-center\">Ваша корзина пуста</h3>\
@@ -1616,11 +1616,12 @@
                             </div>\
                             <div class='cart-title'>\
                                 <h4 class='pb-0 mb-1'><a href='" + responseData[k]["product_url"] + "'>" + responseData[k]["name"] + "</a></h4>\
-                                <span style='font-size: 12px ;'>(" + 
+                                <div style='font-size: 12px ;'>Товар: " + 
                                 responseData[k]["quantity"] + " × " + 
-                                responseData[k]["price"]    + ") + (" + 
+                                responseData[k]["price"] + "</div>\
+                                <div style='font-size: 12px ;'>Монтаж: " + 
                                 responseData[k]["quantity"] + " × " + 
-                                responseData[k]["price_install"] + ")</span>\
+                                responseData[k]["price_install"] + "</div>\
                             </div>\
                             <div class='cart-delete'>\
                                 <form action='/cart/remove/" + k + "/' method='post'>\
@@ -1677,7 +1678,7 @@
                         "<li class='spinner-border spinner-border-sm text-center' role='status'>\
                         <span class='sr-only'>Загрузка...</span>\
                     </li>")
-                    // product 33
+                    // product 33 петля для якорного крепления
                     if (formElem.find("#add_anchor").prop("checked")) {
                         $.ajax({
                             url: formElem.find("#add_anchor").data("url"),
@@ -1687,8 +1688,7 @@
                                 "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
                                 "quantity": 1,
                                 "override": 0,
-                                "price_install": $("input[name=price_install]").prop("checked") ? 
-                                formElem.find("#add_anchor").data("priceInstall") : 0
+                                "price_install": $("input[name=price_install]").prop("checked") ? 1 : 0
                             }
                         }).done(function(response) {
                             console.log("add_anchor", response)
@@ -1719,7 +1719,7 @@
                     "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
                     "quantity": 1,
                     "override": 0,
-                    "price_install": install.prop("checked") ? $(this).data("priceInstall") : 0
+                    "price_install": install.prop("checked") ? 1 : 0
                 }
             }).done(function(response) {
                 console.log("add_anchor", response)

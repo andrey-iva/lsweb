@@ -25,110 +25,91 @@
     <div class="container" id="cart-container">
         {% if cart|length %}
         <h3 class="cart-page-title mb-4">Выбранные товары</h3>
-        <div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
-                <div class="table-content table-responsive cart-table-content">
-                    <table>
-                        <thead>
-                            <tr class="text-light" id="fadeshow" style="background: #000; font-size: 12px;">
-                                <th style="font-size: 12px;">Фото</th>
-                                <th style="font-size: 12px;">Название</th>
-                                <th style="font-size: 12px;">За 1</th>
-                                <th style="font-size: 12px;">Кол-во</th>
-                                <th style="font-size: 12px;">Итого</th>
-                                <th style="font-size: 12px;">Установка 1</th>
-                                <th style="font-size: 12px;">Установка Итого</th>
-                                <th style="font-size: 12px;">Действие</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in cart %}
-                            {% with product=item.product %}
-                            <tr class="cart-detail-products bg-light" >
-                                <td class="product-thumbnail p-1">
-                                    <a href="{{ product.get_absolute_url }}"><img class="w-100" src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}" alt=""></a>
-                                </td>
-                                <td class="product-name">
-                                    <a style="font-size: 12px; line-height: 0.9;" href="{{ product.get_absolute_url }}">{{ product.name }}</a>
-                                </td>
-                                <td class="product-price-cart text-center">
-                                    <span class="amount" data-toggle="tooltip" data-placement="top" title="За еденицу">
-                                    {{ currency }}{{ item.price }}
-                                </span>
-                                </td>
-                                <td class="product-quantity pro-details-quality text-center">
-                                    <div class="cart-plus-minus">
-                                        <input class="cart-plus-minus-box" type="text" name="qtybutton" value="{{ item.quantity }}" disabled>
-                                    </div>
-                                </td>
-                                
-                                <td class="product-subtotal text-center">
-                                    <span data-toggle="tooltip" data-placement="top" title="Итого за колличество">
-                                    {{ currency }}{{ item.total_price }}
-                                    </span>
-                                </td>
-
-                                <td class="text-center">
-                                    <span data-toggle="tooltip" data-placement="top" title="За установку">
-                                    {% if item.price_install %}
-                                        {{ currency }}{{ item.price_install }}
-                                    {% else %}
-                                        {{ currency }}0
-                                    {% endif %}
-                                    </span>
-                                </td>
-                                <td class="product-subtotal-install text-center">
-                                    <span data-toggle="tooltip" data-placement="top" title="Итого за все установки">
-                                    {% if item.price_install %}
-                                        {{ currency }}{{ item.total_price_install }}
-                                    {% else %}
-                                        {{ currency }}0
-                                    {% endif %}
-                                    </span>
-                                </td>
-                                <td class="product-remove">
-                                    <form action="{% url 'shop:cart_add' product.id %}" method="post" class="d-flex justify-content-center">
-                                        {% csrf_token %}
-                                        <input type="text" name="override" value="1" hidden>
-                                        <input type="text" name="quantity" value="{{ item.quantity }}" hidden>
-                                        {% if item.price_install %}
-                                            <input checked type="checkbox" name="price_install" value="{{ item.price_install }}" hidden>
-                                        {% else %}
-                                            <input checked type="checkbox" name="price_install" value="0" hidden>
-                                        {% endif %}
-
-                                        <div class="m-1">
-                                            <button data-toggle="tooltip" data-placement="top" title="обновить" type="submit" class="btn_update btn btn-success pb-1 border-0 btn-outline-none" data-update-url="{% url 'shop:cart_add' product.id %}">
-                                                <i class="icon-refresh"></i>
-                                            </button>
-                                        </div>
-
-                                        <div class="m-1">
-                                            <button data-toggle="tooltip" data-placement="top" title="удалить" type="submit" class="btn_remove btn btn-danger pb-1 border-0 btn-outline-none" data-delete-url="{% url 'shop:cart_remove' product.id %}">
-                                                <i class="icon-close"></i>
-                                            </button>
-                                        </div>
-                                    </form>
-                                </td>
-                            </tr>
-                            {% endwith %}
-                            {% endfor %}
-                        </tbody>
-                    </table>
+        <div class="row row-cols-1 row-cols-md-2">
+          {% for item in cart %}
+          {% with product=item.product %}
+          <div class="col mb-4">
+            <div class="card mb-3 cart-detail-products" style="max-width: 540px;">
+              <div class="row no-gutters">
+                <div class="col-md-4">
+                  <a href="{{ product.get_absolute_url }}">
+                    <img class="w-100 pl-1 pr-1 pt-4" src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}" alt="">
+                  </a>
                 </div>
-<!--                 <div class="row">
-                    <div class="col-lg-12">
-                        <div class="cart-shiping-update-wrapper">
-                            <div class="cart-shiping-update">
-                                <a href="{% url 'shop:product_list' %}">Каталог</a>
-                                <a href="{% url 'shop:cart_clear' %}">Очистить</a>
-                            </div>
-                            <div class="cart-clear text-center">
-                                
-                            </div>
+                <div class="col-md-8">
+                  <div class="card-body">
+                    <h5 class="card-title font-weight-bold">
+                        <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+                    </h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Товар за еденицу:
+                            <span style="position: absolute; right: 0;" class="font-weight-bold">
+                                 {{ currency }}{{ item.price }}
+                            </span>
+                        </li>
+                        <li class="list-group-item">Товар за всё:
+                            <span style="position: absolute; right: 0;" class="product-subtotal text-danger font-weight-bold">
+                                 {{ currency }}{{ item.total_price }}
+                            </span>
+                        </li>
+                        <li class="list-group-item">Монтаж за единицу: 
+                            <span style="position: absolute; right: 0;" class="font-weight-bold">
+                            {% if item.price_install %}
+                                {{ currency }}{{ item.price_install }}
+                            {% else %}
+                                {{ currency }}0
+                            {% endif %}
+                            </span>
+                        </li>
+                        <li class="list-group-item">Монтаж за всё: 
+                            <span style="position: absolute; right: 0;" class="product-subtotal-install text-danger font-weight-bold">
+                            {% if item.price_install %}
+                                {{ currency }}{{ item.total_price_install }}
+                            {% else %}
+                                {{ currency }}0
+                            {% endif %}
+                            </span>
+                        </li>
+                    </ul>
+
+                    <div class="product-quantity pro-details-quality text-center mt-3">
+                        <div class="cart-plus-minus">
+                            <input class="cart-plus-minus-box" type="text" name="qtybutton" value="{{ item.quantity }}" disabled>
                         </div>
                     </div>
-                </div> -->
+
+                    <form action="{% url 'shop:cart_add' product.id %}" method="post" class="d-flex mt-2 justify-content-center">
+                        {% csrf_token %}
+                        <input type="text" name="override" value="1" hidden>
+                        <input type="text" name="quantity" value="{{ item.quantity }}" hidden>
+                        {% if item.price_install %}
+                            <input checked type="checkbox" name="price_install" value="1" hidden>
+                        {% else %}
+                            <input checked type="checkbox" name="price_install" value="0" hidden>
+                        {% endif %}
+
+                        <div class="m-1">
+                            <button type="submit" class="btn_update btn btn-success pb-1 border-0 btn-outline-none" data-update-url="{% url 'shop:cart_add' product.id %}">
+                                Обновить
+                            </button>
+                        </div>
+
+                        <div class="m-1">
+                            <button type="submit" class="btn_remove btn btn-danger pb-1 border-0 btn-outline-none" data-delete-url="{% url 'shop:cart_remove' product.id %}">
+                                Удалить
+                            </button>
+                        </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endwith %}
+          {% endfor %}
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="row mt-2">                 
                     <div class="col-md-7">
                         <div class="cart-shiping-update-wrapper pt-0 mt-0">

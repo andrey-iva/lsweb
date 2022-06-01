@@ -32,13 +32,15 @@ class Cart(object):
         for item in cart.values():
             item['price'] = Decimal(item['price'])
             item['total_price'] = item['price'] * item['quantity']
-            item['total_price_install'] = str(Decimal(item['price_install']) * item['quantity'])
+            
+            item['price_install'] = Decimal(item['price_install'])
+            item['total_price_install'] = Decimal(item['price_install']) * item['quantity']
             yield item
 
     def __len__(self):
         return sum(item['quantity'] for item in self.cart.values())
 
-    def add(self, product, quantity=1, override_quantity=False, price_install=0):
+    def add(self, product, quantity=1, override_quantity=False, install=0):
         product_id = str(product.id)
         if product_id not in self.cart:
             self.cart[product_id] = {'quantity': 0,
@@ -48,7 +50,10 @@ class Cart(object):
         else:
             self.cart[product_id]['quantity'] += quantity
 
-        self.cart[product_id]['price_install'] = str(Decimal( price_install ))
+        if install:
+            self.cart[product_id]['price_install'] = str(Decimal(product.price_install))
+        else:
+            self.cart[product_id]['price_install'] = '0'
         self.save()
 
     def save(self):

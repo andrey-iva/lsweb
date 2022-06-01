@@ -148,10 +148,16 @@
                                     </ul>
                                 </div>
                                 <div class="your-order-middle">
+                                    <!-- item.product.name|truncatewords:1 -->
                                     <ul>
                                         {% for item in cart %}
-                                        <li data-toggle="tooltip" data-placement="top" title="{{item.product.name}}">{{ item.product.name|truncatewords:2 }} 
-                                            <b>({{item.quantity}})</b><span>{{currency}}{{item.total_price}} + {{currency}}{{item.price_install}}</span></li>
+                                        <li class="border-bottom border-danger">
+                                            {{ item.product.name }}
+                                            <br><b>Товар: </b>
+                                            <span>{{item.quantity}} &times; {{currency}}{{item.total_price}}</span>
+                                            <br><b>Монтаж: </b>
+                                            <span>{{item.quantity}} &times; {{currency}}{{item.price_install}}</span>
+                                        </li>
                                         {% endfor %}
                                     </ul>
                                 </div>
