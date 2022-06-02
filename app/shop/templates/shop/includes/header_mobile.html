@@ -14,14 +14,18 @@
                         </li>
                         <li class="menu-item-has-children"><a href="#">Товары</a>
                             <ul class="dropdown">
-                                <li><a href="{% url 'shop:product_list' %}?products=кронштейн">Кронштейны ISOFIX </a></li>
-                                <li><a href="{% url 'shop:product_list' %}?products=рейка">Рейки ISOFIX Для Задних Сидений </a></li>
+                                {% for category in categories %}
+                                <li>
+                                    <a href="{{category.get_absolute_url}}">{{category.name}} ISOFIX </a>
+                                </li>
+                                {% endfor %}
                             </ul>
                         </li>
                         <li class="menu-item-has-children "><a href="#">Услуги</a>
                             <ul class="dropdown">
-                                <li><a href="{% url 'shop:product_list' %}?services=установка">Установка ISOFIX </a></li>
-                                <li><a href="{% url 'shop:product_list' %}?services=разработка">Разработка нового кронштейна </a></li>
+                                {% for service in get_services %}
+                                <li><a href="{{ service.get_absolute_url }}">{{ service.name }}</a></li>
+                                {% endfor %}
                             </ul>
                         </li>
                         <li class="menu-item-has-children "><a href="#">Информация</a>

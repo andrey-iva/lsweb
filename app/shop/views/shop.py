@@ -72,8 +72,7 @@ def product_list(request, category_slug=None):
         - стиль отображения товаров на странице
     """
     search_query = request.GET.get('search_query')
-    show_products = request.GET.get('products') 
-    show_services = request.GET.get('services')
+    show_products = request.GET.get('products')
 
     sort_by = request.session.get(SORT_BY_SESSION_ID, 'default')
     category = None
@@ -90,9 +89,6 @@ def product_list(request, category_slug=None):
 
     if category_slug is None and show_products is not None:
         products = products.filter(product_type=show_products)
-
-    if category_slug is None and show_services is not None:
-        products = products.filter(service_type=show_services)
 
     # select
     if sort_by == 'price_min':

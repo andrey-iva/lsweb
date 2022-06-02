@@ -69,8 +69,9 @@ TEMPLATES = [
 
                 'shop.ctx_proc.cart',
                 'shop.ctx_proc.currency',
-                'shop.ctx_proc.categories_menu',
+                'shop.ctx_proc.categories',
                 'shop.ctx_proc.no_image',
+                'shop.ctx_proc.get_services',
             ],
         },
     },

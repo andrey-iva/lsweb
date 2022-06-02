@@ -25,11 +25,11 @@
     <div class="container" id="cart-container">
         {% if cart|length %}
         <h3 class="cart-page-title mb-4">Выбранные товары</h3>
-        <div class="row row-cols-1 row-cols-md-2">
+        <div class="row row-cols-1 row-cols-lg-2">
           {% for item in cart %}
           {% with product=item.product %}
           <div class="col mb-4">
-            <div class="card mb-3 cart-detail-products" style="max-width: 540px;">
+            <div class="card mb-3 cart-detail-products">
               <div class="row no-gutters">
                 <div class="col-md-4">
                   <a href="{{ product.get_absolute_url }}">
@@ -112,7 +112,7 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="row mt-2">                 
                     <div class="col-md-7">
-                        <div class="cart-shiping-update-wrapper pt-0 mt-0">
+                        <div class="cart-shiping-update-wrapper">
                             <div class="cart-shiping-update pt-0 mt-0">
                                 <a href="{% url 'shop:product_list' %}">Каталог</a>
                                 <a href="{% url 'shop:cart_clear' %}">Очистить</a>

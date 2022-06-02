@@ -5,11 +5,11 @@ $( function() {
     
     var PERCENT = 5
 
-    if (document.getElementById("delivery_title_scroll")) {
-        $([document.documentElement, document.body]).animate({
-            scrollTop: $("#delivery_title_scroll").offset().top
-        }, 1000);
-    }
+    // if (document.getElementById("delivery_title_scroll")) {
+    //     $([document.documentElement, document.body]).animate({
+    //         scrollTop: $("#delivery_title_scroll").offset().top
+    //     }, 100);
+    // }
 
     // удаляет районы города и всё с 65 уровня
     var defaultFormatResult = $.Suggestions.prototype.formatResult;
@@ -119,10 +119,10 @@ $( function() {
     };
 
     function printErr(message) {
-        $(".search_city_err_msg").text(message)
+        // $(".search_city_err_msg").text(message)
         setTimeout(function() {
-            $(".search_city_err_msg").text("")
-            $(".tariffs_list").html("<p>Ничего не найдено</p>")
+            // $(".search_city_err_msg").text("")
+            $(".tariffs_list").html("<p>Ничего не найдено!</p>")
         }, 3000)
     };
 
@@ -142,6 +142,9 @@ $( function() {
             // print tariff list
             if (tariffs[i]["errors"]) {
                 console.log(tariffs[i])
+                for (var e = 0; e < tariffs[i]["errors"].length; e++) {
+                    tariffListHTML += "<li>"+ tariffs[i]["tariff_name"] + ": " + tariffs[i]["errors"][e]["message"] +"</li>"
+                }
                 continue 
             }
             
@@ -319,7 +322,8 @@ $( function() {
             }
 
         } else {
-            $(".tariffs_list").html("<p>Пункты выдачи закозов не найдены.</p>")
+            $(".tariffs_list").html(tariffListHTML)
+            // $(".tariffs_list").html("<p>Пункты выдачи закозов не найдены.</p>")
         }
     };
 
@@ -600,6 +604,8 @@ $( function() {
                         serverError(err)
                     });
 
+                } else {
+                    printErr("Данное направление в службе СДЕК отсутствует.")
                 }
             })
             .fail(function() {

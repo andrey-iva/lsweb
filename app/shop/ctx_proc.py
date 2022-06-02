@@ -1,5 +1,6 @@
 from .cart import Cart
 from .models import Category
+from .models import Product
 from . import NO_IMAGE_PATH
 
 def cart(request):
@@ -8,8 +9,11 @@ def cart(request):
 def currency(request):
     return {'currency': '₽'}
 
-def categories_menu(request):
-    return {'categories_menu': Category.objects.all()}
+def categories(request):
+    return {'categories': Category.objects.all()}
 
 def no_image(request):
     return {'no_image': NO_IMAGE_PATH}
+
+def get_services(request):
+    return {'get_services': Product.objects.filter(product_type='услуга')}

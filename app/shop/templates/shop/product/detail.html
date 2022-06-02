@@ -13,12 +13,6 @@
                 <li>
                     <a href="{% url 'shop:home' %}">Главная</a>
                 </li>
-                <li>
-                    <a href="{% url 'shop:product_list' %}">Каталог</a>
-                </li>
-                <li>
-                    <a href="{{ product.category.get_absolute_url }}">{{ product.category }}</a>
-                </li>
                 <li class="active">{{ product.name|truncatewords:4 }}</li>
             </ul>
         </div>
@@ -79,7 +73,11 @@
                     <div class="pro-details-price">
                         <!-- <span class="new-price">$75.72</span> -->
                         <!-- <span class="old-price">$95.72</span> -->
+                        {% if product.product_type == 'услуга' %}
+                        <span>{{ currency }}{{ product.price_install }}</span>
+                        {% else %}
                         <span>{{ currency }}{{ product.price }}</span>
+                        {% endif %}
                     </div>
                     <div class="pro-details-quality">
                         <!-- <span>Колличество:</span> -->
@@ -105,16 +103,18 @@
                                 Нет в наличии
                                 {% endif %}
                             </li>
+                            
                             <li>
                                 <span>Устновка: </span>
                                 <span class="b1 badge badge-info">{{currency}}{{ product.price_install }}</span>
                                 <input id="ch" class="form-check-input ml-5" type="checkbox" name="price_install" value="1" style="
                                     width: 40px;
                                     zoom: 0.4;
-                                    cursor: pointer;
-                                ">
+                                    cursor: pointer;" {% if product.product_type == 'услуга' %} checked {% endif %}>
                             </li>
+                            
                         </ul>
+                        {% if product.product_type != 'услуга' %}
                         {% if product.id != 33 %}
                         <span class="font-weight-bold">
                             Петля для якорного крепления:
@@ -129,6 +129,7 @@
                                 cursor: pointer;
                             ">
                         </span>
+                        {% endif %}
                         {% endif %}
                     </div>
 <script type="text/javascript">

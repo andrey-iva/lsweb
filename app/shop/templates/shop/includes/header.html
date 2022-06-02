@@ -52,14 +52,20 @@
                                         <li><a href="{% url 'shop:home' %}">ГЛАВНАЯ </a></li>
                                         <li><a href="{% url 'shop:shop_page' %}">ТОВАРЫ</a>
                                             <ul class="sub-menu-style">
-                                               <li><a href="{% url 'shop:product_list' %}?products=кронштейн">Кронштейны ISOFIX </a></li>
-                                               <li><a href="{% url 'shop:product_list' %}?products=рейка">Рейки ISOFIX Для Задних Сидений </a></li>
+                                               {% for category in categories %}
+                                               <li>
+                                                    <a href="{{category.get_absolute_url}}">{{category.name}} ISOFIX </a>
+                                                </li>
+                                               {% endfor %}
                                             </ul>
                                         </li>
                                         <li><a href="#">УСЛУГИ </a>
                                             <ul class="sub-menu-style">
-                                                <li><a href="{% url 'shop:product_list' %}?services=установка">Установка ISOFIX </a></li>
-                                                <li><a href="{% url 'shop:product_list' %}?services=разработка">Разработка нового кронштейна </a></li>
+                                                {% for service in get_services %}
+                                                <li>
+                                                    <a href="{{ service.get_absolute_url }}">{{ service.name }}</a>
+                                                </li>
+                                                {% endfor %}
                                             </ul>
                                         </li>
                                         <li><a href="#">ИНФОРМАЦИЯ </a>
@@ -81,7 +87,7 @@
                         <div class="col-xl-2 col-lg-2">
                             <div class="header-action header-action-flex header-action-mrg-right">
                                 <div class="header-cart-2">
-                                    <a class="{% if not deactivate_mini_cart %}cart-active{% endif %} cart_info" href="#">
+                                    <a class="{% if not deactivate_mini_cart %}cart-active{% endif %} cart_info" href="{% url 'shop:cart_detail' %}">
                                         <i class="icon-basket-loaded"></i> 
                                         <span class="black">{{ cart|length }}</span>{{currency}}{{cart.get_total_price}}
                                     </a>
@@ -107,7 +113,7 @@
                 <div class="col-7">
                     <div class="header-action header-action-flex">
                         <div class="same-style-2 same-style-2-font-inc header-cart">
-                            <a class="{% if not deactivate_mini_cart %}cart-active{% endif %} mini-cart cart_middle" href="#">
+                            <a class="{% if not deactivate_mini_cart %}cart-active{% endif %} mini-cart cart_middle" href="{% url 'shop:cart_detail' %}">
                                 <i class="icon-basket-loaded"></i><span class="pro-count black">{{ cart|length }}</span>
                             </a>
                         </div>

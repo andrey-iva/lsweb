@@ -46,7 +46,7 @@
                                 <option value="рейка">Рейки</option>
                                 <option value="услуга">Услуги</option>
                             </select> -->
-                        </div>    
+                        </div>
                     </div>
                     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12 pb-3 bracket">
                         <div>Марка машины</div>
@@ -83,7 +83,7 @@
                     </div>
                 </div>
                 <div id="modal_filter_content" class="row">
-                    
+
                 </div>
             </div>
         </div>
@@ -120,7 +120,7 @@
                         <a class="btn btn-outline-info btn-sm ml-1" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                             марки
                           </a>
-                       
+
                     </div>
                     <div class="product-sorting-wrapper">
                         <div class="product-show shorting-style">
@@ -143,14 +143,14 @@
 
                 <div id="scroll_to_products" class="shop-bottom-area">
                     <div class="tab-content jump">
-                        <div class="collapse" id="collapseExample"> 
+                        <div class="collapse" id="collapseExample">
                           <div class="card card-body mb-5">
                             <div class="row d-flex flex-wrap justify-content-around">
                             {% for brand in brands %}
                                 <div class="col-md-2 col-sm-4 col-4">
-                                   <a class="dropdown-item badge" href="/product-category/{{brand}}/">{{ brand|upper }}</a> 
+                                   <a class="dropdown-item badge" href="/product-category/{{brand}}/">{{ brand|upper }}</a>
                                 </div>
-                                
+
                             {% endfor %}
                             </div>
                           </div>
@@ -161,9 +161,9 @@
                             <div class="row">
                                 {% for product in products %}
                                 <!-- <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12"> -->
-                                <form 
-                                    action="{% url 'shop:cart_add' product.id %}" 
-                                    method="post" 
+                                <form
+                                    action="{% url 'shop:cart_add' product.id %}"
+                                    method="post"
                                     class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-6 product_list_add_to_cart"
                                 >
                                     {% csrf_token %}
@@ -175,18 +175,18 @@
                                                 <img src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}" alt="">
                                             </a>
                                             <div class="product-action-2 tooltip-style-2">
-                                                <button 
-                                                class="quick_view" 
-                                                title="Быстрый просмотр" 
-                                                data-toggle="modal" 
-                                                data-target="#exampleModal" 
-                                                data-product-name="{{product.name}}" 
-                                                data-product-price="{{currency}}{{product.price}}" 
-                                                data-product-category="{{product.category.name}}" 
-                                                data-product-category-url="{{product.category.get_absolute_url}}" 
-                                                data-product-absolute-url="{{product.get_absolute_url}}" 
-                                                data-product-description-short="{{product.description_short}}" 
-                                                data-product-image-base="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}" 
+                                                <button
+                                                class="quick_view"
+                                                title="Быстрый просмотр"
+                                                data-toggle="modal"
+                                                data-target="#exampleModal"
+                                                data-product-name="{{product.name}}"
+                                                data-product-price="{{currency}}{{product.price}}"
+                                                data-product-category="{{product.category.name}}"
+                                                data-product-category-url="{{product.category.get_absolute_url}}"
+                                                data-product-absolute-url="{{product.get_absolute_url}}"
+                                                data-product-description-short="{{product.description_short}}"
+                                                data-product-image-base="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}"
                                                 data-product-add-to-cart-url="{% url 'shop:cart_add' product.id %}"
 
                                                 data-product-item-num="{{ product.item_number }}"
@@ -194,19 +194,29 @@
                                                 >
                                                     <i class="icon-size-fullscreen icons"></i>
                                                 </button>
+                                                {% if product.product_type != 'услуга' %}
                                                 <button type="submit"><i class="icon-basket-loaded"></i></button>
+                                                {% endif %}
                                             </div>
                                         </div>
                                         <div class="product-content-wrap-2 text-center">
                                             <h3>{{ product.name }}</h3>
                                             <div class="product-price-2">
+                                                {% if product.product_type == 'услуга' %}
+                                                <span>{{ currency }}{{ product.price_install }}</span>
+                                                {% else %}
                                                 <span>{{ currency }}{{ product.price }}</span>
+                                                {% endif %}
                                             </div>
                                         </div>
                                         <div class="product-content-wrap-2 product-content-position text-center">
                                             <h3><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
                                             <div class="product-price-2">
+                                                {% if product.product_type == 'услуга' %}
+                                                <span>{{ currency }}{{ product.price_install }}</span>
+                                                {% else %}
                                                 <span>{{ currency }}{{ product.price }}</span>
+                                                {% endif %}
                                             </div>
                           <!--                   <div class="pro-add-to-cart">
                                                 <form class="product_list_add_to_cart" action="{% url 'shop:cart_add' product.id %}" method="post">
@@ -233,18 +243,18 @@
                                                 <img src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}" alt="">
                                             </a>
                                             <div class="product-list-quickview">
-                                                <button 
-                                                class="quick_view" 
-                                                title="Быстрый просмотр" 
-                                                data-toggle="modal" 
-                                                data-target="#exampleModal" 
-                                                data-product-name="{{product.name}}" 
-                                                data-product-price="{{currency}}{{product.price}}" 
-                                                data-product-category="{{product.category.name}}" 
-                                                data-product-category-url="{{product.category.get_absolute_url}}" 
-                                                data-product-absolute-url="{{product.get_absolute_url}}" 
-                                                data-product-description-short="{{product.description_short}}" 
-                                                data-product-image-base="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}" 
+                                                <button
+                                                class="quick_view"
+                                                title="Быстрый просмотр"
+                                                data-toggle="modal"
+                                                data-target="#exampleModal"
+                                                data-product-name="{{product.name}}"
+                                                data-product-price="{{currency}}{{product.price}}"
+                                                data-product-category="{{product.category.name}}"
+                                                data-product-category-url="{{product.category.get_absolute_url}}"
+                                                data-product-absolute-url="{{product.get_absolute_url}}"
+                                                data-product-description-short="{{product.description_short}}"
+                                                data-product-image-base="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}"
                                                 data-product-add-to-cart-url="{% url 'shop:cart_add' product.id %}"
 
                                                 data-product-item-num="{{ product.item_number }}"
@@ -262,7 +272,11 @@
                                             <div class="pro-list-price">
                                                 <!-- <span class="new-price">$35.45</span> -->
                                                 <!-- <span class="old-price">$45.80</span> -->
+                                                {% if product.product_type == 'услуга' %}
+                                                <span>{{ currency }}{{ product.price_install }}</span>
+                                                {% else %}
                                                 <span>{{ currency }}{{ product.price }}</span>
+                                                {% endif %}
                                             </div>
                                             <p>{{ product.description_short }}</p>
                                             <p>
@@ -274,7 +288,9 @@
                                                     {% csrf_token %}
                                                     <input type="text" name="override" value="0" hidden>
                                                     <input type="text" name="quantity" value="1" hidden>
+                                                    {% if product.product_type != 'услуга' %}
                                                     <button type="submit" class="btn btn-danger bg-black border-0 btn-outline-none">В корзину</button>
+                                                    {% endif %}
                                                 </form>
                                             </div>
                                         </div>
@@ -293,7 +309,7 @@
                         <div class="h3 text-center">В данной категории нет товаров!</div>
                         {% else %}
 
-                        
+
                         <ul>
                             {% if page.has_previous %}
                             <li>
@@ -311,7 +327,7 @@
                             </li>
                             {% endif %}
                         </ul>
-                        
+
 
                         {% endif %}
                     </div>
