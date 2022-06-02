@@ -1,6 +1,6 @@
 {% extends 'shop/base.html' %}
 {% load static %}
-{% load is_key %}
+{% load helpers %}
 {% block title %}{{ product.seo_title }}{% endblock %}
 {% block description %}{{ product.seo_desc }}{% endblock %}
 {% block keywords %}{{ product.seo_key }}{% endblock %}
@@ -108,11 +108,10 @@
                                 <span>Устновка: </span>
                                 <span class="b1 badge badge-info">{{currency}}{{ product.price_install }}</span>
                                 <input id="ch" class="form-check-input ml-5" type="checkbox" name="price_install" value="1" style="
-                                    width: 40px;
+                                    right: 50px;
                                     zoom: 0.4;
                                     cursor: pointer;" {% if product.product_type == 'услуга' %} checked {% endif %}>
                             </li>
-                            
                         </ul>
                         {% if product.product_type != 'услуга' %}
                         {% if product.id != 33 %}
@@ -123,8 +122,7 @@
                             data-url-remove="{% url 'shop:cart_remove' product33.id %}"
                             data-price-install="{{ product33.price_install }}"
                             style="
-                                margin: 0 0 0 67px;
-                                width: 40px;
+                                right:  50px;
                                 zoom: 0.4;
                                 cursor: pointer;
                             ">

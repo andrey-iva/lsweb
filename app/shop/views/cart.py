@@ -147,11 +147,11 @@ def cart_json(request):
         return HttpResponse(json.dumps({'cart': 'empty'}))
     return redirect('shop:product_list')
 
-@require_POST
-def get_grand_total(request):
-    if request.session.get(GRAND_TOTAL_ID):
-        return HttpResponse(json.dumps({'grand_total': request.session.get(GRAND_TOTAL_ID)}))
-    return HttpResponse(json.dumps({'error': 'error get_grand_total'}))
+# @require_POST
+# def get_grand_total(request):
+#     if request.session.get(GRAND_TOTAL_ID):
+#         return HttpResponse(json.dumps({'grand_total': request.session.get(GRAND_TOTAL_ID)}))
+#     return HttpResponse(json.dumps({'error': 'error get_grand_total'}))
 
 def cart_clear(request):
     cart = Cart(request)

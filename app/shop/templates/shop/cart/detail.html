@@ -1,5 +1,6 @@
 {% extends 'shop/base.html' %}
 {% load static %}
+{% load helpers %}
 {% block title %}Корзина{% endblock %}
 {% block content %}
 <div class="breadcrumb-area bg-gray">
@@ -52,7 +53,7 @@
                                  {{ currency }}{{ item.total_price }}
                             </span>
                         </li>
-                        <li class="list-group-item">Монтаж за единицу: 
+                        <li class="list-group-item">Установка за единицу: 
                             <span style="position: absolute; right: 0;" class="font-weight-bold">
                             {% if item.price_install %}
                                 {{ currency }}{{ item.price_install }}
@@ -61,7 +62,7 @@
                             {% endif %}
                             </span>
                         </li>
-                        <li class="list-group-item">Монтаж за всё: 
+                        <li class="list-group-item">Установка за всё: 
                             <span style="position: absolute; right: 0;" class="product-subtotal-install text-danger font-weight-bold">
                             {% if item.price_install %}
                                 {{ currency }}{{ item.total_price_install }}

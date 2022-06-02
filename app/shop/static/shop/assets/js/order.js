@@ -135,7 +135,7 @@ $( function() {
         var deliveryPoints = tariffs.pop()
         console.log(deliveryPoints)
 
-        var tariffListHTML = "<h6 class='mt-0 pt-0 mb-2 text-danger'>Тип доставки</h6>"
+        var tariffListHTML = ""
 
         tariffs_loop:
         for (var i = 0; i < tariffs.length; i++) {
@@ -185,7 +185,7 @@ $( function() {
             '<label for="city">Пункты выдачи заказов <abbr style="color: red;" class="required" title="required">*</abbr></label>' 
             + '<select id="delivery_points" name="delivery_points" \
             class="form-control form-control-sm bg-light outline-none border border-secondary rounded-0">\
-            <option>Выберите пункт</option>'
+            // <option></option>'
             for (var i = 0; i < deliveryPoints.length; i++) {
                 deliveryPointsHTML += '<option value="'+ deliveryPoints[i]["code"] +'">'+
                 deliveryPoints[i]["location"]["address_full"] +'</option>'
@@ -327,69 +327,60 @@ $( function() {
         }
     };
 
+    // $("#order_create").click(function() {
+    //     var cdekCity = $("input[name=city]")
+    //     if (cdekCity.val() === "") {
+    //         $([document.documentElement, document.body]).animate({
+    //             scrollTop: $("#ser").offset().top
+    //         }, 1000);
+    //         return false
+    //     }
+    // })
+    
     $("#order_create").submit(function(e) {
-        e.preventDefault()
+        // e.preventDefault()
 
-        $.ajax({
-            url: CART_GET_GRAND_TOTAL_URL,
-            method: "POST",
-            data: {
-                "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()
-            },
-        }).done(function(response) {
-            response = JSON.parse(response)
-            if ("grand_total" in response) {
-                console.log(response["grand_total"]["price"])
-            }
-        }).fail(function(err) {
-            console.log(err)
-        });
-        
-
-        var delivery = 0
-        var varrios = {
-            "1": "До адреса клиента",
-            "2": "Службой доставки СДЭК",
-            "3": "Самовывоз",
-        };
-        $("input[name=delivery_name]").each(function() {
-            if (this.checked) {
-                delivery = this.value
-            }
-        });
-        var deliveryCity  = $("input[name=city]").val()
-        var deliveryPoint = $("select[name=delivery_points]").val()
-        if (deliveryPoint) {
-            $("input[name=delivery_point]").val(deliveryPoint)
-        }
-
-        var firstName = $("input[name=first_name]").val()
-        var lastName  = $("input[name=last_name]").val()
-        var country   = $("select[name=country]").val()
-        var region    = $("input[name=region]").val()
-        var address   = $("input[name=address]").val()
-        var postalCode= $("input[name=postal_code]").val()
-        var phone     = $("input[name=phone]").val()
-        var email     = $("input[name=email]").val()
-        
-        var paymentMethod = 0
-        var paymentVarios = {
-            "0": "Картой или наличными при самовывозе",
-            "5": "Картой или наличными при получении товара (+5%) от стоимости товара",
-            "paynow": "Банковской картой при оформлении заказа",
-        }
         $("input[name=payment_method]").each(function() {
-            if (this.checked) {
-                paymentMethod = this.value
+            if (this.checked && this.value === "paynow") {
+                var pay = confirm("Типа платим")
+                if (pay) {
+                    
+                }
+            }
+        })
+
+        // cdek city point
+        var cdekCity = $("input[name=city]")
+        if (cdekCity.val() === "") {
+            cdekCity.addClass("border border-danger")
+            $([document.documentElement, document.body]).animate({
+                scrollTop: $("#ser").offset().top
+            }, 1000);
+            return false
+        }
+
+        // cdek delivery points
+        var option = false
+        $("select[name=delivery_points] option").each(function() {
+            if ($(this).text() !== "" && $(this).prop("selected")) {
+                option = $(this)
             }
         });
-        var deliverySum = 0
-        $("input[name=tariff]").each(function() {
-            if (this.checked) {
-                deliverySum = this.value
-            }
-        });
+
+        if (option) {
+            $("input[name=address]").val("Пункт выдачи: " + option.text())
+        } else {
+            $("select[name=delivery_points]").addClass("border border-danger")
+            $([document.documentElement, document.body]).animate({
+                scrollTop: $("#ser").offset().top
+            }, 1000);
+            return false
+        }
+        
+
     });
+
+
 
     $("input[name=payment_method]").change(function(e) {
         var val = parseInt($(this).val())
@@ -519,6 +510,7 @@ $( function() {
                 this.hidden = true
             })
             $(".payment-method-2").addClass("d-none")
+            $("input[name=address]").val("г.Москва, ул.Щорса, д.8 стр.1")
         }
 
         $("input[name=delivery_name]").each(function() {

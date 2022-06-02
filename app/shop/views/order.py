@@ -13,7 +13,7 @@ from pprint import pprint
 class OrderCreateForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ['delivery_type', 'delivery_point', 'grand_total', 'first_name', 'last_name', 'country', 'region',
+        fields = ['delivery_type', 'grand_total', 'first_name', 'last_name', 'country', 'region',
         'address', 'postal_code', 'phone', 'email', 'notes']
 
 def clear_grand_total(request):
@@ -35,16 +35,18 @@ def order_create(request):
     if request.method == 'POST':
         request_post = request.POST.copy()
 
-        if request.session.get(GRAND_TOTAL_ID):
-            request_post['grand_total'] = str(request.session[GRAND_TOTAL_ID]['price'])
-        pprint(request_post)
+        request_post['grand_total'] = str(cart.get_total_price())
+        # pprint(request_post)
         form = OrderCreateForm(request_post)
         if form.is_valid():
             order = form.save()
             for item in cart:
+                install_product = int(item['price_install']) > 0
                 OrderItem.objects.create(order=order,
                                          product=item['product'],
+                                         install=install_product,
                                          price=item['price'],
+                                         price_install=item['price_install'],
                                          quantity=item['quantity'])
             cart.clear()
             clear_grand_total(request)

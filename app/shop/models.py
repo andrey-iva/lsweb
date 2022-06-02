@@ -121,9 +121,8 @@ class Order(models.Model):
     postal_code = models.CharField(max_length=20, blank=True, verbose_name='индекс')
     phone = models.CharField(max_length=100, blank=True, verbose_name='телефон')
     email = models.EmailField(blank=True)
-    delivery_point = models.CharField(max_length=100, blank=True, verbose_name="пункт выдачи")
     delivery_type = models.CharField(max_length=100, verbose_name="доставка")
-    grand_total = models.CharField(max_length=20, verbose_name="итого")
+    grand_total = models.CharField(max_length=20, verbose_name="Сумма заказа")
     notes = models.TextField(max_length=500, blank=True,
                              verbose_name='примечание к заказу')
     created = models.DateTimeField(auto_now_add=True)
@@ -156,8 +155,11 @@ class OrderItem(models.Model):
                                 related_name='order_items',
                                 on_delete=models.CASCADE,
                                 verbose_name='товар')
+    install = models.BooleanField(default=False, verbose_name='установка')
     price = models.DecimalField(
         max_digits=10, decimal_places=2, verbose_name='цена')
+    price_install = models.DecimalField(
+        default=0, max_digits=10, decimal_places=2, verbose_name='цена установки')
     quantity = models.PositiveIntegerField(
         default=1, verbose_name='колличество')
 

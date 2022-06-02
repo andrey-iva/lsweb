@@ -1,5 +1,5 @@
 from django import template
-
+from decimal import Decimal
 register = template.Library()
 
 # d|get_key:k
@@ -13,3 +13,7 @@ def get_install_price(d, k):
 		return int( float(d[str(k)]['price_install']) ) > 0
 	else:
 		return False
+
+@register.filter
+def add(left, right):
+    return str(Decimal(left) + Decimal(right))

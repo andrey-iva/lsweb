@@ -1479,7 +1479,7 @@
                 "Подитог <span>" + responseData.sub_total + "</span>"
             )
             $("#grand_total").html(
-                "Итог <span>" + responseData.sub_total + "</span>"
+                "Подитог <span>" + responseData.sub_total + "</span>"
             )
             $(".cart_info").html("<i class='icon-basket-loaded'></i><span class='black'>" + responseData.cart_length + "</span>" + responseData.sub_total)
             $(".cart_middle").html("<i class='icon-basket-loaded'></i><span class='pro-count black'>" + responseData.cart_length + "</span>")
@@ -1619,7 +1619,7 @@
                                 <div style='font-size: 12px ;'>Товар: " + 
                                 responseData[k]["quantity"] + " × " + 
                                 responseData[k]["price"] + "</div>\
-                                <div style='font-size: 12px ;'>Монтаж: " + 
+                                <div style='font-size: 12px ;'>Установка: " + 
                                 responseData[k]["quantity"] + " × " + 
                                 responseData[k]["price_install"] + "</div>\
                             </div>\
