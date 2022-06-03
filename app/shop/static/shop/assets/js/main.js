@@ -18,7 +18,7 @@
               if (countryCode === "KZ") {
                 $('#phone').mask('000 000 0000')
               }
-              
+
             });
         },
         initialCountry: "auto",
@@ -1069,7 +1069,7 @@
 
         // $("#modal_filter select").on("change", function(e) {
         //     var currentSelectValue = $(this).val()
-            
+
         //     if (currentSelectValue === bracket) {
         //         $(".bracket").removeClass("d-none")
         //         var requestData = {}
@@ -1135,7 +1135,7 @@
             requestData[tokenCSRF.attr("name")] = tokenCSRF.val()
             requestData["brand_name"] = currentBrand
             requestData["product_type"] = bracket
-            
+
             $(".models_car").html(prevOption)
             $(".years_car").html(prevOption)
             $(".seat_types_car").html(prevOption)
@@ -1167,7 +1167,7 @@
                     requestData[currenElem.data("filterName")] = currenElem.val()
                 }
             })
-            
+
             if (Object.keys(requestData).length <= 1) { return }
 
             requestData[tokenCSRF.attr("name")] = tokenCSRF.val()
@@ -1297,12 +1297,16 @@
     $('.quick_view').on('click', function (e) {
         var modal = $("#modal_body_q")
         var quickView = $(this)
-        
+
         $('#exampleModal').off()
         $("#modal_add_to_cart").off()
         $(".qtybutton").off()
 
         modal.empty()
+        modal.html(
+        "<div class='spinner-border spinner-border-sm' role='status'>\
+            <span class='sr-only'>Загрузка...</span>\
+        </div>")
 
         $.ajax({
             url: quickView.data("productAbsoluteUrl"),
@@ -1333,7 +1337,7 @@
                         <img src='" + productImages[i] + "'>\
                     </div>"
                 }
-                
+
 
                 sPro = 2
                 for (var i = 0; i < productImages.length; i++) {
@@ -1406,53 +1410,48 @@
         </div>\
     </div>\
 </form>'
-            modal.append(modalContent)
+            modal.html(modalContent)
 
-            
-
-            $('#exampleModal').on('shown.bs.modal', function() {
-
-                $('.quickview-slide-active').not('.slick-initialized').slick({
-                    slidesToShow: 3,
-                    slidesToScroll: 1,
-                    fade: false,
-                    loop: true,
-                    dots: false,
-                    arrows: true,
-                    prevArrow: '<span class="icon-prev"><i class="icon-arrow-left"></i></span>',
-                    nextArrow: '<span class="icon-next"><i class="icon-arrow-right"></i></span>',
-                    responsive: [
-                        {
-                            breakpoint: 1199,
-                            settings: {
-                                slidesToShow: 3,
-                            }
-                        },
-                        {
-                            breakpoint: 991,
-                            settings: {
-                                slidesToShow: 3,
-                            }
-                        },
-                        {
-                            breakpoint: 767,
-                            settings: {
-                                slidesToShow: 3,
-                            }
-                        },
-                        {
-                            breakpoint: 575,
-                            settings: {
-                                slidesToShow: 2,
-                            }
+            // .not('.slick-initialized')
+            $('.quickview-slide-active').not('.slick-initialized').slick({
+                // lazyLoad: 'ondemand',
+                slidesToShow: 3,
+                slidesToScroll: 1,
+                fade: false,
+                loop: true,
+                dots: false,
+                arrows: true,
+                prevArrow: '<span class="icon-prev"><i class="icon-arrow-left"></i></span>',
+                nextArrow: '<span class="icon-next"><i class="icon-arrow-right"></i></span>',
+                responsive: [
+                    {
+                        breakpoint: 1199,
+                        settings: {
+                            slidesToShow: 3,
                         }
-                    ]
-                });
-                        
-                $('.quickview-slide-active a').on('click', function() {
-                    $('.quickview-slide-active a').removeClass('active');
-                })
+                    },
+                    {
+                        breakpoint: 991,
+                        settings: {
+                            slidesToShow: 3,
+                        }
+                    },
+                    {
+                        breakpoint: 767,
+                        settings: {
+                            slidesToShow: 3,
+                        }
+                    },
+                    {
+                        breakpoint: 575,
+                        settings: {
+                            slidesToShow: 2,
+                        }
+                    }
+                ]
             });
+
+
 
             var CartPlusMinus = $('.cart-plus-minus');
             CartPlusMinus.prepend('<div class="dec qtybutton">-</div>');
@@ -1495,7 +1494,7 @@
                     if ($("#exampleModal").hasClass("show")) {
                         $(".modal_quickView_close").click()
                     }
-                    
+
                     // кнопки в мини корзине
                     var elemBTN = $("#no_enpty_mini_cart")
                     if (elemBTN.hasClass("d-none")) {
@@ -1530,9 +1529,15 @@
                         printCart()
                     }
 
+                    $('#exampleModal').on('shown.bs.modal', function() {
+                        $('.quickview-slide-active a').on('click', function() {
+                            $('.quickview-slide-active a').removeClass('active');
+                        })
+                    });
+
                 }).fail(function(err) {});
             });
-            
+
         }).fail(function(err) {
             console.log(err)
         });
@@ -1544,12 +1549,12 @@
 
 
 
-    
-    
+
+
 
     // product deatail page
     // Берет value из счетчика колличества товаров input[name=qtybutton]
-    // Устанавливает value в скрытом поле input[name=quantity] 
+    // Устанавливает value в скрытом поле input[name=quantity]
     $(".product_detail").click(function(e) {
         var plusMinusValue = $("input[name=qtybutton]").val()
         $("input[name=quantity]").val(plusMinusValue)
@@ -1584,7 +1589,7 @@
         })
         // /cart/detail/
         // 1 установка подитоговой цены всех продуктов
-        // 2 Счетчик корзиры + стоимость на странице для ПК 
+        // 2 Счетчик корзиры + стоимость на странице для ПК
         // 3 Счетчик на странице для ПЛ
         function changeCartLengthSubTotal(responseData) {
             $("#sub_total").html(
@@ -1638,7 +1643,7 @@
                         parentElem.addClass("d-none")
                         if (parseInt(responseData.cart_length) === 0) {
                             $("#cart-container").html("<h3 class=\"text-center\">Ваша корзина пуста</h3>\
-                                        <div class=\"text-center h6\"><a class='btn btn-danger' href='" + 
+                                        <div class=\"text-center h6\"><a class='btn btn-danger' href='" +
                                         PRODUCT_LIST_URL + "'>Перейти к покупкам</a></div>")
                             //window.location = PRODUCT_LIST_URL
                         }
@@ -1716,7 +1721,7 @@
                 $("#cart-mini-sub-total").text(responseData.sub_total)
 
                 var htm = ""
-                
+
                 for (var k in responseData) {
                     if (k === "sub_total" || k === 'cart_length') { continue }
 
@@ -1728,11 +1733,11 @@
                             </div>\
                             <div class='cart-title'>\
                                 <h4 class='pb-0 mb-1'><a href='" + responseData[k]["product_url"] + "'>" + responseData[k]["name"] + "</a></h4>\
-                                <div style='font-size: 12px ;'>Товар: " + 
-                                responseData[k]["quantity"] + " × " + 
+                                <div style='font-size: 12px ;'>Товар: " +
+                                responseData[k]["quantity"] + " × " +
                                 responseData[k]["price"] + "</div>\
-                                <div style='font-size: 12px ;'>Монтаж: " + 
-                                responseData[k]["quantity"] + " × " + 
+                                <div style='font-size: 12px ;'>Монтаж: " +
+                                responseData[k]["quantity"] + " × " +
                                 responseData[k]["price_install"] + "</div>\
                             </div>\
                             <div class='cart-delete'>\
@@ -1769,7 +1774,7 @@
                     return
                 }
                 console.info(this.url, "update mini cart:", responseData)
-                // если товар успешно добавлен в козину, обновляем 
+                // если товар успешно добавлен в козину, обновляем
                 if (responseData.result === "update") {
                     // Открытие мини корзины при добавлении товара
                     $(".sidebar-cart-active").addClass("inside")
@@ -1778,7 +1783,7 @@
                     if ($("#exampleModal").hasClass("show")) {
                         $(".product_detail_close").click()
                     }
-                    
+
                     // кнопки в мини корзине
                     var elemBTN = $("#no_enpty_mini_cart")
                     if (elemBTN.hasClass("d-none")) {
@@ -1821,7 +1826,7 @@
 
     $("#add_anchor---x").change(function() {
         var install = $("input[name=price_install]")
-        
+
         if (this.checked) {
             $.ajax({
                 url: $(this).data("url"),
