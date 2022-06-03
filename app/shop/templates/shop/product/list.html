@@ -176,24 +176,19 @@
                                             </a>
                                             <div class="product-action-2 tooltip-style-2">
                                                 <button
+                                                type="button"
                                                 class="quick_view"
                                                 title="Быстрый просмотр"
                                                 data-toggle="modal"
                                                 data-target="#exampleModal"
-                                                data-product-name="{{product.name}}"
-                                                data-product-price="{{currency}}{{product.price}}"
-                                                data-product-category="{{product.category.name}}"
-                                                data-product-category-url="{{product.category.get_absolute_url}}"
+
                                                 data-product-absolute-url="{{product.get_absolute_url}}"
-                                                data-product-description-short="{{product.description_short}}"
                                                 data-product-image-base="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}"
                                                 data-product-add-to-cart-url="{% url 'shop:cart_add' product.id %}"
-
-                                                data-product-item-num="{{ product.item_number }}"
-                                                data-product-available="{{ product.available }}"
                                                 >
                                                     <i class="icon-size-fullscreen icons"></i>
                                                 </button>
+
                                                 {% if product.product_type != 'услуга' %}
                                                 <button type="submit"><i class="icon-basket-loaded"></i></button>
                                                 {% endif %}

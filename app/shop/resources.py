@@ -36,6 +36,7 @@ class ProductResource(resources.ModelResource):
     seo_title = fields.Field(attribute='seo_title', column_name='SEO Заголовок')
     seo_key = fields.Field(attribute='seo_key', column_name='SEO Ключевые слова')
     seo_desc = fields.Field(attribute='seo_desc', column_name='SEO Описание')
+    attribute = fields.Field(attribute='attribute', column_name='Атрибут')
     # full_url = fields.Field(attribute='full_url', column_name='Полный URL')
     # created = fields.Field(attribute='created', column_name='Был добавлен')
     # updated = fields.Field(attribute='updated', column_name='Был обновлен')

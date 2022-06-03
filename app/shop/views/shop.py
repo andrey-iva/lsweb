@@ -160,7 +160,7 @@ def product_list(request, category_slug=None):
 # "{0}://{1}{2}".format(request.scheme, request.get_host(), request.path)
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug)
-    product33 = get_object_or_404(Product, id=33)
+    ploop = get_object_or_404(Product, attribute='loop')
 
     # как-то проверить есть ли
     product.full_url = "{0}://{1}{2}".format(request.scheme, request.get_host(), request.path)
@@ -170,15 +170,32 @@ def product_detail(request, slug):
     
     # url картинок, модальное окно с карточкой товара
     if request.headers.get('X-Requested-With'):
-        images_urls = []
+        image_urls = []
         for item in images:
-            images_urls.append(item.image.url)
-        return HttpResponse(json.dumps(images_urls))
+            image_urls.append(item.image.url)
+        return HttpResponse(json.dumps({
+                'image_urls': image_urls,
+                'product': {
+                    'id': product.id,
+                    'name': product.name,
+                    'price': str(product.price),
+                    'price_install': str(product.price_install),
+                    'description': product.description_short,
+                    'category': product.category.name,
+                    'code': product.item_number,
+                    'available': product.available,
+                    'product_type': product.product_type,
+                    'attribute': product.attribute,
+                },
+                'product_loop': {
+                    'id': ploop.id
+                },
+            }))
 
     return render(request, 'shop/product/detail.html', {
         'product': product,
         'images': images,
-        'product33': product33,
+        'product_loop': ploop,
     })
 
 @require_POST

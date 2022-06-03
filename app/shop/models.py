@@ -76,6 +76,7 @@ class Product(models.Model):
         blank=True, verbose_name='SEO content')
     full_url = models.TextField(
         blank=True, verbose_name='Полный URL')
+    attribute = models.CharField(max_length=30, blank=True, default='', verbose_name="Атрибут")
 
     # created = models.DateTimeField(auto_now_add=True, blank=True, null=True, verbose_name='Добавлен')
     # updated = models.DateTimeField(auto_now=True, blank=True, null=True, verbose_name='Обновлен')

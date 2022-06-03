@@ -1294,106 +1294,135 @@
 
     // модальное окно с карточкой товара
 
-    
-    // отключаем повторную инициализацию, карточка товара
-    $("#exampleModal").find(".close").click(function(e) {
-        $('.quickview-slide-active').slick('unslick');
-    })
-
-    // quickview-slide-active nav-style-6 slick-initialized slick-slider
-    // обновление данных в модальном окне, текущая карточка товара
-    $(".quick_view").on("click", function(e) {
-        e.preventDefault()
+    $('.quick_view').on('click', function (e) {
+        var modal = $("#modal_body_q")
+        var quickView = $(this)
         
-        // глючит слайдер
-        if ($(".quickview-slide-active").hasClass("slick-initialized")) {
-            $(".quickview-slide-active").removeClass("slick-initialized")
-            $(".quickview-slide-active").removeClass("slick-slider")
-        }
-        var modal = $("#exampleModal");
-        var parentElem = $(this)
+        $('#exampleModal').off()
+        $("#modal_add_to_cart").off()
+        $(".qtybutton").off()
 
-        var bigIMG =
+        modal.empty()
+
+        $.ajax({
+            url: quickView.data("productAbsoluteUrl"),
+            method: "GET",
+        }).done(function(response) {
+
+            var response = JSON.parse(response)
+            var productImages = response["image_urls"]
+            var product = response["product"]
+            var productLoop = response["product_loop"]
+
+            console.log(response)
+
+            var bigImages =
             "<div id='pro-1' class='tab-pane fade show active'>\
-                    <img src='" + parentElem.data("productImageBase") + "'>\
+                    <img src='" + quickView.data("productImageBase") + "'>\
                 </div>"
 
-        var smallIMG =
-            "<a class='active' data-toggle='tab' href='#pro-1'>\
-                    <img src='" + parentElem.data("productImageBase") + "'>\
-                </a>"
-        // запрос на получение доп изображений
-        modal.find(".quickview-big-img").html(bigIMG)
-        modal.find(".quickview-slide-active").html(smallIMG)
-        $.ajax({
-            url: parentElem.data("productAbsoluteUrl"),
-            method: "GET",
-            headers: { 'X-Requested-With': 'XMLHttpRequest' },
-            success: function(response) {
-                try {
-                    var responseData = JSON.parse(response)
-                    console.log(responseData)
-                } catch (err) {
-                    // если ошибка при получении url-лов картинок, вставляем базовое изображение
-                    // 
-                    // modal.find(".quickview-big-img").html(bigIMG)
-                    // modal.find(".quickview-slide-active").html(smallIMG)
-                    // console.info("УСТАНОВЛЕНЫ БАЗОВЫЕ ИЗОБРАЖЕНИЕ:", err)
-                    return
-                }
+            var smallImages =
+                "<a class='active' data-toggle='tab' href='#pro-1'>\
+                        <img src='" + quickView.data("productImageBase") + "'>\
+                    </a>"
 
-                var sPro = 2
-                for (var i = 0; i < responseData.length; i++) {
-                    bigIMG +=
+            var sPro = 2
+                for (var i = 0; i < productImages.length; i++) {
+                    bigImages +=
                         "<div id='pro-" + (sPro++) + "' class='tab-pane fade'>\
-                        <img src='" + responseData[i] + "'>\
+                        <img src='" + productImages[i] + "'>\
                     </div>"
                 }
                 
 
                 sPro = 2
-                for (var i = 0; i < responseData.length; i++) {
-                    smallIMG +=
+                for (var i = 0; i < productImages.length; i++) {
+                    smallImages +=
                         "<a data-toggle='tab' href='#pro-" + (sPro++) + "'>\
-                        <img src='" + responseData[i] + "'>\
+                        <img src='" + productImages[i] + "'>\
                     </a>"
                 }
 
-                modal.find(".modal_product_name").html("<a style='color:black;' href='" +
-                    parentElem.data("productAbsoluteUrl") + "'>" +
-                    parentElem.data("productName") + "</a>"
-                )
-                modal.find(".modal_product_price").html("<span>" + parentElem.data("productPrice") + "</span>")
-                modal.find(".modal_product_category").html("<span>Категория: </span><a href='" +
-                    parentElem.data("productCategoryUrl") + "'>" +
-                    parentElem.data("productCategory") + ",</a>"
-                )
-                modal.find(".modal_item_num").html("<span>Код товара: </span>" + parentElem.data("productItemNum"))
-                var available = parentElem.data("productAvailable")
-                if (available === "True") {
-                    modal.find(".modal_product_available").html("<span>Наличие: </span> Есть в наличии")
-                } else {
-                    modal.find(".modal_product_available").html("<span>Наличие: </span> Нет в наличии")
-                }
-                modal.find(".modal_product_desc_short").text(parentElem.data("productDescriptionShort"))
+            var checkbox = '\
+<span class="font-weight-bold">\
+Петля для якорного крепления:\
+<input id="add_anchor" class="form-check-input" type="checkbox" name="" value=""\
+    style="\
+        max-width: 200px;\
+        margin-left: -7px;\
+        zoom: 0.4;\
+        cursor: pointer;\
+    ">\
+</span>'
 
-                modal.find("form").attr("action", parentElem.data("productAddToCartUrl"))
+            var modalContent = '\
+<form action="' + quickView.data("productAddToCartUrl") + '"  method="post" class="row" id="modal_add_to_cart">\
+' + CSRF_TOKEN + '\
+<input type="text" name="override" value="0" hidden>\
+<input id="modal_quantity" type="text" name="quantity" value="1" hidden>\
+    <div class="col-lg-5 col-md-6 col-12 col-sm-12">\
+        <div class="tab-content quickview-big-img">\
+            '+ bigImages +'\
+        </div>\
+        <div class="quickview-wrap mt-15">\
+            <div class="quickview-slide-active nav-style-6">\
+                '+ smallImages +'\
+            </div>\
+        </div>\
+    </div>\
+    <div class="col-lg-7 col-md-6 col-12 col-sm-12">\
+        <div class="product-details-content quickview-content">\
+            <h2>' + product["name"] + '</h2>\
+            <div class="product-ratting-review-wrap">\
+            </div>\
+            <p>' + product["description"] + '</p>\
+            <div class="pro-details-price">\
+                <span>' + CURRENCY + product["price"] + '</span>\
+            </div>\
+            <div class="pro-details-quality">\
+                <span>Колличество:</span>\
+                <div class="cart-plus-minus">\
+                    <input class="cart-plus-minus-box" type="text" name="qtybutton" value="1">\
+                </div>\
+            </div>\
+            <div class="product-details-meta">\
+                <ul>\
+                    <li><span>Категория:</span> ' + product["category"] + '</li>\
+                    <li><span>Код товара: </span> ' + product["code"] + '</li>\
+                    <li><span>Наличие: </span> ' + (product["available"] ? "Есть в наличии" : "Нет в наличии")  + '</li>\
+                    <li><span>Устновка: </span>\
+                        <span class="b1 badge badge-info" style="font-size: 16px;">' + CURRENCY + product["price_install"] + '</span>\
+                        <input type="checkbox" ' + (product["product_type"] === "услуга" ? "checked" : "")  + ' id="ch" class="form-check-input ml-5" \
+                        style="max-width: 50px;zoom: 0.4;cursor: pointer;" name="price_install" value="1">\
+                    </li>\
+                </ul>\
+                ' + ( (product["product_type"] !== "услуга" && product["attribute"] !== "loop") ? checkbox : "") + '\
+            </div>\
+            <div class="pro-details-action-wrap">\
+                <div class="pro-details-add-to-cart">\
+                    <button type="submit" class="btn btn-danger bg-black p-3 border-0 btn-outline-none">Добавить в корзину</button>\
+                </div>\
+            </div>\
+        </div>\
+    </div>\
+</form>'
+            modal.append(modalContent)
 
-                modal.find(".quickview-big-img").html(bigIMG)
-                modal.find(".quickview-slide-active").html(smallIMG)
+            
+
+            $('#exampleModal').on('shown.bs.modal', function() {
 
                 $('.quickview-slide-active').not('.slick-initialized').slick({
-                    // lazyLoad: 'ondemand',
                     slidesToShow: 3,
                     slidesToScroll: 1,
                     fade: false,
                     loop: true,
                     dots: false,
                     arrows: true,
-                    focusOnSelect: true,
                     prevArrow: '<span class="icon-prev"><i class="icon-arrow-left"></i></span>',
                     nextArrow: '<span class="icon-next"><i class="icon-arrow-right"></i></span>',
-                    responsive: [{
+                    responsive: [
+                        {
                             breakpoint: 1199,
                             settings: {
                                 slidesToShow: 3,
@@ -1419,21 +1448,104 @@
                         }
                     ]
                 });
-
-
-                $('#exampleModal').trigger('shown.bs.modal')
-
+                        
                 $('.quickview-slide-active a').on('click', function() {
                     $('.quickview-slide-active a').removeClass('active');
                 })
-            },
-            error: function() {
-                console.error(this.url)
-            },
+            });
+
+            var CartPlusMinus = $('.cart-plus-minus');
+            CartPlusMinus.prepend('<div class="dec qtybutton">-</div>');
+            CartPlusMinus.append('<div class="inc qtybutton">+</div>');
+            $(".qtybutton").on("click", function() {
+                var $button = $(this);
+                var oldValue = $button.parent().find("input").val();
+                if ($button.text() === "+") {
+                    var newVal = parseFloat(oldValue) + 1;
+                } else {
+                    // Don't allow decrementing below zero
+                    if (oldValue > 1) {
+                        var newVal = parseFloat(oldValue) - 1;
+                    } else {
+                        newVal = 1;
+                    }
+                }
+                if (newVal > 100) {
+                    newVal = 100
+                }
+                $button.parent().find("input").val(newVal);
+                $("#modal_quantity").val(newVal)
+            });
+
+            $("#modal_add_to_cart").submit(function(e) {
+                e.preventDefault()
+
+                var formElem = $(this)
+
+                $.ajax({
+                    url: this.action,
+                    method: "POST",
+                    data: $(this).serialize(),
+                }).done(function(response) {
+
+                    // Открытие мини корзины при добавлении товара
+                    $(".sidebar-cart-active").addClass("inside")
+                    $(".main-wrapper").addClass("overlay-active")
+
+                    if ($("#exampleModal").hasClass("show")) {
+                        $(".modal_quickView_close").click()
+                    }
+                    
+                    // кнопки в мини корзине
+                    var elemBTN = $("#no_enpty_mini_cart")
+                    if (elemBTN.hasClass("d-none")) {
+                        elemBTN.removeClass("d-none")
+                        $("#enpty_mini_cart").addClass("d-none")
+                    }
+
+                    $("#cart_mini_content").html(
+                        "<li class='spinner-border spinner-border-sm text-center' role='status'>\
+                        <span class='sr-only'>Загрузка...</span>\
+                    </li>")
+
+                    // product петля для якорного крепления
+                    if (formElem.find("#add_anchor").prop("checked")) {
+                        $.ajax({
+                            url: "/cart/add/" + productLoop["id"] + "/",
+                            method: "POST",
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                            data: {
+                                "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+                                "quantity": 1,
+                                "override": 0,
+                                "price_install": $("input[name=price_install]").prop("checked") ? 1 : 0
+                            }
+                        }).done(function(response) {
+                            console.log("add_anchor", response)
+                            printCart()
+                        }).fail(function(err) {
+                            console.log("add_anchor", err)
+                        })
+                    } else {
+                        printCart()
+                    }
+
+                }).fail(function(err) {});
+            });
+            
+        }).fail(function(err) {
+            console.log(err)
         });
-
-
     });
+
+    // $("#exampleModal").find(".close").click(function(e) {
+    //     $('.quickview-slide-active').slick('unslick');
+    // })
+
+
+
+    
+    
 
     // product deatail page
     // Берет value из счетчика колличества товаров input[name=qtybutton]
@@ -1619,7 +1731,7 @@
                                 <div style='font-size: 12px ;'>Товар: " + 
                                 responseData[k]["quantity"] + " × " + 
                                 responseData[k]["price"] + "</div>\
-                                <div style='font-size: 12px ;'>Установка: " + 
+                                <div style='font-size: 12px ;'>Монтаж: " + 
                                 responseData[k]["quantity"] + " × " + 
                                 responseData[k]["price_install"] + "</div>\
                             </div>\
@@ -1678,7 +1790,7 @@
                         "<li class='spinner-border spinner-border-sm text-center' role='status'>\
                         <span class='sr-only'>Загрузка...</span>\
                     </li>")
-                    // product 33 петля для якорного крепления
+                    // product петля для якорного крепления
                     if (formElem.find("#add_anchor").prop("checked")) {
                         $.ajax({
                             url: formElem.find("#add_anchor").data("url"),

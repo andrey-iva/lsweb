@@ -35,7 +35,7 @@ class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
         'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type',
         'service_type',
         'available', 'image_base', 'preview', 'description_short',
-        'description_full', 'seo_title', 'seo_key', 'seo_desc', 'full_url',
+        'description_full', 'seo_title', 'seo_key', 'seo_desc', 'full_url', 'attribute',
     ]
     list_display = [
         'id', 'category', 'name', 'slug', 'price', 'price_install',
