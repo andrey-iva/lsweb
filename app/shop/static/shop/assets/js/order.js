@@ -349,32 +349,40 @@ $( function() {
             }
         })
 
-        // cdek city point
-        var cdekCity = $("input[name=city]")
-        if (cdekCity.val() === "") {
-            cdekCity.addClass("border border-danger")
-            $([document.documentElement, document.body]).animate({
-                scrollTop: $("#ser").offset().top
-            }, 1000);
-            return false
-        }
-
-        // cdek delivery points
-        var option = false
-        $("select[name=delivery_points] option").each(function() {
-            if ($(this).text() !== "" && $(this).prop("selected")) {
-                option = $(this)
+        var cdek = false
+        $("input[name=delivery_name]").each(function() {
+            if (parseInt($(this).val()) === 2 && $(this).prop("checked")) {
+                cdek = true
             }
         });
+        if ( cdek ) {
+            // cdek city point
+            var cdekCity = $("input[name=city]")
+            if (cdekCity.val() === "") {
+                cdekCity.addClass("border border-danger")
+                $([document.documentElement, document.body]).animate({
+                    scrollTop: $("#ser").offset().top
+                }, 1000);
+                return false
+            }
 
-        if (option) {
-            $("input[name=address]").val("Пункт выдачи: " + option.text())
-        } else {
-            $("select[name=delivery_points]").addClass("border border-danger")
-            $([document.documentElement, document.body]).animate({
-                scrollTop: $("#ser").offset().top
-            }, 1000);
-            return false
+            // cdek delivery points
+            var option = false
+            $("select[name=delivery_points] option").each(function() {
+                if ($(this).text() !== "" && $(this).prop("selected")) {
+                    option = $(this)
+                }
+            });
+
+            if (option) {
+                $("input[name=address]").val("Пункт выдачи: " + option.text())
+            } else {
+                $("select[name=delivery_points]").addClass("border border-danger")
+                $([document.documentElement, document.body]).animate({
+                    scrollTop: $("#ser").offset().top
+                }, 1000);
+                return false
+            }
         }
         
 
@@ -511,6 +519,8 @@ $( function() {
             })
             $(".payment-method-2").addClass("d-none")
             $("input[name=address]").val("г.Москва, ул.Щорса, д.8 стр.1")
+            // астивируем сессию
+            addPercent(0, 0)
         }
 
         $("input[name=delivery_name]").each(function() {
