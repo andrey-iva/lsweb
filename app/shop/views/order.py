@@ -35,7 +35,9 @@ def order_create(request):
     if request.method == 'POST':
         request_post = request.POST.copy()
 
-        request_post['grand_total'] = str(cart.get_total_price())
+        if request.session.get(GRAND_TOTAL_ID):
+            request_post['grand_total'] = str(request.session[GRAND_TOTAL_ID]["price"])
+            # request_post['grand_total'] = str(cart.get_total_price())
         # pprint(request_post)
         form = OrderCreateForm(request_post)
         if form.is_valid():
