@@ -180,13 +180,18 @@ $( function() {
             // Пункты выдачи заказов
             var points = []
             var locations = []
+            var locationsCodes = {}
 
             var deliveryPointsHTML = 
-            '<label for="city">Пункты выдачи заказов <abbr style="color: red;" class="required" title="required">*</abbr></label>' 
+            '<label for="city">Пункты выдачи заказов <abbr style="color: red;" class="required" title="required">*</abbr></label>'
+            + '<input id="search_point" class="form-control-sm border-0 text-dark" type="text" placeholder="Здесь можно ввести адрес. Точка будет на карте">'
             + '<select id="delivery_points" name="delivery_points" \
             class="form-control form-control-sm bg-light outline-none border border-secondary rounded-0">\
-            // <option></option>'
+            // <option>Здесь можно выбрать адрес. Точка будет на карте</option>'
             for (var i = 0; i < deliveryPoints.length; i++) {
+
+                locationsCodes[deliveryPoints[i]["location"]["address_full"]] = deliveryPoints[i]["code"]
+
                 deliveryPointsHTML += '<option value="'+ deliveryPoints[i]["code"] +'">'+
                 deliveryPoints[i]["location"]["address_full"] +'</option>'
 
@@ -309,8 +314,8 @@ $( function() {
                                 myMap.geoObjects.add(new ymaps.Placemark([latitude, longitude], {
                                     balloonContent: deliveryPoints[i]["location"]["address_full"]
                                 }, {
-                                    preset: 'islands#icon',
-                                    iconColor: 'green'
+                                    preset: 'islands#redDotIcon',
+                                    // iconColor: 'green'
                                 }))
 
                             });
@@ -318,6 +323,14 @@ $( function() {
                             break
                         }
                     }
+                });
+
+                $( "#search_point" ).autocomplete({
+                  source: locations,
+                  select: function( event, ui ) {
+                    $("#delivery_points").html("<option value='"+ locationsCodes[ui.item.value] +"' selected>" + ui.item.value + "</option>")
+                    $("#delivery_points").trigger("change")
+                  }
                 });
             }
 
@@ -549,7 +562,7 @@ $( function() {
         console.log("START:", suggestion)
         $(".tariffs_list").html(
         '<div class="d-flex justify-content-center">\
-            <div class="spinner-grow" role="status">\
+            <div class="spinner-border" role="status">\
                 <span class="sr-only">Loading...</span>\
             </div>\
         </div>')
