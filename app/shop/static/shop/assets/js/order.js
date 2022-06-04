@@ -184,7 +184,8 @@ $( function() {
 
             var deliveryPointsHTML = 
             '<label for="city">Пункты выдачи заказов <abbr style="color: red;" class="required" title="required">*</abbr></label>'
-            + '<input id="search_point" class="form-control-sm border-0 text-dark" type="text" placeholder="Здесь можно ввести адрес. Точка будет на карте">'
+            + '<input id="search_point" class="mb-2 form-control-sm bg-light outline-none border border-secondary rounded-0"\
+             type="text" placeholder="Здесь можно ввести адрес. Точка будет на карте">'
             + '<select id="delivery_points" name="delivery_points" \
             class="form-control form-control-sm bg-light outline-none border border-secondary rounded-0">\
             // <option>Здесь можно выбрать адрес. Точка будет на карте</option>'
@@ -254,7 +255,7 @@ $( function() {
                 function init () {
                     var myMap = new ymaps.Map('map', {
                             center: [s["data"]["geo_lat"], s["data"]["geo_lon"]],
-                            zoom: 12
+                            zoom: 11
                         }, {
                             searchControlProvider: 'yandex#search'
                         }),
