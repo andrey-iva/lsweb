@@ -74,5 +74,8 @@ class Cart(object):
         install_price = sum(Decimal(item['price_install']) * item['quantity'] for item in self.cart.values())
         return products_price + install_price
 
-    def get_grand_total_price(self):
+    def get_products_total_price(self):
         return sum(Decimal(item['price']) * item['quantity'] for item in self.cart.values())
+
+    def get_products_install_total_price(self):
+        return sum(Decimal(item['price_install']) * item['quantity'] for item in self.cart.values())

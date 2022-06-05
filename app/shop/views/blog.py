@@ -3,7 +3,14 @@ from django.core.paginator import Paginator, EmptyPage,\
                                   PageNotAnInteger
 from django.views.generic import ListView
 from ..models import Post
-
+'''
+https://isofix-msk.ru/blog/instrukciya-isofix/
+https://isofix-msk.ru/blog/neskolko-kresel/
+https://isofix-msk.ru/blog/podushka-bezopasnosti/
+https://isofix-msk.ru/blog/avto-s-isofix/
+https://isofix-msk.ru/blog/sertificati-kresel/
+https://isofix-msk.ru/blog/isofix-standart/
+'''
 
 def post_list(request):
     object_list = Post.published.all()

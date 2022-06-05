@@ -1,4 +1,5 @@
 $( function() {
+    
     var token = "17a564feb19fabf1391ab53059b81a6a2012b9a9";
     // $("#map").eq(0).css("all", "initial")
     // 55.645664,37.403028
@@ -328,6 +329,7 @@ $( function() {
 
                 $( "#search_point" ).autocomplete({
                   source: locations,
+                  minLength: 2,
                   select: function( event, ui ) {
                     $("#delivery_points").html("<option value='"+ locationsCodes[ui.item.value] +"' selected>" + ui.item.value + "</option>")
                     $("#delivery_points").trigger("change")
@@ -519,8 +521,8 @@ $( function() {
             clientInfo.attr("hidden", false)
             $("#shoping_center").removeClass("d-none")
             
-            deliveryTypeInfoText.text("Самовывоз")
-            hiddenInputDeliveryType.val("Самовывоз")
+            deliveryTypeInfoText.text("Самовывоз или установка")
+            hiddenInputDeliveryType.val("Самовывоз или установка")
 
             $("#country").prop('required', false)
             $("#client_info input").each(function() {
@@ -545,6 +547,14 @@ $( function() {
 
         setDefaultPayment()
     });
+    //
+    if ( parseInt($("#base").val()) === 3) {
+        setDefaultPayment()
+        var elem = document.querySelector("#base")
+        var event = new Event("change");
+        elem.checked = true
+        elem.dispatchEvent(event);
+    }
 
     // cdek start        
     $("#city").suggestions({
