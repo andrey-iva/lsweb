@@ -44,9 +44,12 @@
                                 {% if cart.get_products_install_total_price == 0 %}
                                 <li><input type="radio" name="delivery_name" value="1"> До адреса клиента <span></span></li> 
                                 <li><input type="radio" name="delivery_name" value="2"> До пункта выдачи СДЭК <span></span></li>
-                                {% else %}
                                 <li class="help_text">
                                     <input id="base" type="radio" name="delivery_name" value="3"> Самовывоз или установка 
+                                </li>
+                                {% else %}
+                                <li class="help_text">
+                                    <input id="base" checked type="radio" name="delivery_name" value="3"> Самовывоз или установка 
                                 </li>
                                 {% endif %} 
                             </ul>
@@ -72,7 +75,9 @@
                 
             </div>
             <div id="shoping_center" class="alert border h6 text-center text-danger d-none h5" role="alert">
-               Товар можно забрать по адресу: г.Москва, ул.Щорса, д.8 стр.1 - автокомплекс "Buncar", ежедневно с 10 до 20, по предварительному согласованию.
+               Установить или забрать кронштейн можно по адресу,: г.Москва, ул.Щорса, д.8 стр.1 - автокомплекс "Buncar".
+               <br>Забрать - ежедневно с 10:00 до 20:00.
+               <br>Установить - ПН и СР с 20:00 до 22:00, СБ с 10:00 до 22:00, по предварительной записи
             </div>
             <form id="order_create" action="{% url 'shop:order_create' %}" method="post" class="row mt-20 d-none">
                 {% csrf_token %}

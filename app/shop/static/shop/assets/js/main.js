@@ -1320,7 +1320,7 @@
             var product = response["product"]
             var productLoop = response["product_loop"]
 
-            console.log(response)
+            // console.log(response)
 
             var bigImages =
             "<div id='pro-1' class='tab-pane fade show active'>\
@@ -1349,8 +1349,11 @@
                     </a>"
                 }
 
+            var textColor = product["product_type"] === "услуга" ? "danger" : "info";
+            var cssClassReil = product["product_type"] === "рейка" ? "class='d-none'": ""; 
+
             var checkbox = '\
-<span class="font-weight-bold">\
+<span class="font-weight-bold ' + cssClassReil + '">\
 Петля для якорного крепления:\
 <input id="add_anchor" class="form-check-input" type="checkbox" name="" value=""\
     style="\
@@ -1396,9 +1399,9 @@
                     <li><span>Категория:</span> ' + product["category"] + '</li>\
                     <li><span>Код товара: </span> ' + product["code"] + '</li>\
                     <li><span>Наличие: </span> ' + (product["available"] ? "Есть в наличии" : "Нет в наличии")  + '</li>\
-                    <li><span>Устновка: </span>\
-                        <span class="b1 badge badge-info" style="font-size: 16px;">' + CURRENCY + product["price_install"] + '</span>\
-                        <input type="checkbox" ' + (product["product_type"] === "услуга" ? "checked" : "")  + ' id="ch" class="form-check-input ml-5" \
+                    <li ' + cssClassReil + '><span>Устновка: </span>\
+                        <span class="b1 badge badge-' + textColor + '" style="font-size: 16px;">' + CURRENCY + product["price_install"] + '</span>\
+                        <input type="checkbox" ' + (product["product_type"] === "услуга" ? "checked" : "")  + ' class="form-check-input ml-5" \
                         style="max-width: 50px;zoom: 0.4;cursor: pointer;" name="price_install" value="1">\
                     </li>\
                 </ul>\
@@ -1413,6 +1416,16 @@
     </div>\
 </form>'
             modal.html(modalContent)
+
+            $("input[name=price_install]").change(function(e) {
+                if ($(this).prev().hasClass("badge-info")) {
+                    $(this).prev().removeClass("badge-info")
+                    $(this).prev().addClass("badge-danger")
+                } else {
+                    $(this).prev().removeClass("badge-danger")
+                    $(this).prev().addClass("badge-info")
+                }
+            });
 
             // .not('.slick-initialized')
             $('.quickview-slide-active').not('.slick-initialized').slick({
@@ -1826,38 +1839,24 @@
         });
     });
 
-    $("#add_anchor---x").change(function() {
-        var install = $("input[name=price_install]")
+    $(".cart-detail-products").change(function() {
 
-        if (this.checked) {
-            $.ajax({
-                url: $(this).data("url"),
-                method: "POST",
-                headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                data: {
-                    "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
-                    "quantity": 1,
-                    "override": 0,
-                    "price_install": install.prop("checked") ? 1 : 0
-                }
-            }).done(function(response) {
-                console.log("add_anchor", response)
-            }).fail(function(err) {
-                console.log("add_anchor", err)
-            })
+        var btn = $(this).find(".btn_update")
+        var hiddenInput = $(this).find("input[name=price_install]")
+        var quantity = $(this).find("input[name=quantity]").val()
+        var price_install = $(this).find(".item_price_install").data("priceInstall")
+
+        if (parseInt(hiddenInput.val()) === 0) {
+            hiddenInput.val(1)
+            $(this).find(".item_price_install").text(CURRENCY + price_install)
         } else {
-            $.ajax({
-                url: $(this).data("urlRemove"),
-                method: "POST",
-                headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                data: {
-                    "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
-                }
-            }).done(function(response) {
-                console.log("add_anchor", response)
-            }).fail(function(err) {
-                console.log("add_anchor", err)
-            })
+            hiddenInput.val(0)
+            $(this).find(".item_price_install").text(CURRENCY + "0")
         }
+
+        // var elem = document.querySelector("#base")
+        // var event = new Event("change");
+        // elem.dispatchEvent(event);
+        btn.trigger("submit")
     });
 })(jQuery);

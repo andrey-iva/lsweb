@@ -103,10 +103,12 @@
                                 Нет в наличии
                                 {% endif %}
                             </li>
-                            
+                            {% if product.product_type != 'рейка' %}
                             <li>
                                 <span>Устновка: </span>
-                                <span class="b1 badge badge-info">{{currency}}{{ product.price_install }}</span>
+                                <span class="b1 badge badge-{% if product.product_type == 'услуга' %}danger{% else %}info{% endif %}">
+                                    {{currency}}{{ product.price_install }}
+                                </span>
 
                                 <input id="ch" class="form-check-input ml-5" type="checkbox" name="price_install" value="1" style="
                                 max-width: 50px;
@@ -114,7 +116,10 @@
                                 cursor: pointer;" {% if product.product_type == 'услуга' %} checked {% endif %}>
 
                             </li>
+                            {% endif %}
                         </ul>
+                        {% if product.product_type != 'рейка' %}
+
                         {% if product.product_type != 'услуга' %}
                         {% if product.attribute != 'loop' %}
                         <span class="font-weight-bold">
@@ -130,16 +135,20 @@
                         </span>
                         {% endif %}
                         {% endif %}
+
+                        {% endif %}
                     </div>
 <script type="text/javascript">
-    document.getElementById("ch").onchange = function() {
-        var title = document.querySelector(".b1")
-        if (this.checked) {
-            title.classList.remove("badge-info")
-            title.classList.add("badge-danger")
-        } else {
-            title.classList.remove("badge-danger")
-            title.classList.add("badge-info")
+    if (document.getElementById("ch")) {
+        document.getElementById("ch").onchange = function() {
+            var title = document.querySelector(".b1")
+            if (this.checked) {
+                title.classList.remove("badge-info")
+                title.classList.add("badge-danger")
+            } else {
+                title.classList.remove("badge-danger")
+                title.classList.add("badge-info")
+            }
         }
     }
 </script>

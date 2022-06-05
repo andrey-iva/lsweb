@@ -186,10 +186,10 @@ $( function() {
             var deliveryPointsHTML = 
             '<label for="city">Пункты выдачи заказов <abbr style="color: red;" class="required" title="required">*</abbr></label>'
             + '<input id="search_point" class="mb-2 form-control-sm bg-light outline-none border border-secondary rounded-0"\
-             type="text" placeholder="Здесь можно ввести адрес. Точка будет на карте">'
+             type="text" placeholder="ввести адрес">'
             + '<select id="delivery_points" name="delivery_points" \
             class="form-control form-control-sm bg-light outline-none border border-secondary rounded-0">\
-            // <option>Здесь можно выбрать адрес. Точка будет на карте</option>'
+            // <option>выбрать адрес</option>'
             for (var i = 0; i < deliveryPoints.length; i++) {
 
                 locationsCodes[deliveryPoints[i]["location"]["address_full"]] = deliveryPoints[i]["code"]
@@ -548,11 +548,10 @@ $( function() {
         setDefaultPayment()
     });
     //
-    if ( parseInt($("#base").val()) === 3) {
+    if ( parseInt($("#base").val()) === 3 && $("#base").prop("checked")) {
         setDefaultPayment()
         var elem = document.querySelector("#base")
         var event = new Event("change");
-        elem.checked = true
         elem.dispatchEvent(event);
     }
 

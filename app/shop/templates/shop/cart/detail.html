@@ -26,7 +26,8 @@
     <div class="container" id="cart-container">
         {% if cart|length %}
         <h3 class="cart-page-title mb-4">Выбранные товары</h3>
-        <div class="row row-cols-1 row-cols-lg-2">
+        <!-- row-cols-lg-2 -->
+        <div class="row row-cols-1">
           {% for item in cart %}
           {% with product=item.product %}
           <div class="col mb-4">
@@ -34,7 +35,7 @@
               <div class="row no-gutters">
                 <div class="col-md-4">
                   <a href="{{ product.get_absolute_url }}">
-                    <img class="w-100 pl-1 pr-1 pt-4" src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}" alt="">
+                    <img class="w-100" src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}" alt="">
                   </a>
                 </div>
                 <div class="col-md-8">
@@ -54,7 +55,7 @@
                             </span>
                         </li>
                         <li class="list-group-item">Установка за единицу: 
-                            <span style="position: absolute; right: 0;" class="font-weight-bold">
+                            <span data-price-install="{{ item.product.price_install }}" class="item_price_install" style="position: absolute; right: 0;" class="font-weight-bold">
                             {% if item.price_install %}
                                 {{ currency }}{{ item.price_install }}
                             {% else %}
@@ -71,15 +72,29 @@
                             {% endif %}
                             </span>
                         </li>
-                    </ul>
 
-                    <div class="product-quantity pro-details-quality text-center mt-3">
+                        {% if product.product_type == 'кронштейн' and product.attribute != 'loop' %}
+                        <li class="item_install list-group-item font-weight-bold">
+                            <span style="font-size: 16px;">Установка: </span>
+                                <input type="checkbox" name="add_install"
+                                style="
+                                    max-width: 70px;
+                                    max-height: 40px;
+                                    zoom: 0.4;
+                                    cursor: pointer;
+                                " {% if item.total_price_install > 0 %} checked {% endif %}>
+                            
+                        </li>
+                        {% endif %}
+                    </ul>
+                    
+                    <div class="product-quantity pro-details-quality text-center mt-1">
                         <div class="cart-plus-minus">
                             <input class="cart-plus-minus-box" type="text" name="qtybutton" value="{{ item.quantity }}" disabled>
                         </div>
                     </div>
 
-                    <form action="{% url 'shop:cart_add' product.id %}" method="post" class="d-flex mt-2 justify-content-center">
+                    <form action="{% url 'shop:cart_add' product.id %}" method="post" class="d-flex justify-content-center">
                         {% csrf_token %}
                         <input type="text" name="override" value="1" hidden>
                         <input type="text" name="quantity" value="{{ item.quantity }}" hidden>
@@ -90,13 +105,13 @@
                         {% endif %}
 
                         <div class="m-1">
-                            <button type="submit" class="btn_update btn btn-success pb-1 border-0 btn-outline-none" data-update-url="{% url 'shop:cart_add' product.id %}">
+                            <button type="submit" class="btn_update btn btn-dark btn-sm bg-black pb-1 border-0 btn-outline-none" data-update-url="{% url 'shop:cart_add' product.id %}">
                                 Обновить
                             </button>
                         </div>
 
                         <div class="m-1">
-                            <button type="submit" class="btn_remove btn btn-danger pb-1 border-0 btn-outline-none" data-delete-url="{% url 'shop:cart_remove' product.id %}">
+                            <button type="submit" class="btn_remove btn btn-danger btn-sm pb-1 border-0 btn-outline-none" data-delete-url="{% url 'shop:cart_remove' product.id %}">
                                 Удалить
                             </button>
                         </div>
