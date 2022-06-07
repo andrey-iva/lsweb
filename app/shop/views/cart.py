@@ -143,15 +143,9 @@ def cart_json(request):
             request)['currency'] + str(cart.get_total_price())
         response_data['cart_length'] = str(len(cart))
         return HttpResponse(json.dumps(response_data))
-    else:
-        return HttpResponse(json.dumps({'cart': 'empty'}))
+    # else:
+    #     return HttpResponse(json.dumps({'cart': 'empty'}))
     return redirect('shop:product_list')
-
-# @require_POST
-# def get_grand_total(request):
-#     if request.session.get(GRAND_TOTAL_ID):
-#         return HttpResponse(json.dumps({'grand_total': request.session.get(GRAND_TOTAL_ID)}))
-#     return HttpResponse(json.dumps({'error': 'error get_grand_total'}))
 
 def cart_clear(request):
     cart = Cart(request)

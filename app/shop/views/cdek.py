@@ -6,7 +6,6 @@ from pprint import pprint
 import requests as r
 import json, time
 
-PROD = False
 # 55.645283, 37.403216
 FROM_LOCATION = {
 	'code': 44,
@@ -21,7 +20,7 @@ TARIFF_CODES = {
 	# '482': 'Экспресс склад-дверь',
 }
 
-if PROD:
+if False:
 	GRANT_TYPE          = 'client_credentials'
 	CLIENT_ID           = ''
 	CLIENT_SECRET       = ''

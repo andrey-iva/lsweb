@@ -14,13 +14,25 @@
         </div>
     </div>
 </div>
+{{ request.session.payment_id }}
+{{ request.session.order_id }}
+{{ request.session.cart }}
+{{ request.session.grand_total }}
 <div class="shop-location pt-115 pb-115">
     <div class="container">
         <div class="row">
             <div class="col-12">
                 <div class="alert text-center" role="alert">
                     <div class="h1">Спасибо за покупку!</div>
-                    <p class="h5">Ваш заказ принят, номер заказа <span class="text-danger">{{ order_id }}</span></p>
+                    {% if paid %}
+                        {% if order_id %}
+                        <p class="h5">Статус заказа - <span class="text-danger">принят и оплачен</span>, номер заказа <span class="text-danger">{{ order_id }}</span></p>
+                        {% endif %}
+                    {% else %}
+                        {% if order_id %}
+                        <p class="h5">Статус заказа - <span class="text-danger">принят</span>, номер заказа <span class="text-danger">{{ order_id }}</span></p>
+                        {% endif %}
+                    {% endif %}
                     <div><a class="btn btn-outline-danger" href="{% url 'shop:product_list' %}">Перейти в каталог</a></div>
                 </div>
             </div>

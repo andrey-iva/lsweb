@@ -147,9 +147,8 @@ CORS_ALLOWED_ORIGINS = [
     'https://i12n.r2r.space',
     'https://api-maps.yandex.ru',
 ]
+# SESSION_COOKIE_DOMAIN = None
 
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 SUMMERNOTE_THEME = 'bs4'
-SUMMERNOTE_CONFIG = {
-    'lang': 'ru-RU'
-}
+SUMMERNOTE_CONFIG = {'lang': 'ru-RU'}
