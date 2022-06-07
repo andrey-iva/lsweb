@@ -52,6 +52,7 @@ $( function() {
         $("input[name=payment_method]").each(function() {
             if (this.value === "paynow") {
                 this.checked = true
+                // addPercent(0, 0)
             }
         });
     }
@@ -177,6 +178,11 @@ $( function() {
             $(".tariffs_list").html(tariffListHTML)
             $(".tariffs_list").find("input[data-tariff-code='136']").prop("checked", true)
             setDefaultPayment()
+            $("input[name=tariff]").each(function() {
+                if ($(this).prop("checked")) {
+                    $("input[name=delivery_sum]").val(this.value)
+                }
+            });
 
             // Пункты выдачи заказов
             var points = []
@@ -337,6 +343,10 @@ $( function() {
                 });
             }
 
+            $("input[name=tariff]").change(function() {
+                $("input[name=delivery_sum]").val(this.value)
+            });
+
         } else {
             $(".tariffs_list").html(tariffListHTML)
             // $(".tariffs_list").html("<p>Пункты выдачи закозов не найдены.</p>")
@@ -358,7 +368,7 @@ $( function() {
 
         $("input[name=payment_method]").each(function() {
             if (this.checked && this.value === "paynow") {
-                var pay = confirm("Типа платим")
+                var pay = confirm("Вы собираетесь оплатить заказ.")
                 if (pay) {
                     
                 }

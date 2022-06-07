@@ -6,24 +6,10 @@ from pprint import pprint
 import requests as r
 import json, time
 
-# 55.645283, 37.403216
-FROM_LOCATION = {
-	'code': 44,
-	'country_code': 'RU',
-	'city': 'Москва',
-	'address': 'г. Москва, Солнцево, ул.Щорса, д.8 стр.1',
-}
+from .. import PROD, CLIENT_ID, CLIENT_SECRET, FROM_LOCATION, TARIFF_CODES
 
-TARIFF_CODES = {
-	# '137': 'Посылка склад-дверь',
-	'136': 'Посылка склад-склад',
-	# '482': 'Экспресс склад-дверь',
-}
-
-if False:
+if PROD:
 	GRANT_TYPE          = 'client_credentials'
-	CLIENT_ID           = ''
-	CLIENT_SECRET       = ''
 	CDEK                = 'https://api.cdek.ru/v2/oauth/token?parameters'
 	TARIFFS_URL         = 'https://api.cdek.ru/v2/calculator/tarifflist'
 	TARIFF_URL          = 'https://api.cdek.ru/v2/calculator/tariff'

@@ -9,7 +9,6 @@ handler404 = 'shop.views.error.bad_request'
 
 urlpatterns = [
 	path('', view.home, name='home'),
-	path('success/', view.success_pay, name='success_pay'),
 	path('about-us/', view.about, name='about'),
 	path(u'доставка-и-оплата/', view.shipping_payment, name='shipping_payment'),
 	path('pdd/', view.pdd, name='pdd'),

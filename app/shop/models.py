@@ -129,7 +129,7 @@ class Order(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField(default=False, verbose_name='оплачен')
-    # yookassa_id = models.CharField(max_length=200, blank=True)
+    yookassa_id = models.CharField(max_length=200, blank=True, verbose_name='Юкасса номер транзакции')
     status = models.CharField(max_length=20,
                                     verbose_name='Статус заказа',
                                     choices=(

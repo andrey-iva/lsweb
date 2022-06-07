@@ -82,6 +82,7 @@
             <form id="order_create" action="{% url 'shop:order_create' %}" method="post" class="row mt-20 d-none">
                 {% csrf_token %}
                 <input type="hidden" maxlength="100" name="delivery_type">
+                <input type="hidden" maxlength="100" name="delivery_sum">
                 <div class="col-lg-7">
                     <div class="billing-info-wrap mr-50">
                         <h3>ДЕТАЛИ ОПЛАТЫ</h3>
