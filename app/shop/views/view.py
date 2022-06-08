@@ -5,6 +5,7 @@ from django import forms
 from pprint import pprint
 
 from ..models import Message
+from ..models import Post
 
 class MessageCreateForm(forms.ModelForm):
     class Meta:
@@ -12,7 +13,11 @@ class MessageCreateForm(forms.ModelForm):
         fields = ['name', 'subject', 'email', 'notes']
 
 def home(request):
-	return render(request, 'shop/index.html')
+	posts = Post.objects.all()[0:9]
+	
+	return render(request, 'shop/index.html', {
+			'posts': posts,
+		})
 
 def about(request):
 	return render(request, 'shop/adout.html')

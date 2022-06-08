@@ -6,18 +6,18 @@
             $.get("https://ipinfo.io", function() {}, "jsonp").always(function(resp) {
               var countryCode = (resp && resp.country) ? resp.country : "us";
               success(countryCode);
-
+              
               if (countryCode === "RU") {
                 $('#phone').mask('000 000-00-00')
               }
 
-              if (countryCode === "BY") {
-                $('#phone').mask('00 000-00-00')
-              }
+              // if (countryCode === "BY") {
+              //   $('#phone').mask('00 000-00-00')
+              // }
 
-              if (countryCode === "KZ") {
-                $('#phone').mask('000 000 0000')
-              }
+              // if (countryCode === "KZ") {
+              //   $('#phone').mask('000 000 0000')
+              // }
 
             });
         },

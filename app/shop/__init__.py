@@ -23,7 +23,8 @@ TARIFF_CODES = {
 
 # app
 PROD = False
-CART_SESSION_ID = 'cart'
-GRAND_TOTAL_ID  = 'gt'
-NO_IMAGE_PATH   = '/static/shop/images/no_image/placeholder.jpg'
+CART_SESSION_ID       = 'cart'
+GRAND_TOTAL_ID        = 'gt'
+NO_IMAGE_PATH         = '/static/shop/images/no_image/placeholder.jpg'
 PAYMENT_REDIRECT_PAGE = 'http://127.0.0.1:8000/order/created/'
+ADMIN_EMAIL           = 'admin@mail.com'

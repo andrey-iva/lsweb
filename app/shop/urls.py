@@ -47,7 +47,7 @@ urlpatterns = [
 	])),
 	path('blog/', include([
 		path('', blog.post_list, name='post_list'),
-		path('<int:year>/<int:month>/<int:day>/<slug:post>/', blog.post_detail, name='post_detail'),
+		path('<slug:post>/', blog.post_detail, name='post_detail'),
 	])),
 	path('cdek/', include([
 		path('tariffs/', cdek.tarifflist, name='tarifflist'),

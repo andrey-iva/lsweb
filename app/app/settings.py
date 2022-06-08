@@ -137,6 +137,8 @@ STATIC_ROOT = './static/'
 MEDIA_ROOT = './media/'
 MEDIA_URL = '/media/'
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 CORS_ALLOWED_ORIGINS = [
     'https://suggestions.dadata.ru',
     'https://api.cdek.ru',

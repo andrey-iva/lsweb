@@ -431,7 +431,7 @@
     </div>
 </div>
 <!-- end График работы и контакты -->
-
+{% if posts|length %}
 <div class="blog-area pt-60 pb-175">
     <div class="container">
         <div class="section-title-tab-wrap mb-55">
@@ -443,88 +443,30 @@
             </div>
         </div>
         <div class="d-flex flex-nowrap" style="overflow-x: scroll;">
+            {% for post in posts %}
             <div class="col-lg-3 col-md-6 col-sm-12 col-12">
                 <div class="blog-wrap mb-30">
                     <div class="blog-img mb-25">
-                        <a href="blog-details.html"><img src="/static/shop/assets/images/blog/blog-2.jpg" alt="blog-img"></a>
+                        <a href="{{ post.get_absolute_url }}">
+                            <img src="{% if post.image_preview %}{{post.image_preview.url}}{% else %}{{no_image}}{% endif %}">
+                        </a>
                     </div>
                     <div class="blog-content">
                         <div class="blog-meta">
                             <ul>
-                                <li><a href="#">Inspiration </a></li>
-                                <li>May 25, 2020</li>
+                                <li>{{ post.publish }}</li>
+                                <li>{{ post.author }}</li>
                             </ul>
                         </div>
-                        <h3><a href="blog-details.html">Basic colord mixed - trendind 2020</a></h3>
+                        <h3><a href="{{ post.get_absolute_url }}">
+                            {{ post.title }}
+                        </a></h3>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 col-12">
-                <div class="blog-wrap mb-30">
-                    <div class="blog-img mb-25">
-                        <a href="blog-details.html"><img src="/static/shop/assets/images/blog/blog-3.jpg" alt="blog-img"></a>
-                    </div>
-                    <div class="blog-content">
-                        <div class="blog-meta">
-                            <ul>
-                                <li><a href="#">Lookbook </a></li>
-                                <li>May 25, 2020</li>
-                            </ul>
-                        </div>
-                        <h3><a href="blog-details.html">Calvin Klein Shoes Collection 2020, Activites Summer</a></h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 col-12">
-                <div class="blog-wrap mb-30">
-                    <div class="blog-img mb-25">
-                        <a href="blog-details.html"><img src="/static/shop/assets/images/blog/blog-1.jpg" alt="blog-img"></a>
-                    </div>
-                    <div class="blog-content">
-                        <div class="blog-meta">
-                            <ul>
-                                <li><a href="#">News </a></li>
-                                <li>May 25, 2020</li>
-                            </ul>
-                        </div>
-                        <h3><a href="blog-details.html">Five things you only know if you’re at Chanel's Hamburg Show</a></h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 col-12">
-                <div class="blog-wrap mb-30">
-                    <div class="blog-img mb-25">
-                        <a href="blog-details.html"><img src="/static/shop/assets/images/blog/blog-2.jpg" alt="blog-img"></a>
-                    </div>
-                    <div class="blog-content">
-                        <div class="blog-meta">
-                            <ul>
-                                <li><a href="#">Inspiration </a></li>
-                                <li>May 25, 2020</li>
-                            </ul>
-                        </div>
-                        <h3><a href="blog-details.html">Basic colord mixed - trendind 2020</a></h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 col-12">
-                <div class="blog-wrap mb-30">
-                    <div class="blog-img mb-25">
-                        <a href="blog-details.html"><img src="/static/shop/assets/images/blog/blog-3.jpg" alt="blog-img"></a>
-                    </div>
-                    <div class="blog-content">
-                        <div class="blog-meta">
-                            <ul>
-                                <li><a href="#">Lookbook </a></li>
-                                <li>May 25, 2020</li>
-                            </ul>
-                        </div>
-                        <h3><a href="blog-details.html">Calvin Klein Shoes Collection 2020, Activites Summer</a></h3>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
 </div>
-
+{% endif %}
 {% endblock %}

@@ -1,8 +1,9 @@
-import json, uuid, time, pickle
+import json, uuid, time, pickle, logging
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django import forms
 from django.views.decorators.http import require_POST
+from django.core.mail import send_mail
 from yookassa import Configuration, Payment
 
 from threading import Thread
@@ -10,21 +11,48 @@ from decimal import Decimal
 
 from ..cart import Cart
 from ..models import OrderItem, Order
-from .. import GRAND_TOTAL_ID, PAYMENT_REDIRECT_PAGE
+from .. import GRAND_TOTAL_ID, PAYMENT_REDIRECT_PAGE, ADMIN_EMAIL
 from pprint import pprint
-# from ..tasks import order_created
+
+format = '%(asctime)s: %(message)s'
+logging.basicConfig(format=format, level=logging.INFO, datefmt='%H:%M:%S')
 
 
 # Configuration.account_id = <Идентификатор магазина>
 # Configuration.secret_key = <Секретный ключ>
 
+def get_subject(order_id):
+    return f'iSOFIX-MSK Заказ №{order_id}'
+
+def get_message(order_id, order_name):
+    return f'''
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>ifsofix-msk</title>
+</head>
+<body>
+    <div style="text-align: center;">
+        <h2>iSOFIX-MSK</h2>
+        <p>Заказ №{order_id}</p>
+        <p>Уважаемый {order_name}, благодарим вас за заказ!</p>
+    </div>
+</body>
+</html>'''
+
 class OrderCreateForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ['delivery_type', 'address_full_info', 'grand_total', 'first_name', 'last_name', 'country', 'region',
-        'address', 'postal_code', 'phone', 'email', 'notes']
+        fields = [
+            'delivery_type', 'address_full_info',
+            'grand_total', 'first_name', 'last_name',
+            'country', 'region', 'address', 'postal_code',
+            'phone', 'email', 'notes'
+        ]
 
 def payment_status(payment_id, order):
+    # logging.info("Thread %s: starting", payment_id)
     payment = Payment.find_one(payment_id)
     status = payment.status
     paid = payment.paid
@@ -33,11 +61,14 @@ def payment_status(payment_id, order):
     # print(pickle.loads(r))
     while status == 'pending':
         if count == 600:
-            break
+            order.yookassa_status = 'unknown'
+            order.save()
+            # logging.info("Thread %s: finishing", payment_id)
+            return
         payment = Payment.find_one(payment_id)
         status = payment.status
         paid = payment.paid
-        print('status>>', status)
+        # print('status>>', status)
         count += 1
         time.sleep(1)
     # print('status>>', status)
@@ -48,6 +79,7 @@ def payment_status(payment_id, order):
         order.yookassa_amount = payment.amount.value
         order.yookassa_full_info = pickle.dumps(payment)
     order.save()
+    # logging.info("Thread %s: finishing", payment_id)
 
 def get_percent(total_price, percent):
     return (total_price / Decimal(100)) * Decimal(percent)
@@ -116,10 +148,20 @@ def order_create(request):
                 request.session['payment_id'] = str(payment.id)
                 request.session.modified = True
 
-                t = Thread(target=payment_status, args=(payment.id, order))
-                t.start()
+                Thread(target=payment_status, args=(payment.id, order)).start()
+                Thread(target=send_mail, args=(
+                        get_subject(order.id),
+                        get_message(order.id, order.first_name),
+                        ADMIN_EMAIL, [order.email]
+                    )).start()
+
                 return redirect(payment.confirmation.confirmation_url)
             
+            Thread(target=send_mail, args=(
+                    get_subject(order.id),
+                    get_message(order.id, order.first_name),
+                    ADMIN_EMAIL, [order.email]
+                 )).start()
             request.session['order_id'] = str(order.id)    
             request.session.modified = True
 
@@ -135,7 +177,6 @@ def order_create(request):
 
 
 def order_created(request):
-    # 'status': 'succeeded', 'paid': true,
     data = {}
     payment_id = request.session.get('payment_id')
     order_id   = request.session.get('order_id')
@@ -154,6 +195,6 @@ def order_created(request):
         del request.session['payment_id']
     if order_id:
         del request.session['order_id']
-    request.session.flush()
+    request.session.modified = True
 
     return render(request, 'shop/order/created.html', data)

@@ -223,9 +223,7 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return reverse('shop:post_detail',
-                       args=[self.publish.year,
-                             self.publish.month,
-                             self.publish.day, self.slug])
+                       args=[self.slug])
 
 class Message(models.Model):
     name = models.CharField(max_length=50, verbose_name='Имя')
