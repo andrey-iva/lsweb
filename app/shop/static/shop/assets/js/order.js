@@ -52,7 +52,7 @@ $( function() {
         $("input[name=payment_method]").each(function() {
             if (this.value === "paynow") {
                 this.checked = true
-                // addPercent(0, 0)
+                addPercent(0, 0)
             }
         });
     }

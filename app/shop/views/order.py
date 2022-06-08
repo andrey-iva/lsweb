@@ -87,14 +87,14 @@ def get_percent(total_price, percent):
 def clear_grand_total(request):
     ''' js калькулятор '''
     if request.session.get(GRAND_TOTAL_ID):
-        request.session[GRAND_TOTAL_ID]['price'] = '0.0'
+        del request.session[GRAND_TOTAL_ID]['price']
         request.session.modified = True
 
 @require_POST
 def del_grand_total_session(request):
     ''' js калькулятор '''
     clear_grand_total(request)
-    return HttpResponse(json.dumps({'info': 'set GRAND_TOTAL_ID[price] = 0.0'}))
+    return HttpResponse(json.dumps({'info': 'del GRAND_TOTAL_ID[price]'}))
 
 def order_create(request):
     cart = Cart(request)
