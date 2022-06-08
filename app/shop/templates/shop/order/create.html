@@ -81,8 +81,9 @@
             </div>
             <form id="order_create" action="{% url 'shop:order_create' %}" method="post" class="row mt-20 d-none">
                 {% csrf_token %}
-                <input type="hidden" maxlength="100" name="delivery_type">
-                <input type="hidden" maxlength="100" name="delivery_sum">
+                <input type="hidden" maxlength="100" name="delivery_type" value="empty">
+                <input type="hidden" maxlength="100" name="delivery_sum" value="0">
+                <input type="hidden" name="address_full_info" value="empty">
                 <div class="col-lg-7">
                     <div class="billing-info-wrap mr-50">
                         <h3>ДЕТАЛИ ОПЛАТЫ</h3>
@@ -91,22 +92,22 @@
                             <div class="col-lg-6 col-md-6">
                                 <div class="billing-info mb-20">
                                     <label for="first_name">Имя <abbr class="required" title="required">*</abbr></label>
-                                    <input maxlength="50" type="text" name="first_name" id="first_name" placeholder="Ваше имя">
+                                    <input maxlength="50" type="text" name="first_name" id="first_name" placeholder="Ваше имя" value="{{request.POST.first_name}}">
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-6">
                                 <div class="billing-info mb-20">
                                     <label for="last_name">Фамилия <abbr class="required" title="required">*</abbr></label>
-                                    <input maxlength="50" type="text" name="last_name" id="last_name" placeholder="Ваша фамилия">
+                                    <input maxlength="50" type="text" name="last_name" id="last_name" placeholder="Ваша фамилия" value="{{request.POST.last_name}}">
                                 </div>
                             </div>
                             <div class="col-lg-12 field_hidden">
                                 <div class="billing-info mb-20">
                                     <label for="country">Страна <abbr class="required" title="required">*</abbr></label>
                                     <select name="country" id="country" class="border-bottom border-secondary">
-                                        <option value="">---</option>
-                                        <option>Россия</option>
+                                        <option>Выбрать страну</option>
                                         <option>Беларусь</option>
+                                        <option>Россия</option>
                                         <option>Казахстан</option>
                                     </select>
                                     <!-- <input maxlength="50" type="text" name="country" id="country" placeholder="Страна" required> -->
@@ -115,38 +116,38 @@
                             <div class="col-lg-12 col-md-12 field_hidden">
                                 <div class="billing-info mb-20">
                                     <label for="region">Регион / район <abbr class="required" title="required">*</abbr></label>
-                                    <input maxlength="100" type="text" name="region" id="region" placeholder="Пример: Приморский край">
+                                    <input maxlength="100" type="text" name="region" id="region" placeholder="Пример: Приморский край" value="{{request.POST.region}}">
                                 </div>
                             </div>
                             <div class="col-lg-12 col-md-12 field_hidden">
                                 <div class="billing-info mb-20">
                                     <label for="address">Адресс / Город, улица, дом, квартира <abbr class="required" title="required">*</abbr></label>
-                                    <input maxlength="250" type="text" name="address" id="address" placeholder="Пример: г Владивосток, ул Авиаторов, д 2, кв 34">
+                                    <input maxlength="250" type="text" name="address" id="address" placeholder="Пример: г Владивосток, ул Авиаторов, д 2, кв 34" value="{{request.POST.address}}">
                                 </div>
                             </div>
                             <div class="col-lg-12 col-md-12 field_hidden">
                                 <div class="billing-info mb-20">
                                     <label for="postal_code">Почтовый индекс <abbr class="required" title="required">*</abbr></label>
-                                    <input maxlength="20" type="text" name="postal_code" id="postal_code">
+                                    <input maxlength="20" type="text" name="postal_code" id="postal_code" value="{{request.POST.postal_code}}">
                                 </div>
                             </div>
                             <div class="col-lg-12 col-md-12">
                                 <div class="billing-info mb-20">
                                     <label for="phone">Телефон <abbr class="required" title="required">*</abbr></label>
-                                    <input maxlength="100" type="text" name="phone" id="phone" style="padding-left: 50px;">
+                                    <input maxlength="100" type="text" name="phone" id="phone" style="padding-left: 50px;" value="{{request.POST.phone}}">
                                 </div>
                             </div>
                             <div class="col-lg-12 col-md-12">
                                 <div class="billing-info mb-20">
                                     <label for="email">Email Address <abbr class="required" title="required">*</abbr></label>
-                                    <input type="email" name="email" id="email">
+                                    <input type="email" name="email" id="email" value="{{request.POST.email}}">
                                 </div>
                             </div>
                         </div>
                         
                         <div id="additional-info" class="additional-info-wrap d-none">
                             <label>Примечания к заказу</label>
-                            <textarea maxlength="1000" type="text" name="notes" placeholder="Примечания"></textarea>
+                            <textarea maxlength="1000" type="text" name="notes" value="ok"></textarea>
                         </div>
                     </div>
                 </div>
@@ -231,11 +232,7 @@
         </div>
     </div>
 </div>
-<script type="text/javascript">
-    document.querySelector("#order_create").onsubmit = function(e) {
-        // e.preventDefault()
-    }
-</script>
+
 {% endblock %}
 {% block orderjs %}
 <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>

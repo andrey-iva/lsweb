@@ -368,10 +368,7 @@ $( function() {
 
         $("input[name=payment_method]").each(function() {
             if (this.checked && this.value === "paynow") {
-                var pay = confirm("Вы собираетесь оплатить заказ.")
-                if (pay) {
-                    
-                }
+
             }
         })
 
@@ -490,6 +487,7 @@ $( function() {
         // Службой доставки СДЭК
         $("#cdek_hidden").prop("hidden", true)
         if ( parseInt($(this).val()) === 2 ) {
+            $("#country").empty()
             clientInfo.attr("hidden", false)
             $("#cdek_hidden").prop("hidden", false)
 
@@ -528,6 +526,7 @@ $( function() {
         // Самовывоз
         $("#shoping_center").addClass("d-none")
         if ( parseInt($(this).val()) === 3 ) {
+            $("#country").empty()
             clientInfo.attr("hidden", false)
             $("#shoping_center").removeClass("d-none")
             
@@ -544,7 +543,7 @@ $( function() {
                 this.hidden = true
             })
             $(".payment-method-2").addClass("d-none")
-            $("input[name=address]").val("г.Москва, ул.Щорса, д.8 стр.1")
+            $("input[name=address]").val("г Москва, ул Щорса, д 8, стр 1")
             // астивируем сессию
             addPercent(0, 0)
         }
@@ -579,6 +578,7 @@ $( function() {
       bounds: "region-settlement",
       onSelect: function(suggestion) {
         resetCheckedPayment()
+        $("input[name=address_full_info]").val(JSON.stringify((suggestion)) )
         console.log("START:", suggestion)
         $(".tariffs_list").html(
         '<div class="d-flex justify-content-center">\
@@ -750,6 +750,7 @@ $( function() {
       type: "ADDRESS",
       onSelect: function(suggestion) {
         $("#postal_code").val(suggestion['data']['postal_code'])
+        $("input[name=address_full_info]").val(JSON.stringify((suggestion)) )
       },
       constraints: {
          locations: [

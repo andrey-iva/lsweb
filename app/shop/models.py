@@ -129,13 +129,18 @@ class Order(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField(default=False, verbose_name='оплачен')
-    yookassa_id = models.CharField(max_length=200, blank=True, verbose_name='Юкасса номер транзакции')
+    yookassa_id = models.CharField(max_length=200, blank=True, verbose_name='Юкасса ID транзакции')
+    yookassa_amount = models.DecimalField(
+            max_digits=10, decimal_places=2, verbose_name='Юкасса сумма', blank=True, default=0)
+    yookassa_status = models.CharField(max_length=30, blank=True, verbose_name='Юкасса статус')
     status = models.CharField(max_length=20,
                                     verbose_name='Статус заказа',
                                     choices=(
                                         ('new', 'Новый'),
                                         ('proc', 'На обработке'),
                                         ('arc', 'В архиве')), default='new')
+    yookassa_full_info = models.TextField(blank=True)
+    address_full_info = models.TextField(blank=True)
 
     class Meta:
         ordering = ('-created',)

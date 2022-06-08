@@ -1,4 +1,4 @@
-import json, uuid, time
+import json, uuid, time, pickle
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django import forms
@@ -21,7 +21,7 @@ from pprint import pprint
 class OrderCreateForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ['delivery_type', 'grand_total', 'first_name', 'last_name', 'country', 'region',
+        fields = ['delivery_type', 'address_full_info', 'grand_total', 'first_name', 'last_name', 'country', 'region',
         'address', 'postal_code', 'phone', 'email', 'notes']
 
 def payment_status(payment_id, order):
@@ -29,21 +29,25 @@ def payment_status(payment_id, order):
     status = payment.status
     paid = payment.paid
     count = 0
-
+    
+    # print(pickle.loads(r))
     while status == 'pending':
         if count == 600:
             break
         payment = Payment.find_one(payment_id)
         status = payment.status
         paid = payment.paid
-        # print('status>>', status)
+        print('status>>', status)
         count += 1
         time.sleep(1)
     # print('status>>', status)
+    order.yookassa_status = payment.status
     if status == 'succeeded':
         order.paid = paid
         order.yookassa_id = payment_id
-        order.save()
+        order.yookassa_amount = payment.amount.value
+        order.yookassa_full_info = pickle.dumps(payment)
+    order.save()
 
 def get_percent(total_price, percent):
     return (total_price / Decimal(100)) * Decimal(percent)
@@ -62,6 +66,7 @@ def del_grand_total_session(request):
 
 def order_create(request):
     cart = Cart(request)
+    percent = 0
     if len(cart) == 0:
         return redirect('shop:product_list')
 
@@ -69,14 +74,13 @@ def order_create(request):
     if request.method == 'POST':
         request_post = request.POST.copy()
         idempotence_key = uuid.uuid4()
-
-        # if request.session.get(GRAND_TOTAL_ID):
-        #     request_post['grand_total'] = str(request.session[GRAND_TOTAL_ID]['price'])
-            # request_post['grand_total'] = str(cart.get_total_price())
         
         if request_post['payment_method'] == '5':
-            pass
-        pprint(request_post)
+            percent = get_percent(cart.get_total_price(), 5)
+        
+        request_post['grand_total'] = str( 
+            (Decimal(cart.get_total_price()) + percent) + Decimal(request_post['delivery_sum']) )
+
         form = OrderCreateForm(request_post)
         if form.is_valid():
             order = form.save()
@@ -131,7 +135,7 @@ def order_create(request):
 
 
 def order_created(request):
-    # "status": "succeeded", "paid": true,
+    # 'status': 'succeeded', 'paid': true,
     data = {}
     payment_id = request.session.get('payment_id')
     order_id   = request.session.get('order_id')
