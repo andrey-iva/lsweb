@@ -348,8 +348,9 @@ $( function() {
             });
 
         } else {
-            $(".tariffs_list").html(tariffListHTML)
-            // $(".tariffs_list").html("<p>Пункты выдачи закозов не найдены.</p>")
+            // $(".tariffs_list").html(tariffListHTML)
+            console.log(tariffListHTML)
+            $(".tariffs_list").html("<p>Пункты выдачи закозов не найдены.</p>")
         }
     };
 
@@ -392,7 +393,7 @@ $( function() {
             // cdek delivery points
             var option = false
             $("select[name=delivery_points] option").each(function() {
-                if ($(this).text() !== "" && $(this).prop("selected")) {
+                if ($(this).text() !== "выбрать адрес" && $(this).prop("selected")) {
                     option = $(this)
                 }
             });
@@ -440,6 +441,8 @@ $( function() {
             },
         }).done(function(response) {
             console.log(response)
+            setDefaultPayment()
+            console.log('setDefaultPayment(')
         }).fail(function(err) {
             serverError(err)
         });
@@ -482,7 +485,7 @@ $( function() {
                     addPercent(0, 0)
                 }
             });
-            setDefaultPayment()            
+            // setDefaultPayment()            
         }
         // Службой доставки СДЭК
         $("#cdek_hidden").prop("hidden", true)
@@ -544,7 +547,7 @@ $( function() {
             })
             $(".payment-method-2").addClass("d-none")
             $("input[name=address]").val("г Москва, ул Щорса, д 8, стр 1")
-            // астивируем сессию
+            // grand total
             addPercent(0, 0)
         }
 
@@ -554,11 +557,11 @@ $( function() {
             }
         });
 
-        setDefaultPayment()
+        // setDefaultPayment()
     });
     //
     if ( parseInt($("#base").val()) === 3 && $("#base").prop("checked")) {
-        setDefaultPayment()
+        // setDefaultPayment()
         var elem = document.querySelector("#base")
         var event = new Event("change");
         elem.dispatchEvent(event);
