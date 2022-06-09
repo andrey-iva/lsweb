@@ -79,6 +79,40 @@
                         <span>{{ currency }}{{ product.price }}</span>
                         {% endif %}
                     </div>
+                    <div>
+                        {% if product.product_type != 'рейка' %}
+
+                        {% if product.product_type != 'услуга' %}
+                        {% if product.attribute != 'loop' %}
+                        <span class="font-weight-bold">
+                            Петля для якорного крепления <i class="text-primary">{{currency}}{{ product_loop.price }}</i>
+                            <input id="add_anchor" class="form-check-input" type="checkbox" name="" value=""
+                            data-url="{% url 'shop:cart_add' product_loop.id %}"
+                            style="
+                                max-width: 180px;
+                                margin-left: -7px;
+                                zoom: 0.4;
+                                cursor: pointer;
+                            ">
+                        </span>
+                        {% endif %}
+                        {% endif %}
+
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        {% if product.product_type != 'рейка' %}
+                            <span class="font-weight-bold">Установка кронштейна <i class="text-primary">{{currency}}{{ product.price_install }}</i> </span>
+<!--                             <span class="b1 badge badge-{% if product.product_type == 'услуга' %}danger{% else %}info{% endif %}">
+                                {{currency}}{{ product.price_install }}
+                            </span> -->
+
+                            <input id="ch" class="form-check-input ml-5" type="checkbox" name="price_install" value="1" style="
+                            max-width: 280px;
+                            zoom: 0.4;
+                            cursor: pointer;" {% if product.product_type == 'услуга' %} checked {% endif %}>
+                        {% endif %}
+                    </div>
                     <div class="pro-details-quality">
                         <!-- <span>Колличество:</span> -->
                         <div class="cart-plus-minus">
@@ -103,40 +137,8 @@
                                 Нет в наличии
                                 {% endif %}
                             </li>
-                            {% if product.product_type != 'рейка' %}
-                            <li>
-                                <span>Устновка: </span>
-                                <span class="b1 badge badge-{% if product.product_type == 'услуга' %}danger{% else %}info{% endif %}">
-                                    {{currency}}{{ product.price_install }}
-                                </span>
-
-                                <input id="ch" class="form-check-input ml-5" type="checkbox" name="price_install" value="1" style="
-                                max-width: 50px;
-                                zoom: 0.4;
-                                cursor: pointer;" {% if product.product_type == 'услуга' %} checked {% endif %}>
-
-                            </li>
-                            {% endif %}
                         </ul>
-                        {% if product.product_type != 'рейка' %}
-
-                        {% if product.product_type != 'услуга' %}
-                        {% if product.attribute != 'loop' %}
-                        <span class="font-weight-bold">
-                            Петля для якорного крепления:
-                            <input id="add_anchor" class="form-check-input" type="checkbox" name="" value=""
-                            data-url="{% url 'shop:cart_add' product_loop.id %}"
-                            style="
-                                max-width: 200px;
-                                margin-left: -7px;
-                                zoom: 0.4;
-                                cursor: pointer;
-                            ">
-                        </span>
-                        {% endif %}
-                        {% endif %}
-
-                        {% endif %}
+                        
                     </div>
 <script type="text/javascript">
     if (document.getElementById("ch")) {

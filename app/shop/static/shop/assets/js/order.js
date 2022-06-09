@@ -332,13 +332,19 @@ $( function() {
                         }
                     }
                 });
-
+                // ui-menu
                 $( "#search_point" ).autocomplete({
                   source: locations,
                   minLength: 2,
-                  select: function( event, ui ) {
+                  select: function( event, ui ) {    
                     $("#delivery_points").html("<option value='"+ locationsCodes[ui.item.value] +"' selected>" + ui.item.value + "</option>")
                     $("#delivery_points").trigger("change")
+                  },
+                  open: function( event, ui ) {
+                    var w = document.querySelector("#search_point").offsetWidth
+                    $(".ui-menu").css({"width": w})
+                    $(".ui-menu-item").css({"width": w})
+                    $(".ui-menu-item-wrapper").css({"width": w})
                   }
                 });
             }

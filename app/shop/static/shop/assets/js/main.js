@@ -1,6 +1,23 @@
 (function($) {
     "use strict";
     //
+
+    $("#v1").click(function(e) {
+        $(this).addClass("d-none")
+        $(".v1").removeClass("d-none")
+        $(".v1").html('<video controls autoplay width="100%">\
+            <source src="/media/video/1.mp4" />\
+        </video>')
+    });
+
+    $("#v2").click(function(e) {
+        $(this).addClass("d-none")
+        $(".v2").removeClass("d-none")
+        $(".v2").html('<video controls autoplay width="100%">\
+            <source src="/media/video/2.mp4" />\
+        </video>')
+    });
+
     $("#phone").intlTelInput({
         geoIpLookup: function(success, failure) {
             $.get("https://ipinfo.io", function() {}, "jsonp").always(function(resp) {
@@ -1014,9 +1031,7 @@
             <span class='sr-only'>Загрузка...</span>\
         </div>")
     setTimeout(function(e) {
-        $(".video-first").html('<iframe src="https://www.youtube.com/embed/sFqMX_tBUCs" title="Компания ISOFIX-MSK"\
-         frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"\
-          allowfullscreen></iframe>')
+        $(".video-first").html('<iframe width="560" height="315" src="https://www.youtube.com/embed/sFqMX_tBUCs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>')
     }, 3000)
 
     $(".video-second").html(
@@ -1024,9 +1039,7 @@
             <span class='sr-only'>Загрузка...</span>\
         </div>")
     setTimeout(function(e) {
-        $(".video-second").html('<iframe src="https://www.youtube.com/embed/NtOjU7BhsHA" title="Приспособления для установки\
-         нескольких автокресел на заднее сиденье" frameborder="0" allow="accelerometer; autoplay; clipboard-write;\
-          encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>')
+        $(".video-second").html('<iframe width="560" height="315" src="https://www.youtube.com/embed/NtOjU7BhsHA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>')
     }, 5000)
 
     $(function () {
@@ -1335,7 +1348,7 @@
             var sPro = 2
                 for (var i = 0; i < productImages.length; i++) {
                     bigImages +=
-                        "<div id='pro-" + (sPro++) + "' class='tab-pane fade'>\
+                    "<div id='pro-" + (sPro++) + "' class='tab-pane fade'>\
                         <img src='" + productImages[i] + "'>\
                     </div>"
                 }
@@ -1432,6 +1445,7 @@
                 // lazyLoad: 'ondemand',
                 slidesToShow: 3,
                 slidesToScroll: 1,
+
                 fade: false,
                 loop: true,
                 dots: false,
@@ -1465,6 +1479,10 @@
                     }
                 ]
             });
+
+            $('.quickview-slide-active a').on('click', function() {
+                $('.quickview-slide-active a').removeClass('active');
+            })
 
 
 
@@ -1544,11 +1562,7 @@
                         printCart()
                     }
 
-                    $('#exampleModal').on('shown.bs.modal', function() {
-                        $('.quickview-slide-active a').on('click', function() {
-                            $('.quickview-slide-active a').removeClass('active');
-                        })
-                    });
+                    $('#exampleModal').on('shown.bs.modal', function() {});
 
                 }).fail(function(err) {});
             });
