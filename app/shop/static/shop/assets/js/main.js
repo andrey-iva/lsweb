@@ -391,11 +391,13 @@
         endTrigger.on('click', function() {
             container.removeClass('inside');
             wrapper.removeClass('overlay-active');
+            window.location = window.location.pathname
         });
 
         $('.body-overlay').on('click', function() {
             container.removeClass('inside');
             wrapper.removeClass('overlay-active');
+            window.location = window.location.pathname
         });
     };
     miniCart();
@@ -1026,6 +1028,12 @@
         }, 1000);
     }
 
+    if (document.getElementById("scroll_to_product")) {
+        $([document.documentElement, document.body]).animate({
+            scrollTop: $("#scroll_to_product").offset().top
+        }, 1000);
+    }
+
     $(".video-first").html(
         "<div class='spinner-border spinner-border' role='status'>\
             <span class='sr-only'>Загрузка...</span>\
@@ -1363,14 +1371,14 @@
                 }
 
             var textColor = product["product_type"] === "услуга" ? "danger" : "info";
-            var cssClassReil = product["product_type"] === "рейка" ? "class='d-none'": ""; 
+            var cssClassReil = product["product_type"] === "рейка" ? "class='d-none'": "class='mb-3'"; 
 
             var checkbox = '\
-<span class="font-weight-bold ' + cssClassReil + '">\
-Петля для якорного крепления:\
+<span class="' + cssClassReil + '">\
+Петля для якорного крепления <i class="text-primary">'+ CURRENCY + productLoop["price"] +'</i>\
 <input id="add_anchor" class="form-check-input" type="checkbox" name="" value=""\
     style="\
-        max-width: 200px;\
+        max-width: 180px;\
         margin-left: -7px;\
         zoom: 0.4;\
         cursor: pointer;\
@@ -1401,6 +1409,13 @@
             <div class="pro-details-price">\
                 <span>' + CURRENCY + product["price"] + '</span>\
             </div>\
+            <div>\
+            ' + ( (product["product_type"] !== "услуга" && product["attribute"] !== "loop") ? checkbox : "") + '\
+            </div>\
+            <div ' + cssClassReil + '><span>Установка кронштейна <i class="text-primary">' + CURRENCY + product["price_install"] + '</i></span>\
+                <input type="checkbox" ' + (product["product_type"] === "услуга" ? "checked" : "")  + ' class="form-check-input ml-5" \
+                style="max-width: 280px;zoom: 0.4;cursor: pointer;" name="price_install" value="1">\
+            </div>\
             <div class="pro-details-quality">\
                 <span>Колличество:</span>\
                 <div class="cart-plus-minus">\
@@ -1412,13 +1427,7 @@
                     <li><span>Категория:</span> ' + product["category"] + '</li>\
                     <li><span>Код товара: </span> ' + product["code"] + '</li>\
                     <li><span>Наличие: </span> ' + (product["available"] ? "Есть в наличии" : "Нет в наличии")  + '</li>\
-                    <li ' + cssClassReil + '><span>Устновка: </span>\
-                        <span class="b1 badge badge-' + textColor + '" style="font-size: 16px;">' + CURRENCY + product["price_install"] + '</span>\
-                        <input type="checkbox" ' + (product["product_type"] === "услуга" ? "checked" : "")  + ' class="form-check-input ml-5" \
-                        style="max-width: 50px;zoom: 0.4;cursor: pointer;" name="price_install" value="1">\
-                    </li>\
                 </ul>\
-                ' + ( (product["product_type"] !== "услуга" && product["attribute"] !== "loop") ? checkbox : "") + '\
             </div>\
             <div class="pro-details-action-wrap">\
                 <div class="pro-details-add-to-cart">\
@@ -1429,16 +1438,6 @@
     </div>\
 </form>'
             modal.html(modalContent)
-
-            $("input[name=price_install]").change(function(e) {
-                if ($(this).prev().hasClass("badge-info")) {
-                    $(this).prev().removeClass("badge-info")
-                    $(this).prev().addClass("badge-danger")
-                } else {
-                    $(this).prev().removeClass("badge-danger")
-                    $(this).prev().addClass("badge-info")
-                }
-            });
 
             // .not('.slick-initialized')
             $('.quickview-slide-active').not('.slick-initialized').slick({
@@ -1827,13 +1826,13 @@
                     // product петля для якорного крепления
                     if (formElem.find("#add_anchor").prop("checked")) {
                         $.ajax({
-                            url: formElem.find("#add_anchor").data("url"),
+                            url: formElem.find("#add_anchor").data("urlAdd"),
                             method: "POST",
                             headers: { 'X-Requested-With': 'XMLHttpRequest' },
                             data: {
                                 "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
-                                "quantity": 1,
-                                "override": 0,
+                                "quantity": $("input[name=quantity]").val(),
+                                "override": $("input[name=override]").val(),
                                 "price_install": $("input[name=price_install]").prop("checked") ? 1 : 0
                             }
                         }).done(function(response) {
@@ -1872,5 +1871,39 @@
         // var event = new Event("change");
         // elem.dispatchEvent(event);
         btn.trigger("submit")
+    });
+
+    $(".del-loop").change(function(e) {
+        var url = $(this).data("urlRemove")
+        if (this.checked === false) {
+            $.ajax({
+                url: url,
+                method: "POST",
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                data: {
+                    "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+                }
+            }).done(function(response) {
+                console.log('remove: ', url)
+            })
+        }
+    });
+    $(".del-service").change(function(e) {
+        var url = $(this).data("url")
+        if (this.checked === false) {
+            $.ajax({
+                url: url,
+                method: "POST",
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                data: {
+                    "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+                    "quantity": $("input[name=quantity]").val(),
+                    "override": $("input[name=override]").val(),
+                    "price_install": $("input[name=price_install]").prop("checked") ? 1 : 0
+                }
+            }).done(function(response) {
+                console.log('remove: ', url)
+            })
+        }
     });
 })(jQuery);

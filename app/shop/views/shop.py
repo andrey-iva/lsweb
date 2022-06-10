@@ -10,6 +10,7 @@ from django.db.models import Q
 from .. import NO_IMAGE_PATH
 from ..ctx_proc import currency
 from ..models import Category, Product, ProductImage
+from ..cart import Cart
 
 PAGINATION_SIZE = 12
 PAGINATION_SIZE_SESSION_ID = 'pagination_size'
@@ -162,6 +163,8 @@ def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug)
     ploop = get_object_or_404(Product, attribute='loop')
 
+    # product_in_cart = str(product.id) in request.session['cart']
+
     # как-то проверить есть ли
     product.full_url = "{0}://{1}{2}".format(request.scheme, request.get_host(), request.path)
     product.save()
@@ -188,7 +191,8 @@ def product_detail(request, slug):
                     'attribute': product.attribute,
                 },
                 'product_loop': {
-                    'id': ploop.id
+                    'id': ploop.id,
+                    'price': str(ploop.price)
                 },
             }))
 

@@ -8,6 +8,14 @@ def get_key(d, k):
     return str(k) in d
 
 @register.filter
+def get_quantity(d, k):
+    return d[str(k)]['quantity']
+
+@register.filter
+def get_product_total_price_install(d, k):
+    return d[str(k)]['total_price_install']
+
+@register.filter
 def get_install_price(d, k):
 	if str(k) in d:
 		return int( float(d[str(k)]['price_install']) ) > 0
