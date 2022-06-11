@@ -95,6 +95,22 @@ def add_percent(request):
     return HttpResponse(json.dumps({'error': 'no add percent!'}))
 
 @require_POST
+def set_loop_marker_on(request, product_id):
+    if request.session[CART_SESSION_ID].get(str(product_id)):
+        request.session[CART_SESSION_ID][str(product_id)]['loop'] = 'on'
+        request.session.modified = True
+        return HttpResponse(f'set marker for product {product_id} OK')
+    return HttpResponse(f'set marker for product {product_id} FAIL')
+
+@require_POST
+def remove_loop_marker(request):
+    for item in request.session[CART_SESSION_ID].values():
+        if 'loop' in item:
+            item['loop'] = 'off'
+    request.session.modified = True
+    return HttpResponse('remove markers')
+
+@require_POST
 def cart_count_quantity(request):
     cart = Cart(request)
     quantity_on = 0

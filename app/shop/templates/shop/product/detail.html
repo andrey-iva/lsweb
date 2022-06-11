@@ -18,7 +18,7 @@
         </div>
     </div>
 </div>
-{{request.session.cart}}
+
 <div class="product-details-area pt-120 pb-115">
     <div class="container">
         <form action="{% url 'shop:cart_add' product.id %}" method="post" class="row product_detail product_list_add_to_cart">
@@ -156,7 +156,7 @@
                         <div class="pro-details-add-to-cart">
                             {% if request.session.cart|get_key:product.id %}                        
                             <button type="submit" class="btn btn-danger bg-black p-3 border-0 btn-outline-none">
-                                Обновить в корзину
+                                Обновить товар
                             </button>
                             {% else %}
                             <button type="submit" class="btn btn-danger bg-black p-3 border-0 btn-outline-none">

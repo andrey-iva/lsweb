@@ -32,6 +32,7 @@ urlpatterns = [
 	])),
 	path('cart/', include([
 		path('', cart.cart_detail, name='cart_detail'),
+		path('remove/loop/marker/', cart.remove_loop_marker, name='remove_loop_marker'),
 		path('json/', cart.cart_json, name='cart_json'),
 		path('clear/', cart.cart_clear, name='cart_clear'),
 		path('count/quantity/on/', cart.cart_count_quantity, name='cart_count_quantity'),
@@ -44,6 +45,7 @@ urlpatterns = [
 		path('add/percent/', cart.add_percent, name='add_percent'),
 		# del/sessionkeyloop/<int:product_id>/ - прописан жестко в JS
 		path('del/sessionkeyloop/<int:product_id>/', cart.cart_loop_off, name='cart_loop_off'),
+		path('set/marker/on/<int:product_id>/', cart.set_loop_marker_on, name='set_loop_marker_on'),
 	])),
 	path('order/', include([
 		path('create/', order.order_create, name='order_create'),

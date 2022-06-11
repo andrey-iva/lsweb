@@ -1038,6 +1038,12 @@
         }, 1000);
     }
 
+    if (document.getElementById("scroll_to_cart_title")) {
+        $([document.documentElement, document.body]).animate({
+            scrollTop: $("#scroll_to_cart_title").offset().top
+        }, 1000);
+    }
+
     $(".video-first").html(
         "<div class='spinner-border spinner-border' role='status'>\
             <span class='sr-only'>Загрузка...</span>\
@@ -1389,8 +1395,23 @@
     ">\
 </span>'
 
+            // <div>\
+            // ' + ( (product["product_type"] !== "услуга" && product["attribute"] !== "loop") ? checkbox : "") + '\
+            // </div>\
+            // <div ' + cssClassReil + '><span>Установка кронштейна <i class="text-primary">' + CURRENCY + product["price_install"] + '</i></span>\
+            //     <input type="checkbox" ' + (product["product_type"] === "услуга" ? "checked" : "")  + ' class="form-check-input ml-5" \
+            //     style="max-width: 280px;zoom: 0.4;cursor: pointer;" name="price_install" value="1">\
+            // </div>\
+
+            // <div class="pro-details-quality">\
+            //     <span>Колличество:</span>\
+            //     <div class="cart-plus-minus">\
+            //         <input class="cart-plus-minus-box" type="text" name="qtybutton" value="1">\
+            //     </div>\
+            // </div>\
+// form action="' + quickView.data("productAddToCartUrl") + '"  method="post" class="row" id="modal_add_to_cart"
             var modalContent = '\
-<form action="' + quickView.data("productAddToCartUrl") + '"  method="post" class="row" id="modal_add_to_cart">\
+<div class="row">\
 ' + CSRF_TOKEN + '\
 <input type="text" name="override" value="0" hidden>\
 <input id="modal_quantity" type="text" name="quantity" value="1" hidden>\
@@ -1413,20 +1434,7 @@
             <div class="pro-details-price">\
                 <span>' + CURRENCY + product["price"] + '</span>\
             </div>\
-            <div>\
-            ' + ( (product["product_type"] !== "услуга" && product["attribute"] !== "loop") ? checkbox : "") + '\
-            </div>\
-            <div ' + cssClassReil + '><span>Установка кронштейна <i class="text-primary">' + CURRENCY + product["price_install"] + '</i></span>\
-                <input type="checkbox" ' + (product["product_type"] === "услуга" ? "checked" : "")  + ' class="form-check-input ml-5" \
-                style="max-width: 280px;zoom: 0.4;cursor: pointer;" name="price_install" value="1">\
-            </div>\
-            <div class="pro-details-quality">\
-                <span>Колличество:</span>\
-                <div class="cart-plus-minus">\
-                    <input class="cart-plus-minus-box" type="text" name="qtybutton" value="1">\
-                </div>\
-            </div>\
-            <div class="product-details-meta">\
+            <div class="product-details-meta" style="margin: 30px 0 0 0;">\
                 <ul>\
                     <li><span>Категория:</span> ' + product["category"] + '</li>\
                     <li><span>Код товара: </span> ' + product["code"] + '</li>\
@@ -1434,13 +1442,13 @@
                 </ul>\
             </div>\
             <div class="pro-details-action-wrap">\
-                <div class="pro-details-add-to-cart">\
-                    <button type="submit" class="btn btn-danger bg-black p-3 border-0 btn-outline-none">Добавить в корзину</button>\
+                <div class="pro-details-add-to-cart" style="margin: 50px 0 0 0;">\
+                    <a class="btn btn-danger bg-black p-3 border-0 btn-outline-none" href="' + quickView.data("productAbsoluteUrl") + '">Подробнее</a>\
                 </div>\
             </div>\
         </div>\
     </div>\
-</form>'
+</div>'
             modal.html(modalContent)
 
             // .not('.slick-initialized')
@@ -1638,6 +1646,7 @@
         // ОБНОВЛЕНИЕ И УДАЛЕНИЕ ТОВАРОВ
         parentElem.find("form").submit(function(e) {
             e.preventDefault()
+            // return
             // action="" по умолчанию /cart/add/id/ override=1 устанавливает в зависимости от нажатой кнопки
             // В parentElem.find("button").click(function(e) {}
             parentElem.find("span.product-subtotal").html(
@@ -1670,14 +1679,27 @@
                         parentElem.find("span.product-subtotal").text(responseData.total_price)
                         parentElem.find("span.product-subtotal-install").text(responseData.total_price_install)
                         changeCartLengthSubTotal(responseData)
-
+                        
                     } else if (responseData.result === "remove") {
-                        parentElem.addClass("d-none")
+                        // parentElem.addClass("d-none")
+                        parentElem.remove()
+                        if (parentElem.data("productAttr") === 'loop') {
+                            $.ajax({
+                                url: CART_REMOVE_LOOP_MARKER_URL,
+                                method: "POST",
+                                data: {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()}
+                            }).done(function(response) {
+                                console.log(response)
+                                if (response) {
+                                    window.location = window.location.pathname
+                                }
+                            })
+                        }
                         if (parseInt(responseData.cart_length) === 0) {
                             $("#cart-container").html("<h3 class=\"text-center\">Ваша корзина пуста</h3>\
                                         <div class=\"text-center h6\"><a class='btn btn-danger' href='" +
                                         PRODUCT_LIST_URL + "'>Перейти к покупкам</a></div>")
-                            //window.location = PRODUCT_LIST_URL
+                            window.location = PRODUCT_LIST_URL
                         }
 
                         changeCartLengthSubTotal(responseData)
@@ -1914,11 +1936,48 @@
 
                 if (e.target.checked === true) {
                     console.log("checked: true")
+                    var quantity = parseInt(currenElem.find("input[name=qtybutton]").val())
+                    var loopElem = $("body").find("div[data-product-attr=loop]")
+                    // console.log($("body").find("div[data-product-attr=loop]"))
+                    // if ($("body").find("div[data-product-attr=loop]").length) {
+
+                    // } else {
+                        // добовляем петлю якорного крепления
+                        $.ajax({
+                            url: "/cart/add/" + loopId + "/",
+                            method: "POST",
+                            data: {
+                                "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+                                "quantity": currenElem.find("input[name=qtybutton]").val(),
+                                "override": 0,
+                            }
+                        }).done(function(response) {
+                            try {
+                                response = JSON.parse(response)
+                                console.log(response)
+                            } catch(err) {
+                                console.log("fail /cart/add/   loop||33 cart detail page")
+                            }
+
+                            if (response["result"] === "update") {
+                                $.ajax({
+                                    url: currenElem.data("markerUrl"),
+                                    method: "POST",
+                                    data: {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()}
+                                }).done(function(response) {
+                                    if (response.match(/OK/)) {
+                                        window.location = window.location.pathname
+                                    } else {
+                                        console.error(response)
+                                    }
+                                })   
+                            }
+                        })
+                    // }
+                    
                 }
                 
                 if (e.target.checked === false) {
-                    console.log("checked: false")
-                    console.log("quantity: ", currenElem.find("input[name=quantity]").val() )
                     $.ajax({
                         url: "/cart/remove/loop/" + loopId + "/",
                         method: "POST",
@@ -1945,7 +2004,42 @@
                         }).done(function(response) {
                             console.log("loop off", response, "/cart/del/sessionkeyloop/" + currenElem.data("productId") + "/")
 
-                            // !
+                            try {
+                                response = JSON.parse(response)
+                                console.log(response)
+                            } catch(err) {
+                                console.error("/cart/del/sessionkeyloop/" + currenElem.data("productId") + "/")
+                            }
+                            // проверяем есть еще петли
+                            $.ajax({
+                                url: CART_COUNT_QUANTITY_URL,
+                                method: "POST",
+                                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                                data: {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),}
+                            }).done(function(response) {
+                                try {
+                                    response = JSON.parse(response)
+                                    console.log(response)
+                                } catch(err) {
+                                    console.error(CART_COUNT_QUANTITY_URL)
+                                }
+
+                                var quantity = parseInt(response["quantity_on"])
+                                
+                                var productLoop = $("body").find("div[data-product-attr=loop]")
+                                var loopQuantity = productLoop.find("input[name=qtybutton]")
+                                var btnRemove = productLoop.find("div .btn_remove")
+                                var btnUpdate = productLoop.find("div .btn_update")
+
+                                if (quantity <= 0) {
+                                    btnRemove.trigger("click")
+                                }
+
+                                if (quantity > 0) {
+                                    loopQuantity.val(quantity)
+                                    btnUpdate.trigger("click")
+                                }
+                            })
                         })
 
                     }).fail(function(err) {

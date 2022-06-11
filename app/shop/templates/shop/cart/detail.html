@@ -22,16 +22,20 @@
         }
     }
 </style>
+
 <div class="cart-main-area pt-115 pb-120">
     <div class="container" id="cart-container">
         {% if cart|length %}
-        <h3 class="cart-page-title mb-4">Выбранные товары</h3>
+        <h3 id="scroll_to_cart_title" class="cart-page-title mb-4">Выбранные товары</h3>
         <!-- row-cols-lg-2 -->
         <div class="row row-cols-1">
           {% for item in cart %}
           {% with product=item.product %}
           <div class="col mb-4">
-            <div class="card mb-3 cart-detail-products" data-product-id="{{product.id}}">
+            <div class="card mb-3 cart-detail-products" 
+            data-product-id="{{product.id}}" 
+            data-product-attr="{{product.attribute}}"
+            data-marker-url="{% url 'shop:set_loop_marker_on' product.id %}">
               <div class="row no-gutters">
                 <div class="col-md-4">
                   <a href="{{ product.get_absolute_url }}">
@@ -54,6 +58,7 @@
                                  {{ currency }}{{ item.total_price }}
                             </span>
                         </li>
+
                         <li class="list-group-item">Установка за единицу: 
                             <span data-price-install="{{ item.product.price_install }}" class="item_price_install" style="position: absolute; right: 0;" class="font-weight-bold">
                             {% if item.price_install %}
@@ -98,35 +103,36 @@
                         </li>
                         {% endif %}
                     </ul>
-                    
-                    <div class="product-quantity pro-details-quality text-center mt-1">
-                        <div class="cart-plus-minus">
-                            <input class="cart-plus-minus-box" type="text" name="qtybutton" value="{{ item.quantity }}" disabled>
+                    <div>
+                        <div class="product-quantity pro-details-quality text-center mt-1">
+                            <div class="cart-plus-minus">
+                                <input class="cart-plus-minus-box" type="text" name="qtybutton" value="{{ item.quantity }}" disabled>
+                            </div>
                         </div>
+
+                        <form action="{% url 'shop:cart_add' product.id %}" method="post" class="d-flex justify-content-center">
+                            {% csrf_token %}
+                            <input type="text" name="override" value="1" hidden>
+                            <input type="text" name="quantity" value="{{ item.quantity }}" hidden>
+                            {% if item.price_install %}
+                                <input checked type="checkbox" name="price_install" value="1" hidden>
+                            {% else %}
+                                <input checked type="checkbox" name="price_install" value="0" hidden>
+                            {% endif %}
+
+                            <div class="m-1">
+                                <button type="submit" class="btn_update btn btn-dark btn-sm bg-black pb-1 border-0 btn-outline-none" data-update-url="{% url 'shop:cart_add' product.id %}">
+                                    Обновить
+                                </button>
+                            </div>
+
+                            <div class="m-1">
+                                <button type="submit" class="btn_remove btn btn-danger btn-sm pb-1 border-0 btn-outline-none" data-delete-url="{% url 'shop:cart_remove' product.id %}">
+                                    Удалить
+                                </button>
+                            </div>
+                        </form>
                     </div>
-
-                    <form action="{% url 'shop:cart_add' product.id %}" method="post" class="d-flex justify-content-center">
-                        {% csrf_token %}
-                        <input type="text" name="override" value="1" hidden>
-                        <input type="text" name="quantity" value="{{ item.quantity }}" hidden>
-                        {% if item.price_install %}
-                            <input checked type="checkbox" name="price_install" value="1" hidden>
-                        {% else %}
-                            <input checked type="checkbox" name="price_install" value="0" hidden>
-                        {% endif %}
-
-                        <div class="m-1">
-                            <button type="submit" class="btn_update btn btn-dark btn-sm bg-black pb-1 border-0 btn-outline-none" data-update-url="{% url 'shop:cart_add' product.id %}">
-                                Обновить
-                            </button>
-                        </div>
-
-                        <div class="m-1">
-                            <button type="submit" class="btn_remove btn btn-danger btn-sm pb-1 border-0 btn-outline-none" data-delete-url="{% url 'shop:cart_remove' product.id %}">
-                                Удалить
-                            </button>
-                        </div>
-                    </form>
                   </div>
                 </div>
               </div>
