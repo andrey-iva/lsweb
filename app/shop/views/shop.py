@@ -158,6 +158,13 @@ def product_list(request, category_slug=None):
         'brands': sorted(brands),
     })
 
+def loop_id(request):
+    if request.headers.get('X-Requested-With'):
+        product = get_object_or_404(Product, attribute='loop')
+        return HttpResponse(json.dumps({'loop_id': product.id}))
+    else:
+        return redirect('shop:shop_page')
+
 # "{0}://{1}{2}".format(request.scheme, request.get_host(), request.path)
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug)

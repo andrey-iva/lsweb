@@ -139,6 +139,38 @@ MEDIA_URL = '/media/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
+            'format': '[%(asctime)s %(levelname)-1s] START %(message)s END'
+        },
+        # 'file': {
+        #     'format': '%(asctime)s %(name)-1s %(levelname)-1s %(message)s'
+        # }
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'console'
+        },
+        # 'file': {
+        #     'level': 'DEBUG',
+        #     'class': 'logging.FileHandler',
+        #     'formatter': 'file',
+        #     'filename': 'debug.log'
+        # }
+    },
+    'loggers': {
+        '': {
+            'level': 'DEBUG',
+            'handlers': ['console']
+            # 'handlers': ['console', 'file']
+        }
+    }
+}
+
 CORS_ALLOWED_ORIGINS = [
     'https://suggestions.dadata.ru',
     'https://api.cdek.ru',

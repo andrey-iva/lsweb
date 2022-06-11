@@ -391,13 +391,17 @@
         endTrigger.on('click', function() {
             container.removeClass('inside');
             wrapper.removeClass('overlay-active');
-            window.location = window.location.pathname
+            if (window.location.pathname.match(/^\/product/)) {
+                window.location = window.location.pathname
+            }  
         });
 
         $('.body-overlay').on('click', function() {
             container.removeClass('inside');
             wrapper.removeClass('overlay-active');
-            window.location = window.location.pathname
+            if (window.location.pathname.match(/^\/product/)) {
+                window.location = window.location.pathname
+            } 
         });
     };
     miniCart();
@@ -1826,21 +1830,39 @@
                     // product петля для якорного крепления
                     if (formElem.find("#add_anchor").prop("checked")) {
                         $.ajax({
-                            url: formElem.find("#add_anchor").data("urlAdd"),
+                            url: CART_COUNT_QUANTITY_URL,
                             method: "POST",
                             headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                            data: {
-                                "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
-                                "quantity": $("input[name=quantity]").val(),
-                                "override": $("input[name=override]").val(),
-                                "price_install": $("input[name=price_install]").prop("checked") ? 1 : 0
-                            }
+                            data: {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),}
                         }).done(function(response) {
-                            console.log("add_anchor", response)
-                            printCart()
-                        }).fail(function(err) {
-                            console.log("add_anchor", err)
+                            try {
+                                // колличество товаров с петлей
+                                response = JSON.parse(response)
+                                console.log("/cart/count/quantity/on/", response)
+                            } catch(err) {
+                                console.error("/cart/count/quantity/on/")
+                            }
+                            var quantity_on = response["quantity_on"]
+                            $.ajax({
+                                url: formElem.find("#add_anchor").data("urlAdd"),
+                                method: "POST",
+                                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                                data: {
+                                    "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+                                    // "quantity": $("input[name=quantity]").val(),
+                                    "quantity": quantity_on,
+                                    "override": 1,
+                                    // "override": $("input[name=override]").val(),
+                                    "price_install": $("input[name=price_install]").prop("checked") ? 1 : 0
+                                }
+                            }).done(function(response) {
+                                console.log("add_anchor", response)
+                                printCart()
+                            }).fail(function(err) {
+                                console.log("add_anchor", err)
+                            });
                         })
+                        
                     } else {
                         printCart()
                     }
@@ -1852,42 +1874,121 @@
         });
     });
 
-    $(".cart-detail-products").change(function() {
+    $(".cart-detail-products").change(function(e) {
+        var currenElem = $(this)
 
-        var btn = $(this).find(".btn_update")
-        var hiddenInput = $(this).find("input[name=price_install]")
-        var quantity = $(this).find("input[name=quantity]").val()
-        var price_install = $(this).find(".item_price_install").data("priceInstall")
+        if (e.target.name === 'add_install') {
+            var btn = $(this).find(".btn_update")
+            var hiddenInput = $(this).find("input[name=price_install]")
+            var quantity = $(this).find("input[name=quantity]").val()
+            var price_install = $(this).find(".item_price_install").data("priceInstall")
 
-        if (parseInt(hiddenInput.val()) === 0) {
-            hiddenInput.val(1)
-            $(this).find(".item_price_install").text(CURRENCY + price_install)
-        } else {
-            hiddenInput.val(0)
-            $(this).find(".item_price_install").text(CURRENCY + "0")
+            if (parseInt(hiddenInput.val()) === 0) {
+                hiddenInput.val(1)
+                $(this).find(".item_price_install").text(CURRENCY + price_install)
+            } else {
+                hiddenInput.val(0)
+                $(this).find(".item_price_install").text(CURRENCY + "0")
+            }
+
+            // var elem = document.querySelector("#base")
+            // var event = new Event("change");
+            // elem.dispatchEvent(event);
+            btn.trigger("submit")
         }
 
-        // var elem = document.querySelector("#base")
-        // var event = new Event("change");
-        // elem.dispatchEvent(event);
-        btn.trigger("submit")
+        if (e.target.name === "add_anchor") {
+            // currenElem.find(".btn_update").trigger("submit")
+
+            $.ajax({
+                url: GET_LOOP_ID_URL,
+            }).done(function(response) {
+                try {
+                    response = JSON.parse(response)
+                    console.info("loop_id:", response["loop_id"])
+                } catch(err) {
+                    console.error("не получил ID:", GET_LOOP_ID_URL)
+                }
+
+                var loopId = response["loop_id"]
+
+                if (e.target.checked === true) {
+                    console.log("checked: true")
+                }
+                
+                if (e.target.checked === false) {
+                    console.log("checked: false")
+                    console.log("quantity: ", currenElem.find("input[name=quantity]").val() )
+                    $.ajax({
+                        url: "/cart/remove/loop/" + loopId + "/",
+                        method: "POST",
+                        data: {
+                            "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+                            "quantity": currenElem.find("input[name=quantity]").val()
+                        }
+                    }).done(function(response) {
+                        try {
+                            response = JSON.parse(response)
+                            console.log(response)
+                        } catch(err) {
+                            console.error("/cart/remove/loop/" + loopId + "/")
+                        }
+
+                        // удаляет отметку loop: on
+                        $.ajax({
+                            url: "/cart/del/sessionkeyloop/" + currenElem.data("productId") + "/",
+                            method: "POST",
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                            data: {
+                                "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+                            }
+                        }).done(function(response) {
+                            console.log("loop off", response, "/cart/del/sessionkeyloop/" + currenElem.data("productId") + "/")
+
+                            // !
+                        })
+
+                    }).fail(function(err) {
+                        console.error("/cart/remove/loop/" + loopId + "/")
+                    });
+                }
+
+            }).fail(function(err) {
+                console.error("не получил ID:", GET_LOOP_ID_URL)
+            });
+        }
     });
 
+    // product detail
     $(".del-loop").change(function(e) {
         var url = $(this).data("urlRemove")
         if (this.checked === false) {
+            // модифицирует сессию, удаляет если 0, производит модификацию + -
             $.ajax({
                 url: url,
                 method: "POST",
                 headers: { 'X-Requested-With': 'XMLHttpRequest' },
                 data: {
                     "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+                    "quantity": $("input[name=quantity]").val(),
                 }
             }).done(function(response) {
                 console.log('remove: ', url)
+                // удаляет отметку loop: on
+                $.ajax({
+                    url: $(".del-loop").data("urlLoopOff"),
+                    method: "POST",
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    data: {
+                        "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+                    }
+                }).done(function(response) {
+                    console.log("loop off", response, $(".del-loop").data("urlLoopOff"))
+                })
             })
         }
     });
+    // product detail
     $(".del-service").change(function(e) {
         var url = $(this).data("url")
         if (this.checked === false) {

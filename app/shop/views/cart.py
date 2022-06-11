@@ -8,15 +8,15 @@ from ..models import Product
 from ..cart import Cart
 from ..ctx_proc import currency
 
-import json
+import json, logging
 
 @require_POST
 def cart_add(request, product_id):
-    print(product_id)
     try:
         quantity = int(request.POST.get('quantity'))
         override = int(request.POST.get('override'))
         install = int(request.POST.get('price_install') or 0)
+        loop = request.POST.get('loop')
     except Exception as e:
         print(e)
     else:
@@ -27,7 +27,8 @@ def cart_add(request, product_id):
             cart.add(product=product, 
                     quantity=quantity,
                     override_quantity=override,
-                    install=install)
+                    install=install,
+                    loop=loop)
 
             if request.headers.get('X-Requested-With'):
                 price = Decimal(cart.cart[str(product_id)]['price']) * quantity
@@ -92,6 +93,52 @@ def add_percent(request):
 
 
     return HttpResponse(json.dumps({'error': 'no add percent!'}))
+
+@require_POST
+def cart_count_quantity(request):
+    cart = Cart(request)
+    quantity_on = 0
+    for item in cart:
+        if item.get('loop'):
+            if item['loop'] == 'on':
+                quantity_on += int(item['quantity'])
+
+    # if quantity_on:
+    #     product = get_object_or_404(Product, attribute='loop')
+    #     if request.session[CART_SESSION_ID].get(str(product.id)):
+    #         print('-->', request.session[CART_SESSION_ID][str(product.id)]['quantity'])
+            
+    return HttpResponse(json.dumps({'quantity_on': str(quantity_on)}))
+
+@require_POST
+def cart_loop_off(request, product_id):
+    ''' удаляет отметку loop: on '''
+    if request.session.get(CART_SESSION_ID):
+        if request.session[CART_SESSION_ID][str(product_id)].get('loop'):
+            del request.session[CART_SESSION_ID][str(product_id)]['loop']
+            request.session.modified = True
+            return HttpResponse(json.dumps({'loop_del': 'ok'}))
+
+    return HttpResponse(json.dumps({'loop_del': 'no'}))
+
+@require_POST
+def cart_remove_loop(request, product_id):
+    ''' колличество для установки петель якорного крепления '''
+    if request.session[CART_SESSION_ID].get(str(product_id)):
+        quantity = request.POST.get('quantity')
+        cart_quantity = request.session[CART_SESSION_ID][str(product_id)]['quantity']
+        result = int(cart_quantity) - int(quantity)
+
+        if result <= 0:
+            del request.session[CART_SESSION_ID][str(product_id)]
+            logging.debug('cart_remove_loop FULLING DELETE')
+        else:
+            logging.debug('cart_remove_loop %s RECALCULATION', request.session[CART_SESSION_ID][str(product_id)])
+            request.session[CART_SESSION_ID][str(product_id)]['quantity'] = result
+        
+        request.session.modified = True
+        return HttpResponse(json.dumps({"loop_quantity": quantity}))
+    return HttpResponse(json.dumps({"loop_quantity": 'fail'}))
 
 @require_POST
 def cart_remove(request, product_id):

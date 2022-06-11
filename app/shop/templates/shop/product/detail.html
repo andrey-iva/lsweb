@@ -18,7 +18,7 @@
         </div>
     </div>
 </div>
-
+{{request.session.cart}}
 <div class="product-details-area pt-120 pb-115">
     <div class="container">
         <form action="{% url 'shop:cart_add' product.id %}" method="post" class="row product_detail product_list_add_to_cart">
@@ -87,15 +87,20 @@
                         {% if product.attribute != 'loop' %}
                         <span class="font-weight-bold">
                             Петля для якорного крепления <i class="text-primary">{{currency}}{{ product_loop.price }}</i>
-                            <input id="add_anchor" class="form-check-input {% if request.session.cart|get_key:product.id %}del-loop{% endif %}" type="checkbox" name="" value=""
+                            <input 
+                            id="add_anchor" 
+                            class="form-check-input {% if request.session.cart|get_key:product.id %}del-loop{% endif %}" 
+                            type="checkbox" name="loop"
                             data-url-add="{% url 'shop:cart_add' product_loop.id %}"
-                            data-url-remove="{% url 'shop:cart_remove' product_loop.id %}"
+                            data-url-remove="{% url 'shop:cart_remove_loop' product_loop.id %}"
+                            data-url-loop-off="{% url 'shop:cart_loop_off' product.id %}"
                             style="
                                 max-width: 180px;
                                 margin-left: -7px;
                                 zoom: 0.4;
                                 cursor: pointer;
-                            " {% if request.session.cart|get_key:product_loop.id %} checked {% endif %}>
+                            " {% if request.session.cart|is_loop_install:product.id %} checked {% endif %}>
+                            <!-- {% if request.session.cart|get_key:product_loop.id %}  {% endif %} -->
                         </span>
                         {% endif %}
                         {% endif %}
@@ -106,7 +111,8 @@
                         {% if product.product_type != 'рейка' and product.attribute != 'loop' and product.product_type != 'услуга'%}
                             <span class="font-weight-bold">Установка кронштейна <i class="text-primary">{{currency}}{{ product.price_install }}</i> </span>
 
-                            <input class="form-check-input ml-5 {% if request.session.cart|get_key:product.id %}del-service{% endif %}" type="checkbox" name="price_install" value="1"
+                            <input 
+                            class="form-check-input ml-5 {% if request.session.cart|get_key:product.id %}del-service{% endif %}" type="checkbox" name="price_install" value="1"
                             data-url="{% url 'shop:cart_add' product.id %}" 
                             style="
                             max-width: 280px;

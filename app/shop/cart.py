@@ -2,6 +2,7 @@ from decimal import Decimal
 from . import CART_SESSION_ID
 from .models import Product
 
+import logging
 
 class Cart(object):
 
@@ -40,7 +41,15 @@ class Cart(object):
     def __len__(self):
         return sum(item['quantity'] for item in self.cart.values())
 
-    def add(self, product, quantity=1, override_quantity=False, install=0):
+    def add(self, product, quantity=1, override_quantity=False, install=0, loop=None):
+        
+        logging.debug("Cart add product: %s, quantity: %s, override_quantity: %s, install: %s, loop: %s", 
+            product, 
+            quantity, 
+            override_quantity, 
+            install, 
+            loop)
+
         product_id = str(product.id)
         if product_id not in self.cart:
             self.cart[product_id] = {'quantity': 0,
@@ -54,6 +63,10 @@ class Cart(object):
             self.cart[product_id]['price_install'] = str(Decimal(product.price_install))
         else:
             self.cart[product_id]['price_install'] = '0'
+        
+        if loop == 'on':
+            self.cart[product_id]['loop'] = loop
+        
         self.save()
 
     def save(self):

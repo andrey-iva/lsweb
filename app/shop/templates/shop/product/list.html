@@ -196,21 +196,13 @@
                                         <div class="product-content-wrap-2 text-center">
                                             <h3>{{ product.name }}</h3>
                                             <div class="product-price-2">
-                                                {% if product.product_type == 'услуга' %}
-                                                <span>{{ currency }}{{ product.price_install }}</span>
-                                                {% else %}
                                                 <span>{{ currency }}{{ product.price }}</span>
-                                                {% endif %}
                                             </div>
                                         </div>
                                         <div class="product-content-wrap-2 product-content-position text-center">
                                             <h3><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
                                             <div class="product-price-2">
-                                                {% if product.product_type == 'услуга' %}
-                                                <span>{{ currency }}{{ product.price_install }}</span>
-                                                {% else %}
                                                 <span>{{ currency }}{{ product.price }}</span>
-                                                {% endif %}
                                             </div>
                           <!--                   <div class="pro-add-to-cart">
                                                 <form class="product_list_add_to_cart" action="{% url 'shop:cart_add' product.id %}" method="post">
@@ -266,11 +258,7 @@
                                             <div class="pro-list-price">
                                                 <!-- <span class="new-price">$35.45</span> -->
                                                 <!-- <span class="old-price">$45.80</span> -->
-                                                {% if product.product_type == 'услуга' %}
-                                                <span>{{ currency }}{{ product.price_install }}</span>
-                                                {% else %}
                                                 <span>{{ currency }}{{ product.price }}</span>
-                                                {% endif %}
                                             </div>
                                             <p>{{ product.description_short }}</p>
                                             <p>

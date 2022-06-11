@@ -14,8 +14,7 @@ from ..models import OrderItem, Order
 from .. import GRAND_TOTAL_ID, PAYMENT_REDIRECT_PAGE, ADMIN_EMAIL
 from pprint import pprint
 
-format = '%(asctime)s: %(message)s'
-logging.basicConfig(format=format, level=logging.INFO, datefmt='%H:%M:%S')
+logging.basicConfig(format='%(asctime)s: %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
 
 
 # Configuration.account_id = <Идентификатор магазина>

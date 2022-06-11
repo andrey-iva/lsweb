@@ -9,11 +9,19 @@ def get_key(d, k):
 
 @register.filter
 def get_quantity(d, k):
-    return d[str(k)]['quantity']
+	if str(k) in d:
+		return d[str(k)]['quantity']
 
 @register.filter
 def get_product_total_price_install(d, k):
-    return d[str(k)]['total_price_install']
+	if str(k) in d:
+		return d[str(k)]['total_price_install']
+
+@register.filter
+def is_loop_install(d, k):
+	if str(k) in d:
+		if d[str(k)].get('loop'):
+			return d[str(k)]['loop'] == 'on'
 
 @register.filter
 def get_install_price(d, k):

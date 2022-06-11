@@ -18,6 +18,7 @@ urlpatterns = [
 		path('contact/send/massage/', view.contact_send_message, name='contact_send_message'),
 	])),
 	path('shop/', shop.product_list, name='shop_page'),
+	path('product/loop_id/', shop.loop_id, name='loop_id'),
 	path('product/<slug:slug>/', shop.product_detail, name='product_detail'),
 	# /product-category/{{brand}}/ - прописан жестко в product/list.html - 1 раз
 	path(u'product-category/', include([
@@ -33,12 +34,16 @@ urlpatterns = [
 		path('', cart.cart_detail, name='cart_detail'),
 		path('json/', cart.cart_json, name='cart_json'),
 		path('clear/', cart.cart_clear, name='cart_clear'),
+		path('count/quantity/on/', cart.cart_count_quantity, name='cart_count_quantity'),
 		path('add/<int:product_id>/', cart.cart_add, name='cart_add'),
-		# /cart/remove/id - прописан жестко в JS 1-раз
+		# /cart/remove/id - прописан жестко в JS
 		path('remove/<int:product_id>/', cart.cart_remove, name='cart_remove'),
+		# /cart/remove/loop/id - прописан жестко в JS
+		path('remove/loop/<int:product_id>/', cart.cart_remove_loop, name='cart_remove_loop'),
 		path('add/delivery/tax/', cart.add_delivery_tax, name='add_delivery_tax'),
 		path('add/percent/', cart.add_percent, name='add_percent'),
-		# path('get/grand/total/', cart.get_grand_total, name='get_grand_total'),
+		# del/sessionkeyloop/<int:product_id>/ - прописан жестко в JS
+		path('del/sessionkeyloop/<int:product_id>/', cart.cart_loop_off, name='cart_loop_off'),
 	])),
 	path('order/', include([
 		path('create/', order.order_create, name='order_create'),
