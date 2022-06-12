@@ -1601,23 +1601,29 @@
     });
     // cart detail page
     $(".cart-detail-products").each(function(e) {
-        var parentElem = $(this)
+        var currentForm = $(this)
+
+        if (currentForm.data("markerLoop") === 'on') {
+            $("body").find("form[data-product-attr=loop]").find("button").prop("disabled", true)
+        }
 
         // Берет value из текущего счетчика колличества товаров input[name=qtybutton]
         // Устанавливает value в текущем скрытом поле input[name=quantity]
-        parentElem.click(function(e) {
-            var plusMinusValue = $(this).find("input[name=qtybutton]").val()
-            var quantity = $(this).find("input[name=quantity]")
+        var plusMinusValue = currentForm.find("input[name=qtybutton]").val()
+        var quantity = currentForm.find("input[name=quantity]")
+        quantity.val(plusMinusValue)
+        currentForm.find(".cart-plus-minus").click(function(e) {
+            plusMinusValue = currentForm.find("input[name=qtybutton]").val()
+            quantity = currentForm.find("input[name=quantity]")
             quantity.val(plusMinusValue)
-        });
+        })
 
         // Устанавливает action=URL для  отправки текущей формы
         // В зависимости от нажатой книпки текущей формы delete/update
-        parentElem.find("button").click(function(e) {
+        currentForm.find("button").click(function(e) {
             var update = $(this).data("updateUrl")
             var remove = $(this).data("deleteUrl")
-
-            var currentForm = parentElem.find("form")
+            // var currentForm = currentForm.find("form")
 
             if (update) {
                 currentForm.attr("action", update)
@@ -1627,6 +1633,7 @@
                 currentForm.attr("action", remove)
             }
         })
+
         // /cart/detail/
         // 1 установка подитоговой цены всех продуктов
         // 2 Счетчик корзиры + стоимость на странице для ПК
@@ -1644,72 +1651,174 @@
 
         // Все формы на странице корзины /cart/detail/
         // ОБНОВЛЕНИЕ И УДАЛЕНИЕ ТОВАРОВ
-        parentElem.find("form").submit(function(e) {
+        // action="" по умолчанию /cart/add/id/ override=1 устанавливает в зависимости от нажатой кнопки
+        // В currentForm.find("button").click(function(e) {}
+        // currentForm.find("span.product-subtotal").html(
+        //     "<div class='spinner-border spinner-border-sm' role='status'>\
+        //         <span class='sr-only'>Загрузка...</span>\
+        //     </div>")
+        // currentForm.find("span.product-subtotal-install").html(
+        //     "<div class='spinner-border spinner-border-sm' role='status'>\
+        //         <span class='sr-only'>Загрузка...</span>\
+        //     </div>")
+        // $("#triffs_list").html('<li><input data-delivery-name="standard" data-delivery-sum="0" type="radio" name="tariff_code" value="standard"> Standard <span>'+CURRENCY+'0.00</span></li>')
+        // $("#ser").html('<input maxlength="50" type="text" name="city" id="city" placeholder="Ваш город" required>')
+        currentForm.submit(function(e) {
             e.preventDefault()
+            var currentForm = $(this)
+            // console.log(currentForm.find("input[name=quantity]").val())
             // return
-            // action="" по умолчанию /cart/add/id/ override=1 устанавливает в зависимости от нажатой кнопки
-            // В parentElem.find("button").click(function(e) {}
-            parentElem.find("span.product-subtotal").html(
-                "<div class='spinner-border spinner-border-sm' role='status'>\
-                    <span class='sr-only'>Загрузка...</span>\
-                </div>")
-            parentElem.find("span.product-subtotal-install").html(
-                "<div class='spinner-border spinner-border-sm' role='status'>\
-                    <span class='sr-only'>Загрузка...</span>\
-                </div>")
-            // $("#triffs_list").html('<li><input data-delivery-name="standard" data-delivery-sum="0" type="radio" name="tariff_code" value="standard"> Standard <span>'+CURRENCY+'0.00</span></li>')
-            // $("#ser").html('<input maxlength="50" type="text" name="city" id="city" placeholder="Ваш город" required>')
             $.ajax({
-                url: $(this).attr("action"),
-                method: "POST",
-                headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                data: $(this).serialize(),
-                success: function(response) {
-                    try {
-                        var responseData = JSON.parse(response)
-                        console.log('>>>>', responseData)
-                    } catch (err) {
-                        console.info("ОБНОВЛЕНИЕ И УДАЛЕНИЕ ТОВАРОВ, ОШИБКА ПРИ РАЗБОРЕ ПОЛУЧЕННЫХ ДАННЫХ:", err)
-                        return
-                    }
-                    console.info(this.url, "remove||update main cart:", responseData)
-                    // product-subtotal
-                    if (responseData.result === "update") {
-                        // console.log('=======>', responseData)
-                        parentElem.find("span.product-subtotal").text(responseData.total_price)
-                        parentElem.find("span.product-subtotal-install").text(responseData.total_price_install)
-                        changeCartLengthSubTotal(responseData)
-                        
-                    } else if (responseData.result === "remove") {
-                        // parentElem.addClass("d-none")
-                        parentElem.remove()
-                        if (parentElem.data("productAttr") === 'loop') {
+            url: currentForm.attr("action"),
+            method: "POST",
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            data: $(this).serialize(),
+            success: function(response) {
+                try {
+                    var responseData = JSON.parse(response)
+                    console.log('>>>>', responseData)
+                } catch (err) {
+                    console.info("ОБНОВЛЕНИЕ И УДАЛЕНИЕ ТОВАРОВ, ОШИБКА ПРИ РАЗБОРЕ ПОЛУЧЕННЫХ ДАННЫХ:", err)
+                    return
+                }
+                console.info(this.url, "remove||update main cart:", responseData)
+                // product-subtotal
+                if (responseData.result === "update") {
+                    // console.log('=======>', responseData)
+                    // currentForm.find("span.product-subtotal").text(responseData.total_price)
+                    // if (currentForm.find("input[name=price_install]").prop("checked")) {
+                    //     currentForm.find("span.item_price_install").text(responseData.price_install)
+                    // } else {
+                    //     currentForm.find("span.item_price_install").text(CURRENCY + "0")
+                    // }
+                    // currentForm.find("span.product-subtotal-install").text(responseData.total_price_install)
+                    // changeCartLengthSubTotal(responseData)
+
+                    if (currentForm.find("#add_anchor").prop("checked")) {
+                        $.ajax({
+                            url: CART_COUNT_QUANTITY_URL,
+                            method: "POST",
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                            data: {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),}
+                        }).done(function(response) {
+                            try {
+                                // колличество товаров с петлей
+                                response = JSON.parse(response)
+                                console.log("/cart/count/quantity/on/", response)
+                            } catch(err) {
+                                console.error("/cart/count/quantity/on/")
+                            }
+                            var quantity_on = response["quantity_on"]
+
+
                             $.ajax({
-                                url: CART_REMOVE_LOOP_MARKER_URL,
+                                url: GET_LOOP_ID_URL,
+                            }).done(function(response) {
+                                try {
+                                    response = JSON.parse(response)
+                                    console.info("loop_id:", response["loop_id"])
+                                } catch(err) {
+                                    console.error("не получил ID:", GET_LOOP_ID_URL)
+                                }
+
+                                var loopId = response["loop_id"]
+
+                                $.ajax({
+                                    url: "/cart/add/" + loopId + "/",
+                                    method: "POST",
+                                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                                    data: {
+                                        "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+                                        // "quantity": $("input[name=quantity]").val(),
+                                        "quantity": quantity_on,
+                                        "override": 1,
+                                        // "override": $("input[name=override]").val(),
+                                        // "price_install": $("input[name=price_install]").prop("checked") ? 1 : 0
+                                    }
+                                }).done(function(response) {
+                                    console.log("add_anchor", response)
+                                    // printCart()
+                                    window.location = window.location.pathname
+                                }).fail(function(err) {
+                                    console.log("add_anchor", err)
+                                });
+
+                            });
+         
+                        })
+                    }
+
+                    if (!currentForm.find("#add_anchor").prop("checked")) {
+                        $.ajax({
+                            url: GET_LOOP_ID_URL,
+                        }).done(function(response) {
+                            try {
+                                response = JSON.parse(response)
+                                console.info("loop_id:", response["loop_id"])
+                            } catch(err) {
+                                console.error("не получил ID:", GET_LOOP_ID_URL)
+                            }
+
+                            var loopId = response["loop_id"]
+
+                            // модифицирует сессию, удаляет если 0, производит модификацию + -
+                            $.ajax({
+                                url: "remove/loop/" + loopId + "/",
                                 method: "POST",
-                                data: {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()}
+                                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                                data: {
+                                    "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+                                    "quantity": currentForm.find("input[name=quantity]").val(),
+                                }
                             }).done(function(response) {
                                 console.log(response)
-                                if (response) {
+                                // удаляет отметку loop: on
+                                $.ajax({
+                                    url: "del/sessionkeyloop/" + currentForm.data("productId") + "/",
+                                    method: "POST",
+                                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                                    data: {
+                                        "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+                                    }
+                                }).done(function(response) {
+                                    console.log("loop off", response, "del/sessionkeyloop/" + currentForm.data("productId") + "/")
                                     window.location = window.location.pathname
-                                }
+                                })
                             })
-                        }
-                        if (parseInt(responseData.cart_length) === 0) {
-                            $("#cart-container").html("<h3 class=\"text-center\">Ваша корзина пуста</h3>\
-                                        <div class=\"text-center h6\"><a class='btn btn-danger' href='" +
-                                        PRODUCT_LIST_URL + "'>Перейти к покупкам</a></div>")
-                            window.location = PRODUCT_LIST_URL
-                        }
-
-                        changeCartLengthSubTotal(responseData)
-                    } else {
-                        console.error(this.url, "error update cart")
+                        })
                     }
-                },
-                error: function() { console.error(this.url) },
-            })
+                    
+                } else if (responseData.result === "remove") {
+                    // currentForm.addClass("d-none")
+                    // currentForm.remove()
+
+                    if (parseInt(responseData.cart_length) === 0) {
+                        $("#cart-container").html("<h3 class=\"text-center\">Ваша корзина пуста</h3>\
+                                    <div class=\"text-center h6\"><a class='btn btn-danger' href='" +
+                                    PRODUCT_LIST_URL + "'>Перейти к покупкам</a></div>")
+                        window.location = PRODUCT_LIST_URL
+                    } else {
+                        $.ajax({
+                            url: CART_REMOVE_LOOP_MARKER_URL,
+                            method: "POST",
+                            data: {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()}
+                        }).done(function(response) {
+                            console.log(response)
+                            if (response) {
+                                window.location = window.location.pathname
+                            }
+                        })
+                    }
+
+                    // changeCartLengthSubTotal(responseData)
+                } else {
+                    console.error(this.url, "error update cart")
+                }
+            },
+            error: function() { console.error(this.url) },
         })
+        })
+        
     });
 
     // Удаление товары из мини корзины
@@ -1717,6 +1826,9 @@
         $(".cart-detail-mini-delete").each(function(e) {
             var parent = $(this) // tag LI
             // Все формы в мини корзине
+            // if ($(this).data("isLoop") === "on") {
+            //     $("#cart_mini_content").find("button.loop").text("no")
+            // }
             $(this).find("form").submit(function(e) {
                 e.preventDefault()
                 $.ajax({
@@ -1896,162 +2008,162 @@
         });
     });
 
-    $(".cart-detail-products").change(function(e) {
-        var currenElem = $(this)
+    // $(".cart-detail-products").change(function(e) {
+    //     var currenElem = $(this)
 
-        if (e.target.name === 'add_install') {
-            var btn = $(this).find(".btn_update")
-            var hiddenInput = $(this).find("input[name=price_install]")
-            var quantity = $(this).find("input[name=quantity]").val()
-            var price_install = $(this).find(".item_price_install").data("priceInstall")
+    //     if (e.target.name === 'add_install') {
+    //         var btn = $(this).find(".btn_update")
+    //         var hiddenInput = $(this).find("input[name=price_install]")
+    //         var quantity = $(this).find("input[name=quantity]").val()
+    //         var price_install = $(this).find(".item_price_install").data("priceInstall")
 
-            if (parseInt(hiddenInput.val()) === 0) {
-                hiddenInput.val(1)
-                $(this).find(".item_price_install").text(CURRENCY + price_install)
-            } else {
-                hiddenInput.val(0)
-                $(this).find(".item_price_install").text(CURRENCY + "0")
-            }
+    //         if (parseInt(hiddenInput.val()) === 0) {
+    //             hiddenInput.val(1)
+    //             $(this).find(".item_price_install").text(CURRENCY + price_install)
+    //         } else {
+    //             hiddenInput.val(0)
+    //             $(this).find(".item_price_install").text(CURRENCY + "0")
+    //         }
 
-            // var elem = document.querySelector("#base")
-            // var event = new Event("change");
-            // elem.dispatchEvent(event);
-            btn.trigger("submit")
-        }
+    //         // var elem = document.querySelector("#base")
+    //         // var event = new Event("change");
+    //         // elem.dispatchEvent(event);
+    //         btn.trigger("submit")
+    //     }
 
-        if (e.target.name === "add_anchor") {
-            // currenElem.find(".btn_update").trigger("submit")
+    //     if (e.target.name === "add_anchor") {
+    //         // currenElem.find(".btn_update").trigger("submit")
 
-            $.ajax({
-                url: GET_LOOP_ID_URL,
-            }).done(function(response) {
-                try {
-                    response = JSON.parse(response)
-                    console.info("loop_id:", response["loop_id"])
-                } catch(err) {
-                    console.error("не получил ID:", GET_LOOP_ID_URL)
-                }
+            // $.ajax({
+            //     url: GET_LOOP_ID_URL,
+            // }).done(function(response) {
+            //     try {
+            //         response = JSON.parse(response)
+            //         console.info("loop_id:", response["loop_id"])
+            //     } catch(err) {
+            //         console.error("не получил ID:", GET_LOOP_ID_URL)
+            //     }
 
-                var loopId = response["loop_id"]
+            //     var loopId = response["loop_id"]
 
-                if (e.target.checked === true) {
-                    console.log("checked: true")
-                    var quantity = parseInt(currenElem.find("input[name=qtybutton]").val())
-                    var loopElem = $("body").find("div[data-product-attr=loop]")
-                    // console.log($("body").find("div[data-product-attr=loop]"))
-                    // if ($("body").find("div[data-product-attr=loop]").length) {
+    //             if (e.target.checked === true) {
+    //                 console.log("checked: true")
+    //                 var quantity = parseInt(currenElem.find("input[name=qtybutton]").val())
+    //                 var loopElem = $("body").find("div[data-product-attr=loop]")
+    //                 // console.log($("body").find("div[data-product-attr=loop]"))
+    //                 // if ($("body").find("div[data-product-attr=loop]").length) {
 
-                    // } else {
-                        // добовляем петлю якорного крепления
-                        $.ajax({
-                            url: "/cart/add/" + loopId + "/",
-                            method: "POST",
-                            data: {
-                                "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
-                                "quantity": currenElem.find("input[name=qtybutton]").val(),
-                                "override": 0,
-                            }
-                        }).done(function(response) {
-                            try {
-                                response = JSON.parse(response)
-                                console.log(response)
-                            } catch(err) {
-                                console.log("fail /cart/add/   loop||33 cart detail page")
-                            }
+    //                 // } else {
+    //                     // добовляем петлю якорного крепления
+    //                     $.ajax({
+    //                         url: "/cart/add/" + loopId + "/",
+    //                         method: "POST",
+    //                         data: {
+    //                             "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+    //                             "quantity": currenElem.find("input[name=qtybutton]").val(),
+    //                             "override": 0,
+    //                         }
+    //                     }).done(function(response) {
+    //                         try {
+    //                             response = JSON.parse(response)
+    //                             console.log(response)
+    //                         } catch(err) {
+    //                             console.log("fail /cart/add/   loop||33 cart detail page")
+    //                         }
 
-                            if (response["result"] === "update") {
-                                $.ajax({
-                                    url: currenElem.data("markerUrl"),
-                                    method: "POST",
-                                    data: {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()}
-                                }).done(function(response) {
-                                    if (response.match(/OK/)) {
-                                        window.location = window.location.pathname
-                                    } else {
-                                        console.error(response)
-                                    }
-                                })   
-                            }
-                        })
-                    // }
+    //                         if (response["result"] === "update") {
+    //                             $.ajax({
+    //                                 url: currenElem.data("markerUrl"),
+    //                                 method: "POST",
+    //                                 data: {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()}
+    //                             }).done(function(response) {
+    //                                 if (response.match(/OK/)) {
+    //                                     window.location = window.location.pathname
+    //                                 } else {
+    //                                     console.error(response)
+    //                                 }
+    //                             })   
+    //                         }
+    //                     })
+    //                 // }
                     
-                }
+    //             }
                 
-                if (e.target.checked === false) {
-                    $.ajax({
-                        url: "/cart/remove/loop/" + loopId + "/",
-                        method: "POST",
-                        data: {
-                            "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
-                            "quantity": currenElem.find("input[name=quantity]").val()
-                        }
-                    }).done(function(response) {
-                        try {
-                            response = JSON.parse(response)
-                            console.log(response)
-                        } catch(err) {
-                            console.error("/cart/remove/loop/" + loopId + "/")
-                        }
+    //             if (e.target.checked === false) {
+    //                 $.ajax({
+    //                     url: "/cart/remove/loop/" + loopId + "/",
+    //                     method: "POST",
+    //                     data: {
+    //                         "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+    //                         "quantity": currenElem.find("input[name=quantity]").val()
+    //                     }
+    //                 }).done(function(response) {
+    //                     try {
+    //                         response = JSON.parse(response)
+    //                         console.log(response)
+    //                     } catch(err) {
+    //                         console.error("/cart/remove/loop/" + loopId + "/")
+    //                     }
 
-                        // удаляет отметку loop: on
-                        $.ajax({
-                            url: "/cart/del/sessionkeyloop/" + currenElem.data("productId") + "/",
-                            method: "POST",
-                            headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                            data: {
-                                "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
-                            }
-                        }).done(function(response) {
-                            console.log("loop off", response, "/cart/del/sessionkeyloop/" + currenElem.data("productId") + "/")
+    //                     // удаляет отметку loop: on
+    //                     $.ajax({
+    //                         url: "/cart/del/sessionkeyloop/" + currenElem.data("productId") + "/",
+    //                         method: "POST",
+    //                         headers: { 'X-Requested-With': 'XMLHttpRequest' },
+    //                         data: {
+    //                             "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+    //                         }
+    //                     }).done(function(response) {
+    //                         console.log("loop off", response, "/cart/del/sessionkeyloop/" + currenElem.data("productId") + "/")
 
-                            try {
-                                response = JSON.parse(response)
-                                console.log(response)
-                            } catch(err) {
-                                console.error("/cart/del/sessionkeyloop/" + currenElem.data("productId") + "/")
-                            }
-                            // проверяем есть еще петли
-                            $.ajax({
-                                url: CART_COUNT_QUANTITY_URL,
-                                method: "POST",
-                                headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                                data: {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),}
-                            }).done(function(response) {
-                                try {
-                                    response = JSON.parse(response)
-                                    console.log(response)
-                                } catch(err) {
-                                    console.error(CART_COUNT_QUANTITY_URL)
-                                }
+    //                         try {
+    //                             response = JSON.parse(response)
+    //                             console.log(response)
+    //                         } catch(err) {
+    //                             console.error("/cart/del/sessionkeyloop/" + currenElem.data("productId") + "/")
+    //                         }
+    //                         // проверяем есть еще петли
+    //                         $.ajax({
+    //                             url: CART_COUNT_QUANTITY_URL,
+    //                             method: "POST",
+    //                             headers: { 'X-Requested-With': 'XMLHttpRequest' },
+    //                             data: {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),}
+    //                         }).done(function(response) {
+    //                             try {
+    //                                 response = JSON.parse(response)
+    //                                 console.log(response)
+    //                             } catch(err) {
+    //                                 console.error(CART_COUNT_QUANTITY_URL)
+    //                             }
 
-                                var quantity = parseInt(response["quantity_on"])
+    //                             var quantity = parseInt(response["quantity_on"])
                                 
-                                var productLoop = $("body").find("div[data-product-attr=loop]")
-                                var loopQuantity = productLoop.find("input[name=qtybutton]")
-                                var btnRemove = productLoop.find("div .btn_remove")
-                                var btnUpdate = productLoop.find("div .btn_update")
+    //                             var productLoop = $("body").find("div[data-product-attr=loop]")
+    //                             var loopQuantity = productLoop.find("input[name=qtybutton]")
+    //                             var btnRemove = productLoop.find("div .btn_remove")
+    //                             var btnUpdate = productLoop.find("div .btn_update")
 
-                                if (quantity <= 0) {
-                                    btnRemove.trigger("click")
-                                }
+    //                             if (quantity <= 0) {
+    //                                 btnRemove.trigger("click")
+    //                             }
 
-                                if (quantity > 0) {
-                                    loopQuantity.val(quantity)
-                                    btnUpdate.trigger("click")
-                                }
-                            })
-                        })
+    //                             if (quantity > 0) {
+    //                                 loopQuantity.val(quantity)
+    //                                 btnUpdate.trigger("click")
+    //                             }
+    //                         })
+    //                     })
 
-                    }).fail(function(err) {
-                        console.error("/cart/remove/loop/" + loopId + "/")
-                    });
-                }
+    //                 }).fail(function(err) {
+    //                     console.error("/cart/remove/loop/" + loopId + "/")
+    //                 });
+    //             }
 
-            }).fail(function(err) {
-                console.error("не получил ID:", GET_LOOP_ID_URL)
-            });
-        }
-    });
+    //         }).fail(function(err) {
+    //             console.error("не получил ID:", GET_LOOP_ID_URL)
+    //         });
+    //     }
+    // });
 
     // product detail
     $(".del-loop").change(function(e) {
