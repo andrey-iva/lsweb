@@ -115,9 +115,8 @@ def cart_count_quantity(request):
     cart = Cart(request)
     quantity_on = 0
     for item in cart:
-        if item.get('loop'):
-            if item['loop'] == 'on':
-                quantity_on += int(item['quantity'])
+        if item.get('loop_quantity'):
+            quantity_on += int(item['quantity'])
 
     # if quantity_on:
     #     product = get_object_or_404(Product, attribute='loop')
@@ -140,19 +139,61 @@ def cart_loop_off(request, product_id):
 @require_POST
 def cart_remove_loop(request, product_id):
     ''' колличество для установки петель якорного крепления '''
+    logging.debug('cart_remove_loop %s', product_id)
     if request.session[CART_SESSION_ID].get(str(product_id)):
-        quantity = request.POST.get('quantity')
-        cart_quantity = request.session[CART_SESSION_ID][str(product_id)]['quantity']
-        result = int(cart_quantity) - int(quantity)
-
-        if result <= 0:
-            del request.session[CART_SESSION_ID][str(product_id)]
-            logging.debug('cart_remove_loop FULLING DELETE')
-        else:
-            logging.debug('cart_remove_loop %s RECALCULATION', request.session[CART_SESSION_ID][str(product_id)])
-            request.session[CART_SESSION_ID][str(product_id)]['quantity'] = result
+        qty = int(request.POST.get('quantity'))
+        logging.debug('qty: %s', qty)
+        # cart_quantity = request.session[CART_SESSION_ID][str(product_id)]['quantity']
+        # result = int(cart_quantity) - int(quantity)
+        # cart = Cart(request)
+        # logging.debug(cart)
+        # if result <= 0:
+        #     del request.session[CART_SESSION_ID][str(product_id)]
+        #     logging.debug('cart_remove_loop FULLING DELETE')
+        # else:
+        #     logging.debug('cart_remove_loop %s RECALCULATION', request.session[CART_SESSION_ID][str(product_id)])
+        #     request.session[CART_SESSION_ID][str(product_id)]['quantity'] = result
         
-        request.session.modified = True
+        # request.session.modified = True
+        
+
+        # request.session[CART_SESSION_ID][str(product_id)]['loop_quantity'] = 0
+        # request.session.modified = True
+
+        # product = get_object_or_404(Product, attribute='loop')
+
+        # quantity = 0
+        # for item in request.session[CART_SESSION_ID].values():
+        #     if item.get('loop_quantity'):
+        #         quantity += int(item['loop_quantity'])
+
+        # if quantity <= 0 and request.session[CART_SESSION_ID].get(str(product.id)):
+        #     del request.session[CART_SESSION_ID][str(product.id)]
+        # else:
+        #     if request.session[CART_SESSION_ID].get(str(product.id)):
+        #         request.session[CART_SESSION_ID][str(product.id)]['quantity'] = quantity
+        
+        # request.session.modified = True
+
+        cart = Cart(request)
+        # product only loop
+        cart.session[CART_SESSION_ID][str(product_id)]['loop_quantity'] = 0
+        cart.save()
+
+        product = get_object_or_404(Product, attribute='loop')
+        quantity = 0
+
+        for item in cart.cart.values():
+            if item.get('loop_quantity'):
+                quantity += int(item['loop_quantity'])
+
+        if quantity <= 0 and cart.session[CART_SESSION_ID].get(str(product.id)):
+            del cart.session[CART_SESSION_ID][str(product.id)]
+        else:
+            if cart.session[CART_SESSION_ID].get(str(product.id)):
+                cart.session[CART_SESSION_ID][str(product.id)]['quantity'] = quantity
+        cart.save()
+        
         return HttpResponse(json.dumps({"loop_quantity": quantity}))
     return HttpResponse(json.dumps({"loop_quantity": 'fail'}))
 
@@ -162,6 +203,11 @@ def cart_remove(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     cart.remove(product)
 
+    if (product.attribute == 'loop'):
+        for item in cart.cart.values():
+            if item.get('loop_quantity'):
+                del item['loop_quantity']
+        cart.save()
 
     if request.headers.get('X-Requested-With'):       
         sub_total = currency(

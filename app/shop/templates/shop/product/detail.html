@@ -87,7 +87,7 @@
                             class="form-check-input {% if request.session.cart|get_key:product.id %}del-loop{% endif %}" 
                             type="checkbox" name="loop"
                             data-url-add="{% url 'shop:cart_add' product_loop.id %}"
-                            data-url-remove="{% url 'shop:cart_remove_loop' product_loop.id %}"
+                            data-url-remove="{% url 'shop:cart_remove_loop' product.id %}"
                             data-url-loop-off="{% url 'shop:cart_loop_off' product.id %}"
                             style="
                                 max-width: 180px;

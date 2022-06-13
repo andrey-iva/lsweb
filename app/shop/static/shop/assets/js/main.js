@@ -391,17 +391,17 @@
         endTrigger.on('click', function() {
             container.removeClass('inside');
             wrapper.removeClass('overlay-active');
-            if (window.location.pathname.match(/^\/product/)) {
-                window.location = window.location.pathname
-            }  
+            // if (window.location.pathname.match(/^\/product/)) {
+            //     window.location = window.location.pathname
+            // }  
         });
 
         $('.body-overlay').on('click', function() {
             container.removeClass('inside');
             wrapper.removeClass('overlay-active');
-            if (window.location.pathname.match(/^\/product\//)) {
-                window.location = window.location.pathname
-            } 
+            // if (window.location.pathname.match(/^\/product\//)) {
+            //     window.location = window.location.pathname
+            // } 
         });
     };
     miniCart();
@@ -1593,18 +1593,20 @@
 
 
     // product deatail page
-    // Берет value из счетчика колличества товаров input[name=qtybutton]
-    // Устанавливает value в скрытом поле input[name=quantity]
     $(".product_detail").click(function(e) {
         var plusMinusValue = $("input[name=qtybutton]").val()
         $("input[name=quantity]").val(plusMinusValue)
     });
+
+
     // cart detail page
     $(".cart-detail-products").each(function(e) {
         var currentForm = $(this)
 
         if (currentForm.data("markerLoop") === 'on') {
-            $("body").find("form[data-product-attr=loop]").find("button").prop("disabled", true)
+            // $("body").find("form[data-product-attr=loop]").find("div.dec").off()
+            // $("body").find("form[data-product-attr=loop]").find("div.inc").off()
+            // $("body").find("form[data-product-attr=loop]").find("button").prop("disabled", true)
         }
 
         // Берет value из текущего счетчика колличества товаров input[name=qtybutton]
@@ -1612,6 +1614,7 @@
         var plusMinusValue = currentForm.find("input[name=qtybutton]").val()
         var quantity = currentForm.find("input[name=quantity]")
         quantity.val(plusMinusValue)
+        
         currentForm.find(".cart-plus-minus").click(function(e) {
             plusMinusValue = currentForm.find("input[name=qtybutton]").val()
             quantity = currentForm.find("input[name=quantity]")
@@ -1934,6 +1937,12 @@
                             </div>\
                             </li>"
                 }
+                var productDetealForm = $(".product_detail").find("input[name=override]")
+
+                if (parseInt($("form.product_detail").find("input[name=override]").val()) === 0) {
+                    $("form.product_detail").find("input[name=override]").val(1)
+                    $("form.product_detail").find("button[type=submit]").text("Обновить товар")
+                }
                 $("#cart_mini_content").html(htm)
                 removeItemMiniCart()
             },
@@ -2018,6 +2027,32 @@
                             });
                         })
                         
+                    } else if (formElem.find("#add_anchor").prop("checked") === false) {
+                        var url = formElem.find("#add_anchor").data("urlRemove")
+                        // модифицирует сессию, удаляет если 0, производит модификацию + -
+                        $.ajax({
+                            url: url,
+                            method: "POST",
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                            data: {
+                                "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+                                "quantity": $("input[name=quantity]").val(),
+                            }
+                        }).done(function(response) {
+                            console.log('remove: ', url, response)
+                            // удаляет отметку loop: on
+                            $.ajax({
+                                url: $(".del-loop").data("urlLoopOff"),
+                                method: "POST",
+                                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                                data: {
+                                    "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+                                }
+                            }).done(function(response) {
+                                printCart()
+                                console.log("loop off", response, $(".del-loop").data("urlLoopOff"))
+                            })
+                        })
                     } else {
                         printCart()
                     }
@@ -2187,34 +2222,34 @@
     // });
 
     // product detail
-    $(".del-loop").change(function(e) {
-        var url = $(this).data("urlRemove")
-        if (this.checked === false) {
-            // модифицирует сессию, удаляет если 0, производит модификацию + -
-            $.ajax({
-                url: url,
-                method: "POST",
-                headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                data: {
-                    "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
-                    "quantity": $("input[name=quantity]").val(),
-                }
-            }).done(function(response) {
-                console.log('remove: ', url)
-                // удаляет отметку loop: on
-                $.ajax({
-                    url: $(".del-loop").data("urlLoopOff"),
-                    method: "POST",
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                    data: {
-                        "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
-                    }
-                }).done(function(response) {
-                    console.log("loop off", response, $(".del-loop").data("urlLoopOff"))
-                })
-            })
-        }
-    });
+    // $(".del-loop").change(function(e) {
+    //     var url = $(this).data("urlRemove")
+    //     if (this.checked === false) {
+    //         // модифицирует сессию, удаляет если 0, производит модификацию + -
+    //         $.ajax({
+    //             url: url,
+    //             method: "POST",
+    //             headers: { 'X-Requested-With': 'XMLHttpRequest' },
+    //             data: {
+    //                 "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+    //                 "quantity": $("input[name=quantity]").val(),
+    //             }
+    //         }).done(function(response) {
+    //             console.log('remove: ', url)
+    //             // удаляет отметку loop: on
+    //             $.ajax({
+    //                 url: $(".del-loop").data("urlLoopOff"),
+    //                 method: "POST",
+    //                 headers: { 'X-Requested-With': 'XMLHttpRequest' },
+    //                 data: {
+    //                     "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+    //                 }
+    //             }).done(function(response) {
+    //                 console.log("loop off", response, $(".del-loop").data("urlLoopOff"))
+    //             })
+    //         })
+    //     }
+    // });
     // product detail
     $(".del-service").change(function(e) {
         var url = $(this).data("url")

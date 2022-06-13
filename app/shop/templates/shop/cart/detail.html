@@ -94,7 +94,7 @@
                             <span style="font-size: 16px;">Установка кронштейна: </span>
                                 <input type="checkbox" name="price_install" value="1" class="d-loop"
                                 style="
-                                    max-width: 390px;
+                                    max-width: 100px;
                                     max-height: 40px;
                                     zoom: 0.4;
                                     cursor: pointer;
@@ -113,6 +113,18 @@
                                     cursor: pointer;
                                 " {% if request.session.cart|is_loop_install:product.id %} checked {% endif %}>
                         </li>
+                        {% endif %}
+
+                        {% if product.attribute == 'loop' %}
+                        {% for i in cart %}
+                        {% with p=i.product %}
+
+                            {% if i.loop_quantity > 0 %}
+                            <li class="list-group-item font-weight-bold"><span class="text-danger">Вместе с:</span> <i>{{p.name}}</i></li>
+                            {% endif %}
+                                                    
+                        {% endwith %}
+                        {% endfor %}
                         {% endif %}
                     </ul>
                     <div>

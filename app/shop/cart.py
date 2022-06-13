@@ -53,6 +53,7 @@ class Cart(object):
         product_id = str(product.id)
         if product_id not in self.cart:
             self.cart[product_id] = {'quantity': 0,
+                                      'loop_quantity': 0,
                                       'price': str(product.price)}
         if override_quantity:
             self.cart[product_id]['quantity'] = quantity
@@ -63,9 +64,15 @@ class Cart(object):
             self.cart[product_id]['price_install'] = str(Decimal(product.price_install))
         else:
             self.cart[product_id]['price_install'] = '0'
-        
+        logging.debug('loop status %s', loop)
         if loop == 'on':
             self.cart[product_id]['loop'] = loop
+            if override_quantity:
+                self.cart[product_id]['loop_quantity'] = quantity
+            else:
+                self.cart[product_id]['loop_quantity'] += quantity
+        if loop is None:
+            self.cart[product_id]['loop_quantity'] = 0
         
         self.save()
 
