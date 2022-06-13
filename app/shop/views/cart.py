@@ -200,7 +200,8 @@ def cart_json(request):
                 'total_price': currency(request)['currency'] + str(item['total_price']),
                 'quantity': item['quantity'],
                 'product_url': product.get_absolute_url(),
-                'price_install': currency(request)['currency'] + str(item['price_install'])
+                'price_install': currency(request)['currency'] + str(item['price_install']),
+                'attribute': product.attribute
             }
         response_data['sub_total'] = currency(
             request)['currency'] + str(cart.get_total_price())

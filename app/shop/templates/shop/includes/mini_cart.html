@@ -19,13 +19,12 @@
                         <div style="font-size: 12px;">
                             Товар: {{ item.quantity }} × {{ currency }}{{ item.price }}
                         </div>
-
                         <div style="font-size: 12px;">
                             Монтаж: {{item.quantity }} × {{currency}}{{ item.price_install }}
                         </div>
                     </div>
                     <div class="cart-delete">
-                        <form action="{% url 'shop:cart_remove' product.id %}" method="post">
+                        <form action="{% url 'shop:cart_remove' product.id %}" method="post" data-product-attr="{{product.attribute}}">
                             {% csrf_token %}
                             <button class="btn btn-link btn-outline-none" type="submit">×</button>
                         </form>

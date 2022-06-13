@@ -213,13 +213,10 @@
                                         <p>Банковской картой при оформлении заказа.</p>
                                     </div>
                                 </div>
-<!--                                 <div class="pay-top sin-payment sin-payment-3">
-                                    <input id="payment-method-4" class="input-radio" type="radio" value="cheque" name="payment_method">
-                                    <label for="payment-method-4">PayPal <img alt="" src="/static/shop/assets/images/icon-img/payment.png"><a href="#">What is PayPal?</a></label>
-                                    <div class="payment-box payment_method_bacs">
-                                        <p>Make your payment directly into our bank account. Please use your Order ID as the payment reference.</p>
-                                    </div>
-                                </div> -->
+                                <div class="pay-top sin-payment sin-payment-3 policy">
+                                    <input id="payment-method-4" class="input-radio" type="checkbox" name="policy" checked>
+                                    <label class="text-lowercase">Я прочитал(а) и принимаю&nbsp;<a class="text-danger" href="{% url 'shop:policy' %}">правила и условия сайта</a></label>
+                                </div>
                             </div>
                         </div>
                         <div class="Place-order">

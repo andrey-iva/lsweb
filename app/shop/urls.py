@@ -12,6 +12,7 @@ urlpatterns = [
 	path('about-us/', view.about, name='about'),
 	path(u'доставка-и-оплата/', view.shipping_payment, name='shipping_payment'),
 	path('pdd/', view.pdd, name='pdd'),
+	path('policy/', view.policy, name='policy'),
 	path('contact/', include([
 		path('', view.contact, name='contact'),
 		path('<str:message>/', view.contact, name='contact'),

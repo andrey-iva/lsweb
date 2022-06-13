@@ -31,6 +31,9 @@ def pdd(request):
 def contact(request, message=None):
 	return render(request, 'shop/contact.html', {'message': message})
 
+def policy(request):
+	return render(request, 'shop/policy.html')
+
 @require_POST
 def contact_send_message(request):
 	successMessage = 'Ваше сообщение отправлено!'

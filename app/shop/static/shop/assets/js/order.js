@@ -373,6 +373,10 @@ $( function() {
     $("#order_create").submit(function(e) {
         // e.preventDefault()
 
+        if ($("input[name=policy]").prop("checked") === false) {
+            $(".policy").addClass("border border-danger pl-1")
+            return false
+        }
         $("input[name=payment_method]").each(function() {
             if (this.checked && this.value === "paynow") {
 
@@ -493,15 +497,15 @@ $( function() {
             });
             // setDefaultPayment()            
         }
-        // Службой доставки СДЭК
+        // До пункта выдачи СДЭК
         $("#cdek_hidden").prop("hidden", true)
         if ( parseInt($(this).val()) === 2 ) {
             $("#country").empty()
             clientInfo.attr("hidden", false)
             $("#cdek_hidden").prop("hidden", false)
 
-            deliveryTypeInfoText.text("Службой доставки СДЭК")
-            hiddenInputDeliveryType.val("Службой доставки СДЭК")
+            deliveryTypeInfoText.text("До пункта выдачи СДЭК")
+            hiddenInputDeliveryType.val("До пункта выдачи СДЭК")
 
             $(".maps").removeClass("d-none");
 

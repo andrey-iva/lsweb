@@ -399,7 +399,7 @@
         $('.body-overlay').on('click', function() {
             container.removeClass('inside');
             wrapper.removeClass('overlay-active');
-            if (window.location.pathname.match(/^\/product/)) {
+            if (window.location.pathname.match(/^\/product\//)) {
                 window.location = window.location.pathname
             } 
         });
@@ -1638,16 +1638,16 @@
         // 1 установка подитоговой цены всех продуктов
         // 2 Счетчик корзиры + стоимость на странице для ПК
         // 3 Счетчик на странице для ПЛ
-        function changeCartLengthSubTotal(responseData) {
-            $("#sub_total").html(
-                "Подитог <span>" + responseData.sub_total + "</span>"
-            )
-            $("#grand_total").html(
-                "Подитог <span>" + responseData.sub_total + "</span>"
-            )
-            $(".cart_info").html("<i class='icon-basket-loaded'></i><span class='black'>" + responseData.cart_length + "</span>" + responseData.sub_total)
-            $(".cart_middle").html("<i class='icon-basket-loaded'></i><span class='pro-count black'>" + responseData.cart_length + "</span>")
-        }
+        // function changeCartLengthSubTotal(responseData) {
+        //     $("#sub_total").html(
+        //         "Подитог <span>" + responseData.sub_total + "</span>"
+        //     )
+        //     $("#grand_total").html(
+        //         "Подитог <span>" + responseData.sub_total + "</span>"
+        //     )
+        //     $(".cart_info").html("<i class='icon-basket-loaded'></i><span class='black'>" + responseData.cart_length + "</span>" + responseData.sub_total)
+        //     $(".cart_middle").html("<i class='icon-basket-loaded'></i><span class='pro-count black'>" + responseData.cart_length + "</span>")
+        // }
 
         // Все формы на странице корзины /cart/detail/
         // ОБНОВЛЕНИЕ И УДАЛЕНИЕ ТОВАРОВ
@@ -1663,9 +1663,12 @@
         //     </div>")
         // $("#triffs_list").html('<li><input data-delivery-name="standard" data-delivery-sum="0" type="radio" name="tariff_code" value="standard"> Standard <span>'+CURRENCY+'0.00</span></li>')
         // $("#ser").html('<input maxlength="50" type="text" name="city" id="city" placeholder="Ваш город" required>')
+
         currentForm.submit(function(e) {
             e.preventDefault()
             var currentForm = $(this)
+            // console.log(currentForm.attr("action"))
+            // return
             // console.log(currentForm.find("input[name=quantity]").val())
             // return
             $.ajax({
@@ -1693,6 +1696,10 @@
                     // }
                     // currentForm.find("span.product-subtotal-install").text(responseData.total_price_install)
                     // changeCartLengthSubTotal(responseData)
+
+                    if (typeof(currentForm.find("#add_anchor").prop("checked")) === "undefined") {
+                        window.location = window.location.pathname
+                    }
 
                     if (currentForm.find("#add_anchor").prop("checked")) {
                         $.ajax({
@@ -1748,7 +1755,7 @@
                         })
                     }
 
-                    if (!currentForm.find("#add_anchor").prop("checked")) {
+                    if (currentForm.find("#add_anchor").prop("checked") === false) {
                         $.ajax({
                             url: GET_LOOP_ID_URL,
                         }).done(function(response) {
@@ -1826,11 +1833,14 @@
         $(".cart-detail-mini-delete").each(function(e) {
             var parent = $(this) // tag LI
             // Все формы в мини корзине
-            // if ($(this).data("isLoop") === "on") {
-            //     $("#cart_mini_content").find("button.loop").text("no")
-            // }
+            var marker = 0
+            if ($(this).find("form").data("productAttr") === "loop") {
+                marker += 1
+            }
+
             $(this).find("form").submit(function(e) {
                 e.preventDefault()
+                var form = $(this)
                 $.ajax({
                     url: $(this).attr("action"),
                     method: "POST",
@@ -1856,6 +1866,16 @@
                                 // кнопки в мини корзине
                                 $("#enpty_mini_cart").removeClass("d-none")
                                 $("#no_enpty_mini_cart").addClass("d-none")
+                            }
+
+                            if (form.data("productAttr") === "loop") {
+                                $.ajax({
+                                    url: CART_REMOVE_LOOP_MARKER_URL,
+                                    method: "POST",
+                                    data: {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()}
+                                }).done(function(response) {
+                                    console.log("mini cart", response)
+                                })
                             }
                         }
                     },
@@ -1907,7 +1927,7 @@
                                 responseData[k]["price_install"] + "</div>\
                             </div>\
                             <div class='cart-delete'>\
-                                <form action='/cart/remove/" + k + "/' method='post'>\
+                                <form action='/cart/remove/" + k + "/' method='post' data-product-attr='"+ responseData[k]["attribute"] +"'>\
                                 " + CSRF_TOKEN + "\
                                     <button class='btn btn-link btn-outline-none' type='submit'>×</button>\
                                 </form>\
@@ -1940,6 +1960,7 @@
                     return
                 }
                 console.info(this.url, "update mini cart:", responseData)
+
                 // если товар успешно добавлен в козину, обновляем
                 if (responseData.result === "update") {
                     // Открытие мини корзины при добавлении товара

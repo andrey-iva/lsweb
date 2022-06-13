@@ -66,12 +66,7 @@
             </div>
             <div class="col-lg-6 col-md-6">
                 <div class="product-details-content pro-details-content-mrg">
-                    {% if request.session.cart|get_key:product.id %}
-                        <div id="scroll_to_product" class="w-100 p-2 h4 bg-danger text-white text-center">
-                            Товар добавлен.
-                        </div>
-                    {% endif %}
-                    <h2 class="bd-highlight">{{ product.name }}</h2>
+                    <h2 id="scroll_to_product" class="bd-highlight">{{ product.name }}</h2>
                     <div class="product-ratting-review-wrap">
                         <p>{{ product.description_short }}</p>
                     </div>
