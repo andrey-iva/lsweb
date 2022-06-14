@@ -123,7 +123,8 @@ class Order(models.Model):
     phone = models.CharField(max_length=100, blank=True, verbose_name='телефон')
     email = models.EmailField(blank=True)
     delivery_type = models.CharField(max_length=100, verbose_name="доставка")
-    grand_total = models.CharField(max_length=20, verbose_name="Сумма заказа")
+    grand_total = models.DecimalField(
+        max_digits=10, decimal_places=2, verbose_name='Сумма заказа')
     notes = models.TextField(max_length=500, blank=True,
                              verbose_name='примечание к заказу')
     created = models.DateTimeField(auto_now_add=True)

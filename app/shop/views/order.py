@@ -110,7 +110,8 @@ def order_create(request):
             percent = get_percent(cart.get_total_price(), 5)
         
         request_post['grand_total'] = str( 
-            (Decimal(cart.get_total_price()) + percent) + Decimal(request_post['delivery_sum']) )
+            (Decimal(cart.get_total_price()) + percent) + Decimal(request_post['delivery_sum']))
+
         # pprint(request_post)
         form = OrderCreateForm(request_post)
         if form.is_valid():

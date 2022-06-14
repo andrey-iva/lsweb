@@ -409,7 +409,7 @@ $( function() {
             });
 
             if (option) {
-                $("input[name=address]").val("Пункт выдачи: " + option.text())
+                $("input[name=address]").val("ПВЗ:" + option.text())
             } else {
                 $("select[name=delivery_points]").addClass("border border-danger")
                 $([document.documentElement, document.body]).animate({
