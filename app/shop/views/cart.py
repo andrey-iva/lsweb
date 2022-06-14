@@ -3,7 +3,7 @@ from django.views.decorators.http import require_POST
 from django.http import HttpResponse
 from decimal import Decimal
 
-from .. import CART_SESSION_ID, NO_IMAGE_PATH, GRAND_TOTAL_ID
+from .. import CART_SESSION_ID, NO_IMAGE_PATH
 from ..models import Product
 from ..cart import Cart
 from ..ctx_proc import currency
@@ -56,24 +56,20 @@ def cart_add(request, product_id):
 def add_delivery_tax(request):
     delivery_tax = request.POST.get('delivery_tax')
     grand_total = 0
-
     cart = Cart(request)
 
-    if delivery_tax and request.session.get(GRAND_TOTAL_ID):
+    if delivery_tax:
         if int(delivery_tax) >= 0:
-            grand_total = Decimal(request.session[GRAND_TOTAL_ID]['price']) + Decimal(delivery_tax)
-            request.session[GRAND_TOTAL_ID]['price'] = str(grand_total)
-            request.session.modified = True
+            grand_total = Decimal(cart.get_total_price()) + Decimal(delivery_tax)
 
             return HttpResponse(json.dumps({
-                    'grand_total': currency(request)['currency'] + str(grand_total)
+                    'grand_total': str(grand_total)
                 }))
 
     return HttpResponse(json.dumps({'error': 'fail add delivery tax!'}))
 
 @require_POST
 def add_percent(request):
-    request.session[GRAND_TOTAL_ID] = {}
     percent = request.POST.get('percent')
     grand_total = 0
 
@@ -84,13 +80,9 @@ def add_percent(request):
             percent = (cart.get_total_price() / Decimal(100)) * Decimal(percent)
             grand_total = cart.get_total_price() + percent
             
-            request.session[GRAND_TOTAL_ID]['price'] = str(grand_total)
-            request.session.modified = True
-
             return HttpResponse(json.dumps({
-                    'grand_total': currency(request)['currency'] + str(grand_total)
+                    'grand_total': str(grand_total)
                 }))
-
 
     return HttpResponse(json.dumps({'error': 'no add percent!'}))
 
@@ -117,11 +109,6 @@ def cart_count_quantity(request):
     for item in cart:
         if item.get('loop_quantity'):
             quantity_on += int(item['quantity'])
-
-    # if quantity_on:
-    #     product = get_object_or_404(Product, attribute='loop')
-    #     if request.session[CART_SESSION_ID].get(str(product.id)):
-    #         print('-->', request.session[CART_SESSION_ID][str(product.id)]['quantity'])
             
     return HttpResponse(json.dumps({'quantity_on': str(quantity_on)}))
 
@@ -142,38 +129,6 @@ def cart_remove_loop(request, product_id):
     logging.debug('cart_remove_loop %s', product_id)
     if request.session[CART_SESSION_ID].get(str(product_id)):
         qty = int(request.POST.get('quantity'))
-        logging.debug('qty: %s', qty)
-        # cart_quantity = request.session[CART_SESSION_ID][str(product_id)]['quantity']
-        # result = int(cart_quantity) - int(quantity)
-        # cart = Cart(request)
-        # logging.debug(cart)
-        # if result <= 0:
-        #     del request.session[CART_SESSION_ID][str(product_id)]
-        #     logging.debug('cart_remove_loop FULLING DELETE')
-        # else:
-        #     logging.debug('cart_remove_loop %s RECALCULATION', request.session[CART_SESSION_ID][str(product_id)])
-        #     request.session[CART_SESSION_ID][str(product_id)]['quantity'] = result
-        
-        # request.session.modified = True
-        
-
-        # request.session[CART_SESSION_ID][str(product_id)]['loop_quantity'] = 0
-        # request.session.modified = True
-
-        # product = get_object_or_404(Product, attribute='loop')
-
-        # quantity = 0
-        # for item in request.session[CART_SESSION_ID].values():
-        #     if item.get('loop_quantity'):
-        #         quantity += int(item['loop_quantity'])
-
-        # if quantity <= 0 and request.session[CART_SESSION_ID].get(str(product.id)):
-        #     del request.session[CART_SESSION_ID][str(product.id)]
-        # else:
-        #     if request.session[CART_SESSION_ID].get(str(product.id)):
-        #         request.session[CART_SESSION_ID][str(product.id)]['quantity'] = quantity
-        
-        # request.session.modified = True
 
         cart = Cart(request)
         # product only loop

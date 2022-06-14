@@ -11,14 +11,10 @@ from decimal import Decimal
 
 from ..cart import Cart
 from ..models import OrderItem, Order
-from .. import GRAND_TOTAL_ID, PAYMENT_REDIRECT_PAGE, ADMIN_EMAIL
+from .. import PAYMENT_REDIRECT_PAGE, ADMIN_EMAIL
 from pprint import pprint
 
 logging.basicConfig(format='%(asctime)s: %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
-
-
-# Configuration.account_id = <Идентификатор магазина>
-# Configuration.secret_key = <Секретный ключ>
 
 def get_subject(order_id):
     return f'iSOFIX-MSK Заказ №{order_id}'
@@ -83,18 +79,6 @@ def payment_status(payment_id, order):
 def get_percent(total_price, percent):
     return (total_price / Decimal(100)) * Decimal(percent)
 
-def clear_grand_total(request):
-    ''' js калькулятор '''
-    if request.session.get(GRAND_TOTAL_ID):
-        del request.session[GRAND_TOTAL_ID]['price']
-        request.session.modified = True
-
-@require_POST
-def del_grand_total_session(request):
-    ''' js калькулятор '''
-    clear_grand_total(request)
-    return HttpResponse(json.dumps({'info': 'del GRAND_TOTAL_ID[price]'}))
-
 def order_create(request):
     cart = Cart(request)
     percent = 0
@@ -126,7 +110,7 @@ def order_create(request):
                                          price_install=item['price_install'],
                                          quantity=item['quantity'])
             cart.clear()
-            clear_grand_total(request)
+            # clear_grand_total(request)
             # send mail
             # request.session.flush()
 

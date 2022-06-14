@@ -22,7 +22,11 @@
         }
     }
 </style>
-
+<div class="fixed-top mt-1 ml-1">
+  <div class="spinner-grow text-dark d-none spiner" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
 <div class="cart-main-area pt-115 pb-120">
     <div class="container" id="cart-container">
         {% if cart|length %}
@@ -90,11 +94,11 @@
                         </li>
 
                         {% if product.product_type == 'кронштейн' and product.attribute != 'loop' %}
-                        <li class="item_install list-group-item font-weight-bold">
+                        <li class="item_install list-group-item font-weight-bold bg-light mt-1">
                             <span style="font-size: 16px;">Установка кронштейна: </span>
-                                <input type="checkbox" name="price_install" value="1" class="d-loop"
+                                <input type="checkbox" class="form-check-input" name="price_install" value="1" class="d-loop"
                                 style="
-                                    max-width: 100px;
+                                    max-width: 110px;
                                     max-height: 40px;
                                     zoom: 0.4;
                                     cursor: pointer;
@@ -103,10 +107,10 @@
                             <span style="font-size: 16px;">Петля для якорного крепления: </span>
                                 <input
                                 id="add_anchor"
-                                class="form-check-input" 
+                                class="form-check-input"
                                 type="checkbox" name="loop"
                                 style="
-                                    max-width: 100px;
+                                    max-width: 80px;
                                     margin-left: -7px;
                                     max-height: 40px;
                                     zoom: 0.4;

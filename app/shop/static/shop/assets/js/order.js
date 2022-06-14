@@ -42,6 +42,10 @@ $( function() {
     }
 
     function setDefaultPayment() {
+        $(".payment_method_bacs").each(function(e) {
+            $(this).addClass("payment-box")
+        })
+        $(".default_payment").removeClass("payment-box")
         if ($("input[name=tariff]").length > 0) {
             $("input[name=tariff]").each(function() {
                 if (this.checked) {
@@ -74,9 +78,8 @@ $( function() {
         }).done(function(response) {
             var response = JSON.parse(response)
 
-            if ("grand_total" in response) {
-                $("#order_grand_total").text(response["grand_total"])
-            }
+            console.log('in to addDeliveryTax: ', response["grand_total"])
+            
 
             if ("error" in response) {
                 console.log(response["error"])
@@ -97,13 +100,16 @@ $( function() {
                 "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
             },
         }).done(function(response) {
-            var response = JSON.parse(response)
-
-            if ("grand_total" in response) {
-                // $("#order_grand_total").text(response["grand_total"])
-                addDeliveryTax(tax)
-                console.log(response["grand_total"])
+            try {
+                var response = JSON.parse(response)
+                var grandTotal = (parseFloat(response["grand_total"]) + parseFloat(tax)).toFixed(2)
+                 $("#order_grand_total").text(CURRENCY + grandTotal.toString())
+            } catch(err) {
+                console.error("addPercent error")
             }
+
+            // addDeliveryTax(tax)
+            // console.log('addPercent: ', response["grand_total"], 'tax: ', tax)
 
             if ("error" in response) {
                 console.log(response["error"])
@@ -118,7 +124,7 @@ $( function() {
         $("input[name=payment_method]").each(function(e) {
             this.checked = false
         })
-    };
+    }
 
     function printErr(message) {
         // $(".search_city_err_msg").text(message)
@@ -183,6 +189,7 @@ $( function() {
                     $("input[name=delivery_sum]").val(this.value)
                 }
             });
+            $("input[name=tariff]").change(function(e) { setDefaultPayment() })
 
             // Пункты выдачи заказов
             var points = []
@@ -359,16 +366,6 @@ $( function() {
             $(".tariffs_list").html("<p>Пункты выдачи закозов не найдены.</p>")
         }
     };
-
-    // $("#order_create").click(function() {
-    //     var cdekCity = $("input[name=city]")
-    //     if (cdekCity.val() === "") {
-    //         $([document.documentElement, document.body]).animate({
-    //             scrollTop: $("#ser").offset().top
-    //         }, 1000);
-    //         return false
-    //     }
-    // })
     
     $("#order_create").submit(function(e) {
         // e.preventDefault()
@@ -425,11 +422,9 @@ $( function() {
 
 
     $("input[name=payment_method]").change(function(e) {
-        var val = parseInt($(this).val())
         $(".payment_method_bacs").addClass("payment-box")
 
         $(this).next().next().removeClass("payment-box")
-
     });
     
     // вариации доставки
@@ -441,21 +436,7 @@ $( function() {
         var hiddenInputDeliveryType = $("input[name=delivery_type]")
 
         resetCheckedPayment()
-
-        // del grand tottal session start or reload page
-        $.ajax({
-            url: DEL_GRAND_TOTAL_SESSION_URL,
-            method: "POST",
-            data: {
-                "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
-            },
-        }).done(function(response) {
-            console.log(response)
-            setDefaultPayment()
-            console.log('setDefaultPayment(')
-        }).fail(function(err) {
-            serverError(err)
-        });
+        setDefaultPayment()
         
         $(".maps").addClass("d-none");
         $("#Place-order").removeClass("d-none")
@@ -522,18 +503,13 @@ $( function() {
             $(".payment_method_1").addClass('d-none')
             
             $("input[name=payment_method]").change(function(e) {
-                var val = parseInt($(this).val()) 
-
-                $("input[name=tariff]").each(function() {
-                    console.log(this.value)
-                    if (this.checked) {
-                        if (val === PERCENT) {
-                            addPercent(val, this.value)                    
-                        } else {
-                            addPercent(0, this.value)
-                        }
-                    }
-                });
+                var paymentVal = parseInt($(this).val()) 
+                var deliveryTax = parseInt($("input[name=tariff]:checked").val())
+                if (paymentVal === PERCENT) {
+                    addPercent(paymentVal, deliveryTax)
+                } else {
+                    addPercent(0, 0)
+                }
             })
         }
         // Самовывоз

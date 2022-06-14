@@ -17,8 +17,6 @@ if PROD:
 	DELIVERY_POINTS_URL = 'https://api.cdek.ru/v2/deliverypoints'
 else:
 	GRANT_TYPE          = 'client_credentials'
-	CLIENT_ID           = 'EMscd6r9JnFiQ3bLoyjJY6eM78JrJceI'
-	CLIENT_SECRET       = 'PjLZkKBHEiLK3YsjtNrt3TGNG0ahs3kG'
 	CDEK                = 'https://api.edu.cdek.ru/v2/oauth/token?parameters'
 	TARIFFS_URL         = 'https://api.edu.cdek.ru/v2/calculator/tarifflist'
 	TARIFF_URL          = 'https://api.edu.cdek.ru/v2/calculator/tariff'

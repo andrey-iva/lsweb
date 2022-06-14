@@ -171,15 +171,22 @@ LOGGING = {
     }
 }
 
+# CORS_ALLOWED_ORIGINS = [
+#     'https://suggestions.dadata.ru',
+#     'https://api.cdek.ru',
+#     'https://api.edu.cdek.ru',
+#     'https://www.youtube.com',
+#     'https://cdn.jsdelivr.net',
+#     'https://maps.api.2gis.ru',
+#     'https://i12n.r2r.space',
+#     'https://api-maps.yandex.ru',
+# ]
+
 CORS_ALLOWED_ORIGINS = [
-    'https://suggestions.dadata.ru',
-    'https://api.cdek.ru',
-    'https://api.edu.cdek.ru',
-    'https://www.youtube.com',
-    'https://cdn.jsdelivr.net',
-    'https://maps.api.2gis.ru',
-    'https://i12n.r2r.space',
-    'https://api-maps.yandex.ru',
+    'https://googleads.g.doubleclick.net',
+    'https://static.doubleclick.net',
+    'https://yt3.ggpht.com',
+    'https://play.google.com',
 ]
 # SESSION_COOKIE_DOMAIN = None
 
