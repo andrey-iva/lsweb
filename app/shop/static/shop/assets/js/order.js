@@ -1,16 +1,10 @@
 $( function() {
-    
+
     var token = "17a564feb19fabf1391ab53059b81a6a2012b9a9";
     // $("#map").eq(0).css("all", "initial")
     // 55.645664,37.403028
-    
-    var PERCENT = 5
 
-    // if (document.getElementById("delivery_title_scroll")) {
-    //     $([document.documentElement, document.body]).animate({
-    //         scrollTop: $("#delivery_title_scroll").offset().top
-    //     }, 100);
-    // }
+    var PERCENT = 5
 
     // удаляет районы города и всё с 65 уровня
     var defaultFormatResult = $.Suggestions.prototype.formatResult;
@@ -46,17 +40,17 @@ $( function() {
             $(this).addClass("payment-box")
         })
         $(".default_payment").removeClass("payment-box")
+
         if ($("input[name=tariff]").length > 0) {
             $("input[name=tariff]").each(function() {
-                if (this.checked) {
-                   addPercent(0, this.value) 
+                if ($(this).prop("checked")) {
+                   addPercent(0, $(this).val())
                 }
-            });  
+            });
         }
         $("input[name=payment_method]").each(function() {
-            if (this.value === "paynow") {
-                this.checked = true
-                addPercent(0, 0)
+            if ($(this).val() === "paynow") {
+                $(this).prop("checked", true)
             }
         });
     }
@@ -79,7 +73,7 @@ $( function() {
             var response = JSON.parse(response)
 
             console.log('in to addDeliveryTax: ', response["grand_total"])
-            
+
 
             if ("error" in response) {
                 console.log(response["error"])
@@ -89,7 +83,7 @@ $( function() {
         });
     }
 
-    
+
     function addPercent(percent, tax) {
         // проценты к итоговой цене при оплате
         $.ajax({
@@ -153,9 +147,9 @@ $( function() {
                 for (var e = 0; e < tariffs[i]["errors"].length; e++) {
                     tariffListHTML += "<li>"+ tariffs[i]["tariff_name"] + ": " + tariffs[i]["errors"][e]["message"] +"</li>"
                 }
-                continue 
+                continue
             }
-            
+
             if ("delivery_sum" in tariffs[i]) {
                 var tariffName  = tariffs[i]["tariff_name"]
                 var periodMin   = tariffs[i]["period_min"]
@@ -184,6 +178,7 @@ $( function() {
             $(".tariffs_list").html(tariffListHTML)
             $(".tariffs_list").find("input[data-tariff-code='136']").prop("checked", true)
             setDefaultPayment()
+
             $("input[name=tariff]").each(function() {
                 if ($(this).prop("checked")) {
                     $("input[name=delivery_sum]").val(this.value)
@@ -196,7 +191,7 @@ $( function() {
             var locations = []
             var locationsCodes = {}
 
-            var deliveryPointsHTML = 
+            var deliveryPointsHTML =
             '<label for="city">Пункты выдачи заказов <abbr style="color: red;" class="required" title="required">*</abbr></label>'
             + '<input id="search_point" class="mb-2 form-control-sm bg-light outline-none border border-secondary rounded-0"\
              type="text" placeholder="ввести адрес">'
@@ -212,7 +207,7 @@ $( function() {
 
                 var latitude = deliveryPoints[i]["location"]["latitude"]
                 var longitude = deliveryPoints[i]["location"]["longitude"]
-                
+
                 points.push([latitude, longitude])
                 locations.push(deliveryPoints[i]["location"]["address_full"])
             }
@@ -228,7 +223,7 @@ $( function() {
                     <div id=\"map\"></div>\
                 </div>"
             )
-            
+
             if (points.length > 0) {
                 p = {
                     "type": "FeatureCollection",
@@ -242,7 +237,7 @@ $( function() {
                     var body = "<ul>"
                     body += "<li>Тип пункта: "+ type +"</li>"
                     body += "<li>Адрес: "+ deliveryPoints[i]["location"]["address_full"] +"</li>"
-                    
+
                     if (typeof(deliveryPoints[i]["phones"]) !== "undefined") {
                         for (var idx = 0; idx < deliveryPoints[i]["phones"].length; idx++) {
                             body += "<li>Тел: "+ deliveryPoints[i]["phones"][idx]["number"] +"</li>"
@@ -286,7 +281,7 @@ $( function() {
                     // обратимся к дочерним коллекциям ObjectManager.
                     objectManager.objects.options.set('preset', 'islands#greenDotIcon');
                     objectManager.clusters.options.set('preset', 'islands#greenClusterIcons');
-                    
+
                     myMap.geoObjects.add(objectManager);
 
                     objectManager.add(JSON.stringify(p));
@@ -343,7 +338,7 @@ $( function() {
                 $( "#search_point" ).autocomplete({
                   source: locations,
                   minLength: 2,
-                  select: function( event, ui ) {    
+                  select: function( event, ui ) {
                     $("#delivery_points").html("<option value='"+ locationsCodes[ui.item.value] +"' selected>" + ui.item.value + "</option>")
                     $("#delivery_points").trigger("change")
                   },
@@ -366,7 +361,7 @@ $( function() {
             $(".tariffs_list").html("<p>Пункты выдачи закозов не найдены.</p>")
         }
     };
-    
+
     $("#order_create").submit(function(e) {
         // e.preventDefault()
 
@@ -415,7 +410,7 @@ $( function() {
                 return false
             }
         }
-        
+
 
     });
 
@@ -426,7 +421,7 @@ $( function() {
 
         $(this).next().next().removeClass("payment-box")
     });
-    
+
     // вариации доставки
     $("input[name=delivery_name]").change(function(e) {
 
@@ -437,11 +432,11 @@ $( function() {
 
         resetCheckedPayment()
         setDefaultPayment()
-        
+
         $(".maps").addClass("d-none");
         $("#Place-order").removeClass("d-none")
         $("#payment-method").removeClass("d-none")
-        
+
         clientInfo.attr("hidden", true)
 
         $("#country").prop('required', false)
@@ -476,7 +471,12 @@ $( function() {
                     addPercent(0, 0)
                 }
             });
-            // setDefaultPayment()            
+            // setDefaultPayment()
+            if (document.getElementById("order_create")) {
+                $([document.documentElement, document.body]).animate({
+                    scrollTop: $("#order_create").offset().top
+                }, 1000);
+            }
         }
         // До пункта выдачи СДЭК
         $("#cdek_hidden").prop("hidden", true)
@@ -501,16 +501,22 @@ $( function() {
             })
 
             $(".payment_method_1").addClass('d-none')
-            
+
             $("input[name=payment_method]").change(function(e) {
-                var paymentVal = parseInt($(this).val()) 
+                var paymentVal = parseInt($(this).val())
                 var deliveryTax = parseInt($("input[name=tariff]:checked").val())
                 if (paymentVal === PERCENT) {
                     addPercent(paymentVal, deliveryTax)
                 } else {
-                    addPercent(0, 0)
+                    addPercent(0, deliveryTax)
                 }
             })
+
+            if (document.getElementById("delivery_poin")) {
+                $([document.documentElement, document.body]).animate({
+                    scrollTop: $("#delivery_poin").offset().top
+                }, 1000);
+            }
         }
         // Самовывоз
         $("#shoping_center").addClass("d-none")
@@ -518,7 +524,7 @@ $( function() {
             $("#country").empty()
             clientInfo.attr("hidden", false)
             $("#shoping_center").removeClass("d-none")
-            
+
             deliveryTypeInfoText.text("Самовывоз или установка")
             hiddenInputDeliveryType.val("Самовывоз или установка")
 
@@ -535,6 +541,12 @@ $( function() {
             $("input[name=address]").val("г Москва, ул Щорса, д 8, стр 1")
             // grand total
             addPercent(0, 0)
+
+            if (document.getElementById("base")) {
+                $([document.documentElement, document.body]).animate({
+                    scrollTop: $("#base").offset().top
+                }, 1000);
+            }
         }
 
         $("input[name=delivery_name]").each(function() {
@@ -553,7 +565,7 @@ $( function() {
         elem.dispatchEvent(event);
     }
 
-    // cdek start        
+    // cdek start
     $("#city").suggestions({
       // token: token,
       // type: "ADDRESS",
@@ -580,7 +592,7 @@ $( function() {
         var csrf = $("input[name=csrfmiddlewaretoken]")
         var city = suggestion["data"]["city_with_type"]
         var country_iso_code = suggestion["data"]["country_iso_code"]
-        
+
         var request = {
             "csrfmiddlewaretoken": csrf.val(),
             'city': city,
@@ -592,7 +604,7 @@ $( function() {
             if (kladr_id.length > 13) {
                 // план. структура
                 kladr_id = kladr_id.substr(0, 11) + "00";
-         
+
             }
             fetchDelivery(kladr_id)
             .done(function(response) {
@@ -713,7 +725,7 @@ $( function() {
       var self = {};
       self.$surname = $surname;
       self.$name = $name;
-      
+
       var fioParts = ["NAME", "SURNAME"];
       $.each([$surname, $name], function(index, $el) {
         var sgt = $el.suggestions({

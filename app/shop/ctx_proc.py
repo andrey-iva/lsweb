@@ -1,3 +1,4 @@
+import logging
 from .cart import Cart
 from .models import Category
 from .models import Product
@@ -29,9 +30,17 @@ def get_services(request):
     return {'get_services': Product.objects.filter(product_type='услуга')}
 
 def get_loop_id(request):
-    product = Product.objects.get(attribute='loop')
-    return {'get_loop_id': product.id}
+    try:
+        product = Product.objects.get(attribute='loop')
+    except Exception as e:
+        logging.exception(e)
+    else:
+        return {'get_loop_id': product.id}
 
 def get_loop_price(request):
-    product = Product.objects.get(attribute='loop')
-    return {'get_loop_price': product.price}
+    try:
+        product = Product.objects.get(attribute='loop')
+    except Exception as e:
+        logging.exception(e)
+    else:
+        return {'get_loop_price': product.price}

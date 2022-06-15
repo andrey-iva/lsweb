@@ -43,7 +43,7 @@
                             <ul id="delivery_v">
                                 {% if cart.get_products_install_total_price == 0 %}
                                 <li><input type="radio" name="delivery_name" value="1"> До адреса клиента <span></span></li> 
-                                <li><input type="radio" name="delivery_name" value="2"> До пункта выдачи СДЭК <span></span></li>
+                                <li id="delivery_poin"><input type="radio" name="delivery_name" value="2"> До пункта выдачи СДЭК <span></span></li>
                                 <li class="help_text">
                                     <input id="base" type="radio" name="delivery_name" value="3"> Самовывоз или установка 
                                 </li>
