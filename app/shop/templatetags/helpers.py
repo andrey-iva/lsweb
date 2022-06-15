@@ -1,5 +1,8 @@
 from django import template
 from decimal import Decimal
+from .. import CART_SESSION_ID
+
+
 register = template.Library()
 
 # d|get_key:k
@@ -33,3 +36,10 @@ def get_install_price(d, k):
 @register.filter
 def add(left, right):
     return str(Decimal(left) + Decimal(right))
+
+@register.filter
+def get_quantity(request, product_id):
+    if request.session.get( CART_SESSION_ID ):
+    	if request.session[CART_SESSION_ID].get( str(product_id) ):
+    		return request.session[CART_SESSION_ID][str(product_id)]['quantity']
+    return '1'

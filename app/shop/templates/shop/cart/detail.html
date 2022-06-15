@@ -140,13 +140,13 @@
 
                         <div class="d-flex justify-content-center">
                             <div class="m-1">
-                                <button type="submit" class="btn_update btn btn-dark btn-sm bg-black pb-1 border-0 btn-outline-none" data-update-url="{% url 'shop:cart_add' product.id %}">
+                                <button type="submit" class="btn_update btn btn-dark btn-sm bg-black" data-update-url="{% url 'shop:cart_add' product.id %}">
                                     Обновить
                                 </button>
                             </div>
 
                             <div class="m-1">
-                                <button type="submit" class="btn_remove btn btn-danger btn-sm pb-1 border-0 btn-outline-none" data-delete-url="{% url 'shop:cart_remove' product.id %}">
+                                <button type="submit" class="btn_remove btn btn-danger btn-sm" data-delete-url="{% url 'shop:cart_remove' product.id %}">
                                     Удалить
                                 </button>
                             </div>

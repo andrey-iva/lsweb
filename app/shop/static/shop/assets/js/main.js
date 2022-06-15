@@ -653,40 +653,47 @@
                     </a>"
                 }
 
-            var textColor = product["product_type"] === "услуга" ? "danger" : "info";
-            var cssClassReil = product["product_type"] === "рейка" ? "class='d-none'": "class='mb-3'"; 
+            var intoCart = quickView.data("intoCart")
+            quickView.data("intoCart", "yes")
 
-            var checkbox = '\
-<span class="' + cssClassReil + '">\
-Петля для якорного крепления <i class="text-primary">'+ CURRENCY + productLoop["price"] +'</i>\
-<input id="add_anchor" class="form-check-input" type="checkbox" name="" value=""\
-    style="\
-        max-width: 180px;\
-        margin-left: -7px;\
-        zoom: 0.4;\
-        cursor: pointer;\
-    ">\
-</span>'
+            var productQuantity = quickView.data("productQuantity")
 
-            // <div>\
-            // ' + ( (product["product_type"] !== "услуга" && product["attribute"] !== "loop") ? checkbox : "") + '\
-            // </div>\
-            // <div ' + cssClassReil + '><span>Установка кронштейна <i class="text-primary">' + CURRENCY + product["price_install"] + '</i></span>\
-            //     <input type="checkbox" ' + (product["product_type"] === "услуга" ? "checked" : "")  + ' class="form-check-input ml-5" \
-            //     style="max-width: 280px;zoom: 0.4;cursor: pointer;" name="price_install" value="1">\
-            // </div>\
+            function isBracket() {
+                if (quickView.data("productType") === "кронштейн") {
+                    return true
+                } else {
+                    return false
+                }
+                // return (
+                //     quickView.data("productType") !== "рейка" && 
+                //     quickView.data("productServiceType") !== "услуга" &&
+                //     quickView.data("productAttribute") !== "loop"
+                // )
+            }
 
-            // <div class="pro-details-quality">\
-            //     <span>Колличество:</span>\
-            //     <div class="cart-plus-minus">\
-            //         <input class="cart-plus-minus-box" type="text" name="qtybutton" value="1">\
-            //     </div>\
-            // </div>\
-// form action="' + quickView.data("productAddToCartUrl") + '"  method="post" class="row" id="modal_add_to_cart"
+            var loopElem = 'Петля для якорного крепления <i class="text-primary">'+ CURRENCY + quickView.data("productLoopPrice") +'</i>\
+            <input id="anchor" class="form-check-input" type="checkbox" name="loop" \
+            style="\
+                max-width: 120px;\
+                margin-left: -7px;\
+                zoom: 0.4;\
+                cursor: pointer;\
+                " '+ (intoCart === "yes" ? "checked" : "") +'>'
+            var loopCheckbox = isBracket() ? loopElem : ""  
+
+            var installElem = 'Установка кронштейна <i class="text-primary">'+ CURRENCY + quickView.data("productPriceInstall") +'</i>\
+            <input class="form-check-input" type="checkbox" name="price_install" value="1" \
+            style="\
+                max-width: 320px;\
+                zoom: 0.4;\
+                cursor: pointer;"'+ (intoCart === "yes" ? "checked" : "") +'>'
+            var installCheckbox = isBracket() ? installElem : ""
+
+
             var modalContent = '\
-<div class="row">\
+<form action="'+ quickView.data("productAddToCartUrl") +'" method="post" id="modal_add_to_cart" class="row">\
 ' + CSRF_TOKEN + '\
-<input type="text" name="override" value="0" hidden>\
+<input type="text" name="override" value="'+ (intoCart === "yes" ? "1" : "0") +'" hidden>\
 <input id="modal_quantity" type="text" name="quantity" value="1" hidden>\
     <div class="col-lg-5 col-md-6 col-12 col-sm-12">\
         <div class="tab-content quickview-big-img">\
@@ -707,6 +714,17 @@
             <div class="pro-details-price">\
                 <span>' + CURRENCY + product["price"] + '</span>\
             </div>\
+            <div class="product-quantity pro-details-quality">\
+                <div class="cart-plus-minus">\
+                    <input class="cart-plus-minus-box" type="text" name="qtybutton" value="'+ productQuantity +'" disabled>\
+                </div>\
+            </div>\
+            <div>\
+                <span class="font-weight-bold">'+ loopCheckbox +'</span>\
+            </div>\
+            <div class="mb-3">\
+                <span class="font-weight-bold">'+ installCheckbox +'</span>\
+            </div>\
             <div class="product-details-meta" style="margin: 30px 0 0 0;">\
                 <ul>\
                     <li><span>Категория:</span> ' + product["category"] + '</li>\
@@ -716,12 +734,12 @@
             </div>\
             <div class="pro-details-action-wrap">\
                 <div class="pro-details-add-to-cart" style="margin: 50px 0 0 0;">\
-                    <a class="btn btn-danger bg-black p-3 border-0 btn-outline-none" href="' + quickView.data("productAbsoluteUrl") + '">Подробнее</a>\
+                    <button type="submit" class="btn btn-danger bg-black p-3 border-0 btn-outline-none">'+ (intoCart === "yes" ? "Обновить товар" : "Добавить в корзину") +'</button>\
                 </div>\
             </div>\
         </div>\
     </div>\
-</div>'
+</form>'
             modal.html(modalContent)
 
             // .not('.slick-initialized')
@@ -790,6 +808,7 @@
                     newVal = 100
                 }
                 $button.parent().find("input").val(newVal);
+                quickView.data("productQuantity", newVal)
                 $("#modal_quantity").val(newVal)
             });
 
@@ -825,27 +844,70 @@
                     </li>")
 
                     // product петля для якорного крепления
-                    if (formElem.find("#add_anchor").prop("checked")) {
+                    // код дублируется
+                    if (formElem.find("#anchor").prop("checked")) {
                         $.ajax({
-                            url: "/cart/add/" + productLoop["id"] + "/",
+                            url: CART_COUNT_QUANTITY_URL,
+                            method: "POST",
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                            data: {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),}
+                        }).done(function(response) {
+                            try {
+                                // колличество товаров с петлей
+                                response = JSON.parse(response)
+                                console.log("/cart/count/quantity/on/", response)
+                            } catch(err) {
+                                console.error("/cart/count/quantity/on/")
+                            }
+                            var quantity_on = response["quantity_on"]
+                            $.ajax({
+                                url: "/cart/add/" + quickView.data("productLoopId") + "/",
+                                method: "POST",
+                                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                                data: {
+                                    "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+                                    // "quantity": $("input[name=quantity]").val(),
+                                    "quantity": quantity_on,
+                                    "override": 1,
+                                    // "override": $("input[name=override]").val(),
+                                    "price_install": formElem.find("input[name=price_install]").prop("checked") ? 1 : 0
+                                }
+                            }).done(function(response) {
+                                console.log("add_anchor", response)
+                                printCart()
+                            }).fail(function(err) {
+                                console.log("add_anchor", err)
+                            });
+                        })
+                    } else if (formElem.find("#anchor").prop("checked") === false) {
+                        // модифицирует сессию, удаляет если 0, производит модификацию + -
+                        $.ajax({
+                            url: "/cart/remove/" + quickView.data("productLoopId") + "/",
                             method: "POST",
                             headers: { 'X-Requested-With': 'XMLHttpRequest' },
                             data: {
                                 "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
-                                "quantity": 1,
-                                "override": 0,
-                                "price_install": $("input[name=price_install]").prop("checked") ? 1 : 0
+                                "quantity": $("input[name=quantity]").val(),
                             }
                         }).done(function(response) {
-                            console.log("add_anchor", response)
-                            printCart()
-                        }).fail(function(err) {
-                            console.log("add_anchor", err)
+                            console.log('remove: ', this.url, response)
+                            // удаляет отметку loop: on
+                            $.ajax({
+                                url: "/cart/del/sessionkeyloop/" + quickView.data("productId") + "/",
+                                method: "POST",
+                                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                                data: {
+                                    "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+                                }
+                            }).done(function(response) {
+                                response = JSON.parse(response)
+                                console.log("loop off::", response, this.url)
+                                printCart()
+                            })
                         })
                     } else {
                         printCart()
                     }
-
                     $('#exampleModal').on('shown.bs.modal', function() {});
 
                 }).fail(function(err) {});
@@ -1039,7 +1101,7 @@
 
                             // модифицирует сессию, удаляет если 0, производит модификацию + -
                             $.ajax({
-                                url: "remove/loop/" + loopId + "/",
+                                url: "/cart/remove/loop/" + loopId + "/",
                                 method: "POST",
                                 headers: { 'X-Requested-With': 'XMLHttpRequest' },
                                 data: {
@@ -1050,7 +1112,7 @@
                                 console.log(response)
                                 // удаляет отметку loop: on
                                 $.ajax({
-                                    url: "del/sessionkeyloop/" + currentForm.data("productId") + "/",
+                                    url: "/cart/del/sessionkeyloop/" + currentForm.data("productId") + "/",
                                     method: "POST",
                                     headers: { 'X-Requested-With': 'XMLHttpRequest' },
                                     data: {

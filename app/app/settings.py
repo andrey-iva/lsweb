@@ -72,6 +72,8 @@ TEMPLATES = [
                 'shop.ctx_proc.categories',
                 'shop.ctx_proc.no_image',
                 'shop.ctx_proc.get_services',
+                'shop.ctx_proc.get_loop_id',
+                'shop.ctx_proc.get_loop_price',
             ],
         },
     },

@@ -17,3 +17,11 @@ def no_image(request):
 
 def get_services(request):
     return {'get_services': Product.objects.filter(product_type='услуга')}
+
+def get_loop_id(request):
+    product = Product.objects.get(attribute='loop')
+    return {'get_loop_id': product.id}
+
+def get_loop_price(request):
+    product = Product.objects.get(attribute='loop')
+    return {'get_loop_price': product.price}
