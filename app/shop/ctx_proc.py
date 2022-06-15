@@ -3,8 +3,18 @@ from .models import Category
 from .models import Product
 from . import NO_IMAGE_PATH
 
+from decimal import Decimal
+
 def cart(request):
     return {'cart': Cart(request)}
+
+def is_install(request):
+    cart = Cart(request)
+    total = 0
+    for item in cart.cart.values():
+        total += Decimal(item['price_install'])
+
+    return {'is_install': int(total) > 0}
 
 def currency(request):
     return {'currency': '₽'}

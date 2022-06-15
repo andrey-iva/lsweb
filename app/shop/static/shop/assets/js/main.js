@@ -653,10 +653,12 @@
                     </a>"
                 }
 
-            var intoCart = quickView.data("intoCart")
-            quickView.data("intoCart", "yes")
+            var intoCart          = quickView.data("intoCart")
+            var isLoop            = quickView.data("isLoopInstall")
+            var totalPriceInstall = quickView.data("totalPriceInstall")
 
             var productQuantity = quickView.data("productQuantity")
+
 
             function isBracket() {
                 if (quickView.data("productType") === "кронштейн") {
@@ -678,7 +680,7 @@
                 margin-left: -7px;\
                 zoom: 0.4;\
                 cursor: pointer;\
-                " '+ (intoCart === "yes" ? "checked" : "") +'>'
+                " '+ (isLoop === "True" ? "checked" : "") +'>'
             var loopCheckbox = isBracket() ? loopElem : ""  
 
             var installElem = 'Установка кронштейна <i class="text-primary">'+ CURRENCY + quickView.data("productPriceInstall") +'</i>\
@@ -686,15 +688,12 @@
             style="\
                 max-width: 320px;\
                 zoom: 0.4;\
-                cursor: pointer;"'+ (intoCart === "yes" ? "checked" : "") +'>'
+                cursor: pointer;"'+ (parseInt(totalPriceInstall) > 0 ? "checked" : "") +'>'
             var installCheckbox = isBracket() ? installElem : ""
 
 
             var modalContent = '\
-<form action="'+ quickView.data("productAddToCartUrl") +'" method="post" id="modal_add_to_cart" class="row">\
-' + CSRF_TOKEN + '\
-<input type="text" name="override" value="'+ (intoCart === "yes" ? "1" : "0") +'" hidden>\
-<input id="modal_quantity" type="text" name="quantity" value="1" hidden>\
+<div class="row">\
     <div class="col-lg-5 col-md-6 col-12 col-sm-12">\
         <div class="tab-content quickview-big-img">\
             '+ bigImages +'\
@@ -706,7 +705,10 @@
         </div>\
     </div>\
     <div class="col-lg-7 col-md-6 col-12 col-sm-12">\
-        <div class="product-details-content quickview-content">\
+        <form form action="'+ quickView.data("productAddToCartUrl") +'" method="post" id="modal_add_to_cart" class="product-details-content quickview-content">\
+        ' + CSRF_TOKEN + '\
+        <input type="text" name="override" value="'+ (intoCart === "yes" ? "1" : "0") +'" hidden>\
+        <input id="modal_quantity" type="text" name="quantity" value="1" hidden>\
             <h2>' + product["name"] + '</h2>\
             <div class="product-ratting-review-wrap">\
             </div>\
@@ -737,9 +739,9 @@
                     <button type="submit" class="btn btn-danger bg-black p-3 border-0 btn-outline-none">'+ (intoCart === "yes" ? "Обновить товар" : "Добавить в корзину") +'</button>\
                 </div>\
             </div>\
-        </div>\
+        </form>\
     </div>\
-</form>'
+</div>'
             modal.html(modalContent)
 
             // .not('.slick-initialized')
@@ -816,13 +818,23 @@
                 e.preventDefault()
 
                 var formElem = $(this)
+                if (formElem.find("input[name=loop]").prop("checked")) {
+                    quickView.data("isLoopInstall", "True")
+                } else {
+                    quickView.data("isLoopInstall", "False")
+                }
 
+                if (formElem.find("input[name=price_install]").prop("checked")) {
+                    quickView.data("totalPriceInstall", 1)
+                } else {
+                    quickView.data("totalPriceInstall", 0)
+                }
                 $.ajax({
                     url: this.action,
                     method: "POST",
                     data: $(this).serialize(),
                 }).done(function(response) {
-
+                    quickView.data("intoCart", "yes")
                     // Открытие мини корзины при добавлении товара
                     $(".sidebar-cart-active").addClass("inside")
                     $(".main-wrapper").addClass("overlay-active")
@@ -882,7 +894,7 @@
                     } else if (formElem.find("#anchor").prop("checked") === false) {
                         // модифицирует сессию, удаляет если 0, производит модификацию + -
                         $.ajax({
-                            url: "/cart/remove/" + quickView.data("productLoopId") + "/",
+                            url: "/cart/remove/loop/" + quickView.data("productLoopId") + "/",
                             method: "POST",
                             headers: { 'X-Requested-With': 'XMLHttpRequest' },
                             data: {
@@ -1206,8 +1218,10 @@
                                     data: {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()}
                                 }).done(function(response) {
                                     console.log("mini cart", response)
+                                    window.location = window.location.pathname
                                 })
                             }
+                            window.location = window.location.pathname
                         }
                     },
                     error: function() { console.error(this.url) },
@@ -1238,9 +1252,11 @@
                 $("#cart-mini-sub-total").text(responseData.sub_total)
 
                 var htm = ""
-
+                var installSum = 0
                 for (var k in responseData) {
                     if (k === "sub_total" || k === 'cart_length') { continue }
+
+                    installSum += parseInt(responseData[k]["price_install"].slice(1))
 
                     htm += "<li class='single-product-cart cart-detail-mini-delete'>\
                             <div class='cart-img'>\
@@ -1264,6 +1280,11 @@
                                 </form>\
                             </div>\
                             </li>"
+                }
+                if (installSum > 0) {
+
+                    $(".cart_info").html("<i class='icon-basket-loaded'></i><img class='is_work mr-2 ml-1' src='/static/shop/images/work.png'><span class='black'>" + responseData.cart_length + "</span>" + responseData.sub_total)
+                    $(".cart_middle").html("<i class='icon-basket-loaded'><img class='is_work mr-0 ml-3' src='/static/shop/images/work.png'></i><span class='pro-count black'>" + responseData.cart_length + "</span>")
                 }
                 var productDetealForm = $(".product_detail").find("input[name=override]")
 

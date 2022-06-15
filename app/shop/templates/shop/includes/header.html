@@ -88,8 +88,9 @@
                         <div class="col-xl-2 col-lg-2">
                             <div class="header-action header-action-flex header-action-mrg-right">
                                 <div class="header-cart-2">
-                                    <a class="{% if not deactivate_mini_cart %}cart-active{% endif %} cart_info" href="{% url 'shop:cart_detail' %}">
-                                        <i class="icon-basket-loaded"></i> 
+                                    <a class="{% if not deactivate_mini_cart %}cart-active{% endif %} cart_info" href="{% url 'shop:cart_detail' %}">                                  
+                                        <i class="icon-basket-loaded"></i>
+                                        <img class="is_work mr-2 ml-1 {% if not is_install %}d-none{% endif %}" src="/static/shop/images/work.png">
                                         <span class="black">{{ cart|length }}</span>{{currency}}{{cart.get_total_price}}
                                     </a>
                                 </div>
@@ -115,7 +116,9 @@
                     <div class="header-action header-action-flex">
                         <div class="same-style-2 same-style-2-font-inc header-cart">
                             <a class="{% if not deactivate_mini_cart %}cart-active{% endif %} mini-cart cart_middle" href="{% url 'shop:cart_detail' %}">
-                                <i class="icon-basket-loaded"></i><span class="pro-count black">{{ cart|length }}</span>
+                                <i class="icon-basket-loaded"></i>
+                                <img class="is_work mr-0 ml-3 {% if not is_install %}d-none{% endif %}" src="/static/shop/images/work.png">
+                                <span class="pro-count black">{{ cart|length }}</span>
                             </a>
                         </div>
                         <div class="same-style-2 main-menu-icon">

@@ -195,6 +195,9 @@
                                                 data-product-service-type="{{product.service_type}}"
                                                 data-product-attribute="{{product.attribute}}"
 
+                                                data-is-loop-install="{{request.session.cart|is_loop_install:product.id}}"
+                                                data-total-price-install="{{request.session.cart|get_product_total_price_install:product.id}}"
+
                                                 data-into-cart="{% if request.session.cart|get_key:product.id %}yes{% else %}no{% endif %}"
                                                 >
                                                     <i class="icon-size-fullscreen icons"></i>
@@ -261,6 +264,9 @@
                                                 data-product-type="{{product.product_type}}"
                                                 data-product-service-type="{{product.service_type}}"
                                                 data-product-attribute="{{product.attribute}}"
+
+                                                data-is-loop-install="{{request.session.cart|is_loop_install:product.id}}"
+                                                data-total-price-install="{{request.session.cart|get_product_total_price_install:product.id}}"
 
                                                 data-into-cart="{% if request.session.cart|get_key:product.id %}yes{% else %}no{% endif %}"
                                                 >

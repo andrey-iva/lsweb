@@ -74,6 +74,7 @@ TEMPLATES = [
                 'shop.ctx_proc.get_services',
                 'shop.ctx_proc.get_loop_id',
                 'shop.ctx_proc.get_loop_price',
+                'shop.ctx_proc.is_install',
             ],
         },
     },

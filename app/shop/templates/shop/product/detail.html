@@ -118,7 +118,7 @@
                         <!-- <span>Колличество:</span> -->
                         <div class="cart-plus-minus">
                             {% if request.session.cart|get_key:product.id %}
-                            <input name="qtybutton" class="cart-plus-minus-box" type="text" value="{{ request.session.cart|get_quantity:product.id }}" disabled>
+                            <input name="qtybutton" class="cart-plus-minus-box" type="text" value="{{ request|get_quantity:product.id }}" disabled>
                             {% else %}
                             <input name="qtybutton" class="cart-plus-minus-box" type="text" value="1" disabled>
                             {% endif %}
