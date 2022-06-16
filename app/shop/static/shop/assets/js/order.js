@@ -97,7 +97,7 @@ $( function() {
             try {
                 var response = JSON.parse(response)
                 var grandTotal = (parseFloat(response["grand_total"]) + parseFloat(tax)).toFixed(2)
-                 $("#order_grand_total").text(CURRENCY + grandTotal.toString())
+                 $("#order_grand_total").text( (CURRENCY + grandTotal.toString()).replace(".", ",") )
             } catch(err) {
                 console.error("addPercent error")
             }
@@ -366,7 +366,7 @@ $( function() {
         // e.preventDefault()
 
         if ($("input[name=policy]").prop("checked") === false) {
-            $(".policy").addClass("border border-danger pl-1")
+            $(".policy").addClass("border-bottom border-danger")
             return false
         }
         $("input[name=payment_method]").each(function() {
@@ -542,11 +542,13 @@ $( function() {
             // grand total
             addPercent(0, 0)
 
-            if (document.getElementById("base")) {
-                $([document.documentElement, document.body]).animate({
-                    scrollTop: $("#base").offset().top
-                }, 1000);
-            }
+            setTimeout(function() {
+                if (document.getElementById("base")) {
+                    $([document.documentElement, document.body]).animate({
+                        scrollTop: $("#base").offset().top
+                    }, 1000);
+                }
+            }, 500)
         }
 
         $("input[name=delivery_name]").each(function() {
@@ -567,16 +569,16 @@ $( function() {
 
     // cdek start
     $("#city").suggestions({
-      // token: token,
-      // type: "ADDRESS",
-      // hint: false,
-      // bounds: "city",
-      // formatResult: formatResult,
-      // formatSelected: formatSelected,
       token: token,
       type: "ADDRESS",
       hint: false,
-      bounds: "region-settlement",
+      bounds: "city",
+      formatResult: formatResult,
+      formatSelected: formatSelected,
+      // token: token,
+      // type: "ADDRESS",
+      // hint: false,
+      // bounds: "region-settlement",
       onSelect: function(suggestion) {
         resetCheckedPayment()
         $("input[name=address_full_info]").val(JSON.stringify((suggestion)) )
@@ -747,7 +749,7 @@ $( function() {
 
     // // Город, улица, дом, квартира
     $("#address").suggestions({
-      token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
+      token: token,
       type: "ADDRESS",
       onSelect: function(suggestion) {
         $("#postal_code").val(suggestion['data']['postal_code'])
@@ -769,7 +771,7 @@ $( function() {
     // });
 
     $("#region").suggestions({
-        token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
+        token: token,
         type: "ADDRESS",
         onSelect: function(suggestion) {},
         constraints: {
@@ -782,12 +784,12 @@ $( function() {
     });
 
     $("#postal_code").suggestions({
-        token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
+        token: token,
         type: "postal_unit"
     });
 
     $("#email").suggestions({
-        token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
+        token: token,
         type: "EMAIL",
         onSelect: function(suggestion) {}
     });

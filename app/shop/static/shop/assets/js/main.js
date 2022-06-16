@@ -1028,6 +1028,7 @@
                     return
                 }
                 console.info(this.url, "remove||update main cart:", responseData)
+                var PRODUCTID = responseData["product_id"]
                 // product-subtotal
                 if (responseData.result === "update") {
                     // console.log('=======>', responseData)
@@ -1133,6 +1134,11 @@
                                 }).done(function(response) {
                                     console.log("loop off", response, "del/sessionkeyloop/" + currentForm.data("productId") + "/")
                                     window.location = window.location.pathname
+                                    $.ajax({
+                                        url: "/cart/",
+                                    }).done(function(response) {
+                                        // console.log(response.match(/cartstart[.\n]+/))
+                                    })
                                 })
                             })
                         })
@@ -1148,16 +1154,61 @@
                                     PRODUCT_LIST_URL + "'>Перейти к покупкам</a></div>")
                         window.location = PRODUCT_LIST_URL
                     } else {
+                        
                         $.ajax({
-                            url: CART_REMOVE_LOOP_MARKER_URL,
+                            url: CART_COUNT_QUANTITY_URL,
                             method: "POST",
-                            data: {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()}
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                            data: {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),}
                         }).done(function(response) {
-                            console.log(response)
-                            if (response) {
-                                window.location = window.location.pathname
+                            try {
+                                // колличество товаров с петлей
+                                response = JSON.parse(response)
+                                console.log("/cart/count/quantity/on/", response)
+                            } catch(err) {
+                                console.error("/cart/count/quantity/on/")
                             }
+                            
+                            var quantity_on = response["quantity_on"]
+
+                            $.ajax({
+                                url: GET_LOOP_ID_URL,
+                            }).done(function(response) {
+                                try {
+                                    response = JSON.parse(response)
+                                    console.info("loop_id:", response["loop_id"])
+                                } catch(err) {
+                                    console.error("не получил ID:", GET_LOOP_ID_URL)
+                                }
+
+                                var loopId = response["loop_id"]
+                                if (parseInt(PRODUCTID) === parseInt(loopId)) {
+                                    $.ajax({
+                                        url: CART_REMOVE_LOOP_MARKER_URL,
+                                        method: "POST",
+                                        data: {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()}
+                                    }).done(function(response) {
+                                        console.log(response)
+                                        if (response) {
+                                            window.location = window.location.pathname
+                                        }
+                                    })
+                                } else {
+                                    $.ajax({
+                                        url: "/cart/add/" + loopId + "/",
+                                        method: "POST",
+                                        data: {
+                                           "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+                                            "quantity": quantity_on,
+                                            "override": 1, 
+                                        }
+                                    }).done(function(response) {
+                                        window.location = window.location.pathname
+                                    })
+                                }
+                                
                         })
+                     })
                     }
 
                     // changeCartLengthSubTotal(responseData)
@@ -1284,7 +1335,7 @@
                 if (installSum > 0) {
 
                     $(".cart_info").html("<i class='icon-basket-loaded'></i><img class='is_work mr-2 ml-1' src='/static/shop/images/work.png'><span class='black'>" + responseData.cart_length + "</span>" + responseData.sub_total)
-                    $(".cart_middle").html("<i class='icon-basket-loaded'><img class='is_work mr-0 ml-3' src='/static/shop/images/work.png'></i><span class='pro-count black'>" + responseData.cart_length + "</span>")
+                    $(".cart_middle").html("<i class='icon-basket-loaded'><img height='20' class='is_work mr-0 ml-3' src='/static/shop/images/work.png'></i><span class='pro-count black'>" + responseData.cart_length + "</span>")
                 }
                 var productDetealForm = $(".product_detail").find("input[name=override]")
 

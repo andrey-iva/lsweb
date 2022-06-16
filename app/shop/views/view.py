@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
+import logging
 from django import forms
 from pprint import pprint
 
@@ -13,8 +14,12 @@ class MessageCreateForm(forms.ModelForm):
         fields = ['name', 'subject', 'email', 'notes']
 
 def home(request):
-	posts = Post.objects.all()[0:9]
-	
+	try:
+		posts = Post.objects.all()[0:9]
+	except Exception as e:
+		logging.debug(e)
+		posts = []
+
 	return render(request, 'shop/index.html', {
 			'posts': posts,
 		})

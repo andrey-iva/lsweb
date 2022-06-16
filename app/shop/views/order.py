@@ -40,7 +40,7 @@ class OrderCreateForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = [
-            'delivery_type', 'address_full_info',
+            'policy', 'delivery_type', 'address_full_info',
             'grand_total', 'first_name', 'last_name',
             'country', 'region', 'address', 'postal_code',
             'phone', 'email', 'notes'

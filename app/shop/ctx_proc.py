@@ -1,4 +1,7 @@
 import logging
+
+from django.shortcuts import get_object_or_404
+
 from .cart import Cart
 from .models import Category
 from .models import Product
@@ -30,17 +33,23 @@ def get_services(request):
     return {'get_services': Product.objects.filter(product_type='услуга')}
 
 def get_loop_id(request):
-    try:
-        product = Product.objects.get(attribute='loop')
-    except Exception as e:
-        logging.exception(e)
+    product = Product.objects.filter(attribute='loop')
+    
+    if len(product):
+        product = product.get(attribute='loop')
+        loop_id = product.id
     else:
-        return {'get_loop_id': product.id}
+        loop_id = None
+    logging.debug("LOOP ID %s", loop_id)
+    return {'get_loop_id': loop_id}
 
 def get_loop_price(request):
-    try:
-        product = Product.objects.get(attribute='loop')
-    except Exception as e:
-        logging.exception(e)
+    product = Product.objects.filter(attribute='loop')
+    
+    if len(product):
+        product = product.get(attribute='loop')
+        price = product.price
     else:
-        return {'get_loop_price': product.price}
+        price = None
+    logging.debug("LOOP ID %s", price)
+    return {'get_loop_price': price}

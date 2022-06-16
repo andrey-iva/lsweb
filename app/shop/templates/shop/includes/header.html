@@ -117,7 +117,7 @@
                         <div class="same-style-2 same-style-2-font-inc header-cart">
                             <a class="{% if not deactivate_mini_cart %}cart-active{% endif %} mini-cart cart_middle" href="{% url 'shop:cart_detail' %}">
                                 <i class="icon-basket-loaded"></i>
-                                <img class="is_work mr-0 ml-3 {% if not is_install %}d-none{% endif %}" src="/static/shop/images/work.png">
+                                <img height="20" class="is_work mr-0 ml-3 {% if not is_install %}d-none{% endif %}" src="/static/shop/images/work.png">
                                 <span class="pro-count black">{{ cart|length }}</span>
                             </a>
                         </div>

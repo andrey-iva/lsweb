@@ -89,7 +89,7 @@
                             data-url-remove="{% url 'shop:cart_remove_loop' product.id %}"
                             data-url-loop-off="{% url 'shop:cart_loop_off' product.id %}"
                             style="
-                                max-width: 180px;
+                                max-width: 160px;
                                 margin-left: -7px;
                                 zoom: 0.4;
                                 cursor: pointer;
@@ -108,7 +108,7 @@
                             class="form-check-input ml-5 {% if request.session.cart|get_key:product.id %}del-service{% endif %}" type="checkbox" name="price_install" value="1"
                             data-url="{% url 'shop:cart_add' product.id %}" 
                             style="
-                            max-width: 280px;
+                            max-width: 260px;
                             zoom: 0.4;
                             cursor: pointer;" 
                             {% if request.session.cart|get_product_total_price_install:product.id %} checked {% endif %}>
