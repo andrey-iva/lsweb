@@ -60,7 +60,7 @@ class Product(models.Model):
                                         ('установка', 'Установка'),
                                         ('разработка', 'Разработка')))
     available = models.BooleanField(
-        default=True, verbose_name='В наличии', blank=True)
+        default=True, verbose_name='наличие', blank=True)
 
     image_base = models.ImageField(upload_to='products/%Y/%m/%d',
                                    blank=True,
@@ -125,7 +125,7 @@ class Order(models.Model):
     email = models.EmailField(blank=True)
     delivery_type = models.CharField(max_length=100, verbose_name="доставка")
     grand_total = models.DecimalField(
-        max_digits=10, decimal_places=2, verbose_name='Сумма заказа')
+        max_digits=10, decimal_places=2, verbose_name='Сумма')
     notes = models.TextField(max_length=500, blank=True,
                              verbose_name='примечание к заказу')
     created = models.DateTimeField(auto_now_add=True)
@@ -136,13 +136,14 @@ class Order(models.Model):
             max_digits=10, decimal_places=2, verbose_name='Юкасса сумма', blank=True, default=0)
     yookassa_status = models.CharField(max_length=30, blank=True, verbose_name='Юкасса статус')
     status = models.CharField(max_length=20,
-                                    verbose_name='Статус заказа',
+                                    verbose_name='Статус',
                                     choices=(
                                         ('new', 'Новый'),
                                         ('proc', 'На обработке'),
                                         ('arc', 'В архиве')), default='new')
     yookassa_full_info = models.TextField(blank=True)
     address_full_info = models.TextField(blank=True)
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Дата')
 
     class Meta:
         ordering = ('-created',)

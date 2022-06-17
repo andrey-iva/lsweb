@@ -27,9 +27,11 @@ class CategoryAdmin(admin.ModelAdmin):
 # import - export
 @admin.register(Product)
 class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
-    list_per_page = 20
+    list_per_page = 100
+    search_help_text = 'Поиск по названию'
     resource_class = ProductResource
     inlines = [ProductImageInline,]
+    search_fields = ['name']
     fields = [
         'category', 'name', 'slug', 'price', 'price_install',
         'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type',
@@ -38,21 +40,27 @@ class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
         'description_full', 'seo_title', 'seo_key', 'seo_desc', 'full_url', 'attribute',
     ]
     list_display = [
-        'id', 'category', 'name', 'slug', 'price', 'price_install',
+        'id', 'name', 'price', 'price_install',
         'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type',
         'service_type',
-        'available', 'image_base', 'description_short',
-        'description_full', 'seo_title', 'seo_key', 'seo_desc', 'full_url',
-        # 'created', 'updated',
+        'available', # 'image_base', 'description_short',
+        # 'description_full', 'seo_title', 'seo_key', 'seo_desc', 'full_url',
     ]
-    list_filter = ['category', 'service_type', 'available', 'brand_car']
     list_editable = [
-        'category', 'name', 'slug', 'price', 'price_install',
+        'name', 'price', 'price_install',
         'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type',
         'service_type',
-        'available', 'image_base', 'description_short',
-        'description_full', 'seo_title', 'seo_key', 'seo_desc', 'full_url'
+        'available', # 'image_base', 'description_short',
+        # 'description_full', 'seo_title', 'seo_key', 'seo_desc', 'full_url',
     ]
+    list_filter = ['category', 'available', 'brand_car']
+    # list_editable = [
+    #     'category', 'name', 'slug', 'price', 'price_install',
+    #     'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type',
+    #     'service_type',
+    #     'available', 'image_base', 'description_short',
+    #     'description_full', 'seo_title', 'seo_key', 'seo_desc', 'full_url'
+    # ]
     prepopulated_fields = {'slug': ('name',)}
     readonly_fields = ['preview']
 
@@ -67,8 +75,10 @@ class OrderItemInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['id', 'first_name', 'status', 'paid', 'grand_total', 'phone', 'email']
-    list_filter = ['paid', 'status', 'created', 'updated']
+    empty_value_display = '-empty-'
+    list_display = ['id', 'first_name', 'status', 'paid', 'grand_total', 'phone', 'created']
+    list_filter = ['paid', 'status', 'created']
+    exclude = ['yookassa_full_info', 'address_full_info']
     # list_editable = ['paid', 'status']
     inlines = [OrderItemInline]
 
