@@ -1134,11 +1134,6 @@
                                 }).done(function(response) {
                                     console.log("loop off", response, "del/sessionkeyloop/" + currentForm.data("productId") + "/")
                                     window.location = window.location.pathname
-                                    $.ajax({
-                                        url: "/cart/",
-                                    }).done(function(response) {
-                                        // console.log(response.match(/cartstart[.\n]+/))
-                                    })
                                 })
                             })
                         })
@@ -1149,9 +1144,9 @@
                     // currentForm.remove()
 
                     if (parseInt(responseData.cart_length) === 0) {
-                        $("#cart-container").html("<h3 class=\"text-center\">Ваша корзина пуста</h3>\
-                                    <div class=\"text-center h6\"><a class='btn btn-danger' href='" +
-                                    PRODUCT_LIST_URL + "'>Перейти к покупкам</a></div>")
+                        // $("#cart-container").html("<h3 class=\"text-center\">Ваша корзина пуста</h3>\
+                        //             <div class=\"text-center h6\"><a class='btn btn-danger' href='" +
+                        //             PRODUCT_LIST_URL + "'>Перейти к покупкам</a></div>")
                         window.location = PRODUCT_LIST_URL
                     } else {
                         

@@ -548,7 +548,7 @@ $( function() {
                         scrollTop: $("#base").offset().top
                     }, 1000);
                 }
-            }, 500)
+            }, 1000)
         }
 
         $("input[name=delivery_name]").each(function() {
