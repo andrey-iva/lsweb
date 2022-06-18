@@ -65,6 +65,12 @@ class Product(models.Model):
     image_base = models.ImageField(upload_to='products/%Y/%m/%d',
                                    blank=True,
                                    verbose_name='Изображение')
+    video = models.FileField(upload_to='video/%Y/%m/%d',
+                                   blank=True,
+                                   verbose_name='Видео')
+    video_shot = models.ImageField(upload_to='video/shot/%Y/%m/%d',
+                                   blank=True,
+                                   verbose_name='Заставка для видео')
     description_short = models.TextField(
         blank=True, verbose_name='Краткое описание')
     description_full = models.TextField(
@@ -74,8 +80,8 @@ class Product(models.Model):
     seo_key = models.TextField(blank=True, verbose_name='SEO keys')
     seo_desc = models.TextField(
         blank=True, verbose_name='SEO content')
-    full_url = models.TextField(
-        blank=True, verbose_name='Полный URL')
+    # full_url = models.TextField(
+    #     blank=True, verbose_name='Полный URL')
     attribute = models.CharField(max_length=30, blank=True, default='', verbose_name="Атрибут")
 
     # created = models.DateTimeField(auto_now_add=True, blank=True, null=True, verbose_name='Добавлен')

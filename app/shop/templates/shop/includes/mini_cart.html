@@ -19,9 +19,11 @@
                         <div style="font-size: 12px;">
                             Товар: {{ item.quantity }} × {{ currency }}{{ item.price }}
                         </div>
+                        {% if item.price_install > 0 %}
                         <div style="font-size: 12px;">
                             Монтаж: {{item.quantity }} × {{currency}}{{ item.price_install }}
                         </div>
+                        {% endif %}
                     </div>
                     <div class="cart-delete">
                         <form action="{% url 'shop:cart_remove' product.id %}" method="post" data-product-attr="{{product.attribute}}">

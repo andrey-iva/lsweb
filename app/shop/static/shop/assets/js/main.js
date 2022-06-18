@@ -153,7 +153,7 @@
             });
         }
     }
-    SocialIconActive()
+    // SocialIconActive()
 
     /*---------------------
         Price range
@@ -693,6 +693,10 @@
                 zoom: 0.4;\
                 cursor: pointer;"'+ (parseInt(totalPriceInstall) > 0 ? "checked" : "") +'>'
             var installCheckbox = isBracket() ? installElem : ""
+            var lst = "<li><span>Тип сиденья: </span>" + quickView.data("productSeatType") + "</li>"+
+                    "<li><span>Марка авто: </span> " + quickView.data("productModel") + "</li>"+
+                    "<li><span>Год выпуска: </span> " + quickView.data("productYear") + "</li>"
+            var bracketList = isBracket() ? lst : ""
 
 
             var modalContent = '\
@@ -712,7 +716,7 @@
         ' + CSRF_TOKEN + '\
         <input type="text" name="override" value="'+ (intoCart === "yes" ? "1" : "0") +'" hidden>\
         <input id="modal_quantity" type="text" name="quantity" value="1" hidden>\
-            <h2>' + product["name"] + '</h2>\
+            <h4 class="font-weight-bold">' + product["name"] + '</h4>\
             <div class="product-ratting-review-wrap">\
             </div>\
             <p>' + product["description"] + '</p>\
@@ -734,9 +738,7 @@
                 <ul>\
                     <li><span>Категория:</span> ' + product["category"] + '</li>\
                     <li><span>Код товара: </span> ' + product["code"] + '</li>\
-                    <li><span>Тип сиденья: </span> ' + quickView.data("productSeatType") + '</li>\
-                    <li><span>Марка авто: </span> ' + quickView.data("productModel") + '</li>\
-                    <li><span>Год выпуска: </span> ' + quickView.data("productYear") + '</li>\
+                    '+ bracketList +'\
                     <li><span>Наличие: </span> ' + (product["available"] ? "Есть в наличии" : "Нет в наличии")  + '</li>\
                 </ul>\
             </div>\
@@ -744,22 +746,11 @@
                 <div class="pro-details-add-to-cart">\
                     <button type="submit" class="btn btn-danger bg-black p-3 border-0 btn-outline-none">'+ (intoCart === "yes" ? "Обновить товар" : "Добавить в корзину") +'</button>\
                 </div>\
-                <div class="pro-details-action">\
-                    <a class="social" title="Social" href="#"><i class="icon-share"></i></a>\
-                    <div class="product-dec-social">\
-                        <a class="facebook" title="Facebook" href="#"><i class="icon-social-facebook"></i></a>\
-                        <a class="twitter" title="Twitter" href="#"><i class="icon-social-twitter"></i></a>\
-                        <a class="instagram" title="Instagram" href="#"><i class="icon-social-instagram"></i></a>\
-                        <a class="pinterest" title="Pinterest" href="#"><i class="icon-social-pinterest"></i></a>\
-                    </div>\
-                </div>\
             </div>\
         </form>\
     </div>\
 </div>'
             modal.html(modalContent)
-
-            SocialIconActive()
 
             // .not('.slick-initialized')
             $('.quickview-slide-active').not('.slick-initialized').slick({
@@ -1321,6 +1312,13 @@
 
                     installSum += parseInt(responseData[k]["price_install"].slice(1))
 
+                    var install = ""
+                    if (parseInt(responseData[k]["price_install"].slice(1)) > 0) {
+                        install = "<div style='font-size: 12px ;'>Монтаж: " +
+                                responseData[k]["quantity"] + " × " +
+                                responseData[k]["price_install"] + "</div>"
+                    }
+
                     htm += "<li class='single-product-cart cart-detail-mini-delete'>\
                             <div class='cart-img'>\
                                 <a href='" + responseData[k]["product_url"] + "'>\
@@ -1331,10 +1329,7 @@
                                 <h4 class='pb-0 mb-1'><a href='" + responseData[k]["product_url"] + "'>" + responseData[k]["name"] + "</a></h4>\
                                 <div style='font-size: 12px ;'>Товар: " +
                                 responseData[k]["quantity"] + " × " +
-                                responseData[k]["price"] + "</div>\
-                                <div style='font-size: 12px ;'>Монтаж: " +
-                                responseData[k]["quantity"] + " × " +
-                                responseData[k]["price_install"] + "</div>\
+                                responseData[k]["price"] + "</div>" + install + "\
                             </div>\
                             <div class='cart-delete'>\
                                 <form action='/cart/remove/" + k + "/' method='post' data-product-attr='"+ responseData[k]["attribute"] +"'>\

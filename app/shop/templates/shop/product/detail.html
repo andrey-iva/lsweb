@@ -50,6 +50,24 @@
                             <a class="easyzoom-pop-up img-popup" href="{{ item.image.url }}"><i class="icon-size-fullscreen"></i></a>
                         </div>
                         {% endfor %}
+
+
+                        {% if product.video_shot %}
+                        <div class="easyzoom-style">
+                            <div class="easyzoom easyzoom--overlay">
+                                <a href="{{ product.video.url }}">
+                                    <video 
+                                    class="w-100"                                     
+                                    poster="{{ product.video_shot.url }}"
+                                    controls="controls">
+                                        <source src="{{ product.video.url }}">
+                                    </video>
+                                </a>
+                            </div>
+                        </div>
+                        {% endif %}
+
+
                     </div>
                     <div class="product-dec-slider-small product-dec-small-style1">
                         <div class="product-dec-small active">
@@ -57,9 +75,18 @@
                         </div>
                         {% for item in images %}
                         <div class="product-dec-small active">
-                            <img src="{{ item.image.url }}" alt="">
+                            <img src="{{ item.image.url }}">
                         </div>
                         {% endfor %}
+
+
+                        {% if product.video_shot %}
+                        <div class="product-dec-small">
+                            <img src="{{ product.video_shot.url }}">
+                        </div>
+                        {% endif %}
+
+
                     </div>
                 </div>
             </div>
@@ -134,6 +161,7 @@
                                 <span>Код товара: </span>
                                 {{ product.item_number }}
                             </li>
+                            {% if product.product_type == 'кронштейн' %}
                             <li>
                                 <span>Тип сиденья: </span>
                                 {{ product.seat_type }}
@@ -146,6 +174,7 @@
                                 <span>Год выпуска: </span>
                                 {{ product.year }}
                             </li>
+                            {% endif %}
                             <li>
                                 <span>Наличие:</span>
                                 {% if product.available %}
@@ -170,13 +199,22 @@
                             {% endif %}
                         </div>
                         <div class="pro-details-action">
-                            <a class="social" title="Social" href="#"><i class="icon-share"></i></a>
-                            <div class="product-dec-social">
+                           <div class="ya-share2"
+                           {% if product.image_base %}data-image="{{product.image_base.url}}"{% endif %}
+                           data-description="{{product.description_short}}"
+                           data-lang="ru"
+                           data-curtain data-size="m" 
+                           data-color-scheme="blackwhite" 
+                           data-limit="0"
+                           data-more-button-type="long" data-services="vkontakte,odnoklassniki,telegram,viber,whatsapp,moimir"></div>
+                            <!-- <a title="Social" href="#"><i class="icon-share"></i></a> -->
+                            
+                            <!-- <div class="product-dec-social">
                                 <a class="facebook" title="Facebook" href="#"><i class="icon-social-facebook"></i></a>
                                 <a class="twitter" title="Twitter" href="#"><i class="icon-social-twitter"></i></a>
                                 <a class="instagram" title="Instagram" href="#"><i class="icon-social-instagram"></i></a>
                                 <a class="pinterest" title="Pinterest" href="#"><i class="icon-social-pinterest"></i></a>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -241,3 +279,5 @@
 </div>
 
 {% endblock %}
+
+{% block productjs %}<script src="https://yastatic.net/share2/share.js"></script>{% endblock %}

@@ -173,8 +173,8 @@ def product_detail(request, slug):
     # product_in_cart = str(product.id) in request.session['cart']
 
     # как-то проверить есть ли
-    product.full_url = "{0}://{1}{2}".format(request.scheme, request.get_host(), request.path)
-    product.save()
+    # product.full_url = "{0}://{1}{2}".format(request.scheme, request.get_host(), request.path)
+    # product.save()
 
     images = ProductImage.objects.filter(product_id=product.id)
     

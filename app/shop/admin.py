@@ -35,37 +35,34 @@ class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     fields = [
         'category', 'name', 'slug', 'price', 'price_install',
         'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type',
-        'service_type',
-        'available', 'image_base', 'preview', 'description_short',
-        'description_full', 'seo_title', 'seo_key', 'seo_desc', 'full_url', 'attribute',
+        'service_type', 'available', 'attribute', 'image_base', 'preview', 'description_short',
+        'description_full', 'seo_title', 'seo_key', 'seo_desc',
+        'video_shot', 'preview_shot', 'video', 'preview_video',
     ]
     list_display = [
         'id', 'name', 'price', 'price_install',
         'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type',
-        'service_type',
-        'available', 'image_base', 'description_short',
-        'description_full', 'seo_title', 'seo_key', 'seo_desc', 'full_url',
+        'service_type', 'available', 'image_base', 'video', 'video_shot', 'description_short',
+        'description_full', 'seo_title', 'seo_key', 'seo_desc',
     ]
     list_editable = [
         'name', 'price', 'price_install',
         'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type',
-        'service_type',
-        'available', 'image_base', 'description_short',
-        'description_full', 'seo_title', 'seo_key', 'seo_desc', 'full_url',
+        'service_type', 'available', 'image_base', 'video', 'video_shot', 'description_short',
+        'description_full', 'seo_title', 'seo_key', 'seo_desc',
     ]
     list_filter = ['category', 'available', 'brand_car']
-    # list_editable = [
-    #     'category', 'name', 'slug', 'price', 'price_install',
-    #     'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type',
-    #     'service_type',
-    #     'available', 'image_base', 'description_short',
-    #     'description_full', 'seo_title', 'seo_key', 'seo_desc', 'full_url'
-    # ]
     prepopulated_fields = {'slug': ('name',)}
-    readonly_fields = ['preview']
+    readonly_fields = ['preview', 'preview_shot', 'preview_video']
 
     def preview(self, obj):
-        return mark_safe(u'<img width=400 src="%s" />' % str(obj.image_base.url))
+        return mark_safe(u'<img width=100 src="%s" />' % str(obj.image_base.url))
+
+    def preview_shot(self, obj):
+        return mark_safe(u'<img width="250" src="%s" />' % str(obj.video_shot.url))
+
+    def preview_video(self, obj):
+        return mark_safe(u'<video width="500" controls="controls"><source src="%s"></video>' % str(obj.video.url))
 # end import - export
 
 class OrderItemInline(admin.TabularInline):
