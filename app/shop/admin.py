@@ -27,7 +27,7 @@ class CategoryAdmin(admin.ModelAdmin):
 # import - export
 @admin.register(Product)
 class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
-    list_per_page = 100
+    list_per_page = 10
     search_help_text = 'Поиск по названию'
     resource_class = ProductResource
     inlines = [ProductImageInline,]
@@ -43,15 +43,15 @@ class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
         'id', 'name', 'price', 'price_install',
         'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type',
         'service_type',
-        'available', # 'image_base', 'description_short',
-        # 'description_full', 'seo_title', 'seo_key', 'seo_desc', 'full_url',
+        'available', 'image_base', 'description_short',
+        'description_full', 'seo_title', 'seo_key', 'seo_desc', 'full_url',
     ]
     list_editable = [
         'name', 'price', 'price_install',
         'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type',
         'service_type',
-        'available', # 'image_base', 'description_short',
-        # 'description_full', 'seo_title', 'seo_key', 'seo_desc', 'full_url',
+        'available', 'image_base', 'description_short',
+        'description_full', 'seo_title', 'seo_key', 'seo_desc', 'full_url',
     ]
     list_filter = ['category', 'available', 'brand_car']
     # list_editable = [

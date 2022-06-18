@@ -129,28 +129,31 @@
     /*--------------------------------
         Social icon active
     -----------------------------------*/
-    if ($('.pro-details-action').length) {
-        var $body = $('body'),
-            $cartWrap = $('.pro-details-action'),
-            $cartContent = $cartWrap.find('.product-dec-social');
-        $cartWrap.on('click', '.social', function(e) {
-            e.preventDefault();
-            var $this = $(this);
-            if (!$this.parent().hasClass('show')) {
-                $this.siblings('.product-dec-social').addClass('show').parent().addClass('show');
-            } else {
-                $this.siblings('.product-dec-social').removeClass('show').parent().removeClass('show');
-            }
-        });
-        /*Close When Click Outside*/
-        $body.on('click', function(e) {
-            var $target = e.target;
-            if (!$($target).is('.pro-details-action') && !$($target).parents().is('.pro-details-action') && $cartWrap.hasClass('show')) {
-                $cartWrap.removeClass('show');
-                $cartContent.removeClass('show');
-            }
-        });
+    function  SocialIconActive() {
+        if ($('.pro-details-action').length) {
+            var $body = $('body'),
+                $cartWrap = $('.pro-details-action'),
+                $cartContent = $cartWrap.find('.product-dec-social');
+            $cartWrap.on('click', '.social', function(e) {
+                e.preventDefault();
+                var $this = $(this);
+                if (!$this.parent().hasClass('show')) {
+                    $this.siblings('.product-dec-social').addClass('show').parent().addClass('show');
+                } else {
+                    $this.siblings('.product-dec-social').removeClass('show').parent().removeClass('show');
+                }
+            });
+            /*Close When Click Outside*/
+            $body.on('click', function(e) {
+                var $target = e.target;
+                if (!$($target).is('.pro-details-action') && !$($target).parents().is('.pro-details-action') && $cartWrap.hasClass('show')) {
+                    $cartWrap.removeClass('show');
+                    $cartContent.removeClass('show');
+                }
+            });
+        }
     }
+    SocialIconActive()
 
     /*---------------------
         Price range
@@ -673,7 +676,7 @@
                 // )
             }
 
-            var loopElem = 'Петля для якорного крепления <i class="text-primary">'+ CURRENCY + quickView.data("productLoopPrice") +'</i>\
+            var loopElem = 'Петля для якорного крепления <b style="color: black;">'+ CURRENCY + quickView.data("productLoopPrice") +'</b>\
             <input id="anchor" class="form-check-input" type="checkbox" name="loop" \
             style="\
                 max-width: 120px;\
@@ -683,7 +686,7 @@
                 " '+ (isLoop === "True" ? "checked" : "") +'>'
             var loopCheckbox = isBracket() ? loopElem : ""  
 
-            var installElem = 'Установка кронштейна <i class="text-primary">'+ CURRENCY + quickView.data("productPriceInstall") +'</i>\
+            var installElem = 'Установка кронштейна <b style="color: black;">'+ CURRENCY + quickView.data("productPriceInstall") +'</b>\
             <input class="form-check-input" type="checkbox" name="price_install" value="1" \
             style="\
                 max-width: 320px;\
@@ -722,27 +725,41 @@
                 </div>\
             </div>\
             <div>\
-                <span class="font-weight-bold">'+ loopCheckbox +'</span>\
+                <span class="h6">'+ loopCheckbox +'</span>\
             </div>\
-            <div class="mb-3">\
-                <span class="font-weight-bold">'+ installCheckbox +'</span>\
+            <div class="mb-1">\
+                <span class="h6">'+ installCheckbox +'</span>\
             </div>\
-            <div class="product-details-meta" style="margin: 30px 0 0 0;">\
+            <div class="product-details-meta mt-1">\
                 <ul>\
                     <li><span>Категория:</span> ' + product["category"] + '</li>\
                     <li><span>Код товара: </span> ' + product["code"] + '</li>\
+                    <li><span>Тип сиденья: </span> ' + quickView.data("productSeatType") + '</li>\
+                    <li><span>Марка авто: </span> ' + quickView.data("productModel") + '</li>\
+                    <li><span>Год выпуска: </span> ' + quickView.data("productYear") + '</li>\
                     <li><span>Наличие: </span> ' + (product["available"] ? "Есть в наличии" : "Нет в наличии")  + '</li>\
                 </ul>\
             </div>\
             <div class="pro-details-action-wrap">\
-                <div class="pro-details-add-to-cart" style="margin: 50px 0 0 0;">\
+                <div class="pro-details-add-to-cart">\
                     <button type="submit" class="btn btn-danger bg-black p-3 border-0 btn-outline-none">'+ (intoCart === "yes" ? "Обновить товар" : "Добавить в корзину") +'</button>\
+                </div>\
+                <div class="pro-details-action">\
+                    <a class="social" title="Social" href="#"><i class="icon-share"></i></a>\
+                    <div class="product-dec-social">\
+                        <a class="facebook" title="Facebook" href="#"><i class="icon-social-facebook"></i></a>\
+                        <a class="twitter" title="Twitter" href="#"><i class="icon-social-twitter"></i></a>\
+                        <a class="instagram" title="Instagram" href="#"><i class="icon-social-instagram"></i></a>\
+                        <a class="pinterest" title="Pinterest" href="#"><i class="icon-social-pinterest"></i></a>\
+                    </div>\
                 </div>\
             </div>\
         </form>\
     </div>\
 </div>'
             modal.html(modalContent)
+
+            SocialIconActive()
 
             // .not('.slick-initialized')
             $('.quickview-slide-active').not('.slick-initialized').slick({

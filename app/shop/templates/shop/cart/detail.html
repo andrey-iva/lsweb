@@ -56,37 +56,18 @@
                 </div>
                 <div class="col-md-8">
                   <div class="card-body">
-                    <h5 class="card-title font-weight-bold">
+                    <h4 class="card-title font-weight-bold">
                         <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
-                    </h5>
+                    </h4>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Товар за еденицу:
+                        <li class="list-group-item">За еденицу:
                             <span style="position: absolute; right: 0;" class="font-weight-bold">
-                                 {{ currency }}{{ item.price }}
+                                 1 x {{ currency }}{{ item.price }}
                             </span>
                         </li>
-                        <li class="list-group-item">Товар за всё:
+                        <li class="list-group-item">За все:
                             <span style="position: absolute; right: 0;" class="product-subtotal text-danger font-weight-bold">
-                                 {{ currency }}{{ item.total_price }}
-                            </span>
-                        </li>
-
-                        <li class="list-group-item">Установка за единицу: 
-                            <span data-price-install="{{ item.product.price_install }}" class="item_price_install" style="position: absolute; right: 0;" class="font-weight-bold">
-                            {% if item.price_install %}
-                                {{ currency }}{{ item.price_install }}
-                            {% else %}
-                                {{ currency }}0
-                            {% endif %}
-                            </span>
-                        </li>
-                        <li class="list-group-item">Установка за всё: 
-                            <span style="position: absolute; right: 0;" class="product-subtotal-install text-danger font-weight-bold">
-                            {% if item.price_install %}
-                                {{ currency }}{{ item.total_price_install }}
-                            {% else %}
-                                {{ currency }}0
-                            {% endif %}
+                                 {{ item.quantity }} x {{ currency }}{{ item.total_price }}
                             </span>
                         </li>
 
@@ -128,8 +109,8 @@
                         {% endfor %}
                         {% endif %}
                     </ul>
-                    <div>
-                        <div class="product-quantity pro-details-quality text-center mt-1">
+                    <div class="mt-20">
+                        <div class="product-quantity pro-details-quality text-center mt-5">
                             <div class="cart-plus-minus">
                                 <input class="cart-plus-minus-box" type="text" name="qtybutton" value="{{ item.quantity }}" disabled>
                             </div>
@@ -156,6 +137,53 @@
           </form>
           {% endwith %}
           {% endfor %}
+
+
+          {% if cart.get_products_install_total_price > 0 %}
+          {% for item in cart %}
+          {% with product=item.product %}
+
+          {% if product.attribute != 'loop' %}
+          <div class="col mb-4">
+            <div class="card mb-3">
+              <div class="row no-gutters">
+                <div class="col-md-4">
+                  <a href="{{ product.get_absolute_url }}">
+                    <img class="w-100" src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}">
+                  </a>
+                </div>
+                <div class="col-md-8">
+                  <div class="card-body">
+                    <h4 class="card-title font-weight-bold">
+                        Установка кронштейна
+                    </h4>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+                        </li>
+                        <li class="list-group-item">За единицу:
+                            <span style="position: absolute; right: 0;" class="font-weight-bold">
+                                1 x {{ currency }}{{ item.price_install }}
+                            </span>
+                        </li>
+                        <li class="list-group-item">За все:
+                            <span style="position: absolute; right: 0;" class="product-subtotal text-danger font-weight-bold">
+                                {{ item.quantity }} x {{ currency }}{{ item.total_price_install }}
+                            </span>
+                        </li>
+                    </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+
+          {% endwith %}
+          {% endfor %}
+          {% endif %}
+
+
         </div>
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-12">
