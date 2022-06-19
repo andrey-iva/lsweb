@@ -60,6 +60,17 @@
                         <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
                     </h4>
                     <ul class="list-group list-group-flush">
+                        {% if product.attribute == 'loop' %}
+                        {% for i in cart %}
+                        {% with p=i.product %}
+
+                            {% if i.loop_quantity > 0 %}
+                            <li class="list-group-item font-weight-bold"><span class="text-danger">Вместе с:</span> <i>{{p.name}}</i></li>
+                            {% endif %}
+                                                    
+                        {% endwith %}
+                        {% endfor %}
+                        {% endif %}
                         <li class="list-group-item">За еденицу:
                             <span style="position: absolute; right: 0;" class="font-weight-bold">
                                  1 x {{ currency }}{{ item.price }}
@@ -97,17 +108,7 @@
                         </li>
                         {% endif %}
 
-                        {% if product.attribute == 'loop' %}
-                        {% for i in cart %}
-                        {% with p=i.product %}
-
-                            {% if i.loop_quantity > 0 %}
-                            <li class="list-group-item font-weight-bold"><span class="text-danger">Вместе с:</span> <i>{{p.name}}</i></li>
-                            {% endif %}
-                                                    
-                        {% endwith %}
-                        {% endfor %}
-                        {% endif %}
+                        
                     </ul>
                     <div class="mt-20">
                         <div class="product-quantity pro-details-quality text-center mt-5">
@@ -140,25 +141,27 @@
 
 
           {% if cart.get_products_install_total_price > 0 %}
+          <h3 class="cart-page-title mb-4 ml-3">Товары на установку</h3>
           {% for item in cart %}
           {% with product=item.product %}
 
-          {% if product.attribute != 'loop' and product.product_type != 'услуга' and product.product_type != 'рейка'%}
+          {% if item.total_price_install > 0 and product.attribute != 'loop' and product.product_type != 'услуга' and product.product_type != 'рейка'%}
           <div class="col mb-4">
             <div class="card mb-3 border-0">
               <div class="row no-gutters">
-                <div class="col-md-3">
+<!--                 <div class="col-md-3">
                   <a href="{{ product.get_absolute_url }}">
                    <img class="w-100" src="/static/shop/images/work_cart.png">
                   </a>
-                </div>
-                <div class="col-md-9">
+                </div> -->
+                <div class="col-12">
                   <div class="card-body">
-                    <h4 class="card-title">
+<!--                     <h4 class="card-title">
                         Установка кронштейна
-                    </h4>
+                    </h4> -->
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">
+                            <img height="100" src="/static/shop/images/work_cart.png">
                             <a href="{{ product.get_absolute_url }}">
                                 <img height="100" src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}">
                             </a>

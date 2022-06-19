@@ -602,6 +602,7 @@
     // модальное окно с карточкой товара
 
     $('.quick_view').on('click', function (e) {
+        $("script#sh").remove()
         var modal = $("#modal_body_q")
         var quickView = $(this)
 
@@ -744,14 +745,29 @@
             </div>\
             <div class="pro-details-action-wrap">\
                 <div class="pro-details-add-to-cart">\
-                    <button type="submit" class="btn btn-danger bg-black p-3 border-0 btn-outline-none">'+ (intoCart === "yes" ? "Обновить товар" : "Добавить в корзину") +'</button>\
+                    <button type="submit" class="btn btn-danger btn-lg bg-black p-3 border-0 btn-outline-none">'+ (intoCart === "yes" ? "Обновить товар" : "Добавить в корзину") +'</button>\
+                </div>\
+                <div class="pro-details-action">\
+                    <div class="ya-share2" \
+                    data-url="'+ window.location.origin + quickView.data("productAbsoluteUrl") +'"\
+                    data-image="'+ window.location.origin + quickView.data("productImageBase") +'"\
+                    data-description="'+ product["description"] +'"\
+                    data-lang="ru" data-curtain data-use-links data-size="l"\
+                    data-color-scheme="blackwhite"\
+                    data-limit="0"\
+                    data-direction="vertical"\
+                    data-popup-direction="top"\
+                    data-more-button-type="short"\
+                    data-services="vkontakte,odnoklassniki,telegram,viber,whatsapp,moimir"\
+                    ></div>\
                 </div>\
             </div>\
         </form>\
     </div>\
 </div>'
             modal.html(modalContent)
-
+            $("body").append('<script id="sh" src="https://yastatic.net/share2/share.js"></script>')
+console.log(window.location.origin)
             // .not('.slick-initialized')
             $('.quickview-slide-active').not('.slick-initialized').slick({
                 // lazyLoad: 'ondemand',
