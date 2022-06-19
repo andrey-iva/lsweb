@@ -97,7 +97,10 @@ $( function() {
             try {
                 var response = JSON.parse(response)
                 var grandTotal = (parseFloat(response["grand_total"]) + parseFloat(tax)).toFixed(2)
-                 $("#order_grand_total").text( (CURRENCY + grandTotal.toString()).replace(".", ",") )
+
+                if (parseInt(grandTotal)) {
+                    $("#order_grand_total").text( (CURRENCY + grandTotal.toString()).replace(".", ",") )
+                }
             } catch(err) {
                 console.error("addPercent error")
             }

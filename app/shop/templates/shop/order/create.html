@@ -168,8 +168,10 @@
                                             {{ item.product.name }}
                                             <br><b>Товар: </b>
                                             <span>{{item.quantity}} &times; {{currency}}{{item.total_price}}</span>
+                                            {% if item.price_install > 0 %}
                                             <br><b>Установка: </b>
                                             <span>{{item.quantity}} &times; {{currency}}{{item.price_install}}</span>
+                                            {% endif %}
                                         </li>
                                         {% endfor %}
                                     </ul>

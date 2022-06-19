@@ -56,7 +56,7 @@ class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     readonly_fields = ['preview', 'preview_shot', 'preview_video']
 
     def preview(self, obj):
-        return mark_safe(u'<img width=100 src="%s" />' % str(obj.image_base.url))
+        return mark_safe(u'<img width=250 src="%s" />' % str(obj.image_base.url))
 
     def preview_shot(self, obj):
         return mark_safe(u'<img width="250" src="%s" />' % str(obj.video_shot.url))

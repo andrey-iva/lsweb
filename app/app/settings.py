@@ -136,9 +136,9 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # my-app
-STATIC_ROOT = './static/'
-MEDIA_ROOT = './media/'
-MEDIA_URL = '/media/'
+STATIC_ROOT = 'static/'
+MEDIA_ROOT = 'media/'
+MEDIA_URL = 'media/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 

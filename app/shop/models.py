@@ -30,59 +30,144 @@ class Product(models.Model):
                                  on_delete=models.CASCADE,
                                  verbose_name='Категория')
     name = models.CharField(
-        max_length=300, db_index=True, verbose_name='Название')
-    slug = models.SlugField(max_length=300, db_index=True, verbose_name='Слаг')
+        max_length=300,
+        db_index=True,
+        verbose_name='Название',
+        help_text='Категория товара'
+    )
+    slug = models.SlugField(
+        max_length=300,
+        db_index=True,
+        verbose_name='Слаг',
+        help_text='Созданый слаг редактировать не рекомендуется'
+    )
     price = models.DecimalField(
-        max_digits=10, decimal_places=2, verbose_name='Цена товара', blank=True, default=0)
+        max_digits=10,
+        decimal_places=2,
+        verbose_name='Цена товара',
+        blank=True, 
+        default=0,
+        help_text='Целые и плавающие числа'
+    )
     price_install = models.DecimalField(
-        max_digits=10, decimal_places=2, verbose_name='Цена установки', blank=True, default=0)
+        max_digits=10,
+        decimal_places=2,
+        verbose_name='Цена установки', 
+        blank=True, 
+        default=0,
+        help_text='Целые и плавающие числа, у типа товара как услуга и для "петли якорного крепления" должно быть установлено 0'
+    )
     item_number = models.CharField(
-        max_length=100, db_index=True, verbose_name='Артикул', blank=True)
+        max_length=100,
+        db_index=True, 
+        verbose_name='Артикул', 
+        blank=True,
+        help_text='Текст'
+    )
     brand_car = models.CharField(
-        max_length=100, db_index=True, verbose_name='Марка машины', blank=True)
+        max_length=100,
+        db_index=True,
+        verbose_name='Марка машины',
+        blank=True,
+        help_text='Текст'
+    )
     model_car = models.CharField(
-        max_length=100, db_index=True, verbose_name='Модель машины', blank=True)
-    year = models.CharField(max_length=100, db_index=True,
-                            verbose_name='Год выпуска', blank=True)
+        max_length=100,
+        db_index=True, 
+        verbose_name='Модель машины', 
+        blank=True,
+        help_text='Текст'
+    )
+    year = models.CharField(
+        max_length=100,
+        db_index=True,
+        verbose_name='Год выпуска', 
+        blank=True,
+        help_text='Текст'
+    )
     seat_type = models.CharField(
-        max_length=250, verbose_name='Тип сиденья', blank=True)
-    product_type = models.CharField(max_length=20,
-                                    verbose_name='Тип товара',
-                                    blank=True,
-                                    choices=(
-                                        ('услуга', 'Услуга'),
-                                        ('рейка', 'Рейка'),
-                                        ('кронштейн', 'Кронштейн')))
-    service_type = models.CharField(max_length=20,
-                                    verbose_name='Тип услуги',
-                                    blank=True,
-                                    choices=(
-                                        ('установка', 'Установка'),
-                                        ('разработка', 'Разработка')))
+        max_length=250, 
+        verbose_name='Тип сиденья', 
+        blank=True,
+        help_text='Текст'
+    )
+    product_type = models.CharField(
+        max_length=20,
+        verbose_name='Тип товара',
+        blank=True,
+        choices=(
+            ('услуга', 'Услуга'),
+            ('рейка', 'Рейка'),
+            ('кронштейн', 'Кронштейн')),
+        help_text='Выбрать из списка тип товара, если выбрана услуга необходимо выбрать тип услуги ниже'
+        )
+    service_type = models.CharField(
+        max_length=20,
+        verbose_name='Тип услуги',
+        blank=True,
+        choices=(
+            ('установка', 'Установка'),
+            ('разработка', 'Разработка')),
+        help_text='Выбрать из списка тип услуги, если тип товара установлен как услуга, иначе оставить пустым'
+    )
     available = models.BooleanField(
-        default=True, verbose_name='наличие', blank=True)
+        default=True,
+        verbose_name='наличие', 
+        blank=True,
+        help_text='Наличие товара, есть или нет'
+    )
 
-    image_base = models.ImageField(upload_to='products/%Y/%m/%d',
-                                   blank=True,
-                                   verbose_name='Изображение')
-    video = models.FileField(upload_to='video/%Y/%m/%d',
-                                   blank=True,
-                                   verbose_name='Видео')
-    video_shot = models.ImageField(upload_to='video/shot/%Y/%m/%d',
-                                   blank=True,
-                                   verbose_name='Заставка для видео')
+    image_base = models.ImageField(
+        upload_to='products/%Y/%m/%d',
+        blank=True,
+        verbose_name='Изображение',
+        help_text='Основное изображение товара'
+    )
+    video = models.FileField(
+        upload_to='video/%Y/%m/%d',
+        blank=True,
+        verbose_name='Видео',
+        help_text='Для видео необходим скриншот будет лучше, если загружать оптимизированное видео'
+    )
+    video_shot = models.ImageField(
+        upload_to='video/shot/%Y/%m/%d',
+        blank=True,
+        verbose_name='Заставка для видео',
+        help_text='Скриншот для видео, размер скриншота должен соответствовать размеру изображения\
+         товара или соотношение сторон должно быть одинаковым'
+    )
     description_short = models.TextField(
-        blank=True, verbose_name='Краткое описание')
+        blank=True,
+        verbose_name='Краткое описание')
     description_full = models.TextField(
-        blank=True, verbose_name='Полное описание')
+        blank=True, 
+        verbose_name='Полное описание')
     seo_title = models.TextField(
-        blank=True, verbose_name='SEO title')
-    seo_key = models.TextField(blank=True, verbose_name='SEO keys')
+        blank=True,
+        verbose_name='SEO title',
+        help_text='Обязательно для заполнения'
+    )
+    seo_key = models.TextField(
+        blank=True, 
+        verbose_name='SEO keys',
+        help_text='Например: кронштейн, рейка, рейки, установка, разработка и.т.д. Нет необходимомти \
+        вставлять текст со строницы, это будет неправильно и в таком случае лучше оставить поле пустым'
+    )
     seo_desc = models.TextField(
-        blank=True, verbose_name='SEO content')
+        blank=True,
+        verbose_name='SEO content',
+        help_text='Нет необходимости заполнять это поле, если сюда вставлять текст со страницы, это будет \
+        не правильно и в таком случае лучше оставить поле пустым'
+    )
     # full_url = models.TextField(
     #     blank=True, verbose_name='Полный URL')
-    attribute = models.CharField(max_length=30, blank=True, default='', verbose_name="Атрибут")
+    attribute = models.CharField(
+        max_length=30,
+        blank=True, 
+        default='', 
+        verbose_name="Атрибут",
+        help_text='Поле используется для индефикации товара, в частности для "петли якорного крепления"'
+    )
 
     # created = models.DateTimeField(auto_now_add=True, blank=True, null=True, verbose_name='Добавлен')
     # updated = models.DateTimeField(auto_now=True, blank=True, null=True, verbose_name='Обновлен')

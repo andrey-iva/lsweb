@@ -189,24 +189,24 @@
                     <div class="pro-details-action-wrap">
                         <div class="pro-details-add-to-cart">
                             {% if request.session.cart|get_key:product.id %}                        
-                            <button type="submit" class="btn btn-danger bg-black p-3 border-0 btn-outline-none">
+                            <button type="submit" class="btn btn-danger btn-lg bg-black p-3 border-0 btn-outline-none">
                                 Обновить товар
                             </button>
                             {% else %}
-                            <button type="submit" class="btn btn-danger bg-black p-3 border-0 btn-outline-none">
+                            <button type="submit" class="btn btn-danger btn-lg bg-black p-3 border-0 btn-outline-none">
                                 Добавить в корзину
                             </button>
                             {% endif %}
                         </div>
                         <div class="pro-details-action">
-                           <div class="ya-share2"
+                           <div class="ya-share2" 
                            {% if product.image_base %}data-image="{{product.image_base.url}}"{% endif %}
                            data-description="{{product.description_short}}"
                            data-lang="ru"
-                           data-curtain data-size="m" 
+                           data-curtain data-size="l" 
                            data-color-scheme="blackwhite" 
                            data-limit="0"
-                           data-more-button-type="long" data-services="vkontakte,odnoklassniki,telegram,viber,whatsapp,moimir"></div>
+                           data-more-button-type="short" data-services="vkontakte,odnoklassniki,telegram,viber,whatsapp,moimir"></div>
                             <!-- <a title="Social" href="#"><i class="icon-share"></i></a> -->
                             
                             <!-- <div class="product-dec-social">

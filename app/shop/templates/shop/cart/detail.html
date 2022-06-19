@@ -49,14 +49,14 @@
 
             <div class="card mb-3 border-0">
               <div class="row no-gutters">
-                <div class="col-md-4">
+                <div class="col-md-3">
                   <a href="{{ product.get_absolute_url }}">
-                    <img class="img-thumbnail" src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}" alt="">
+                    <img class="w-100" src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}" alt="">
                   </a>
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-9">
                   <div class="card-body">
-                    <h4 class="card-title font-weight-bold">
+                    <h4 class="card-title">
                         <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
                     </h4>
                     <ul class="list-group list-group-flush">
@@ -72,8 +72,8 @@
                         </li>
 
                         {% if product.product_type == 'кронштейн' and product.attribute != 'loop' %}
-                        <li class="item_install list-group-item font-weight-bold bg-light mt-1">
-                            <span style="font-size: 16px;">Установка кронштейна: </span>
+                        <li class="item_install list-group-item bg-light mt-1">
+                            <span style="font-size: 16px;">Установка кронштейна: <b>{{currency}}{{product.price_install}}</b></span>
                                 <input type="checkbox" class="form-check-input" name="price_install" value="1" class="d-loop"
                                 style="
                                     max-width: 110px;
@@ -82,7 +82,7 @@
                                     cursor: pointer;
                                 " {% if item.total_price_install > 0 %} checked {% endif %}>
                             <br>
-                            <span style="font-size: 16px;">Петля для якорного крепления: </span>
+                            <span style="font-size: 16px;">Петля для якорного крепления: <b>{{currency}}{{get_loop_price}}</b></span>
                                 <input
                                 id="add_anchor"
                                 class="form-check-input"
@@ -147,20 +147,23 @@
           <div class="col mb-4">
             <div class="card mb-3 border-0">
               <div class="row no-gutters">
-                <div class="col-md-4">
+                <div class="col-md-3">
                   <a href="{{ product.get_absolute_url }}">
-                    <img class="img-thumbnail" src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}">
+                   <img class="w-100" src="/static/shop/images/work_cart.png">
                   </a>
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-9">
                   <div class="card-body">
-                    <h4 class="card-title font-weight-bold">
+                    <h4 class="card-title">
                         Установка кронштейна
                     </h4>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">
-                            <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+                            <a href="{{ product.get_absolute_url }}">
+                                <img height="100" src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}">
+                            </a>
                         </li>
+                        <li class="list-group-item font-weight-bold"><span class="text-danger">Установка: </span> <i> {{product.name}}</i></li>
                         <!-- <li class="list-group-item"></li> -->
                         <li class="list-group-item">За единицу:
                             <span style="position: absolute; right: 0;" class="font-weight-bold">
