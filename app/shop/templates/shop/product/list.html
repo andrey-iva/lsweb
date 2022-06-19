@@ -303,9 +303,9 @@
                                                     <input type="text" name="override" value="0" hidden>
                                                     <input type="text" name="quantity" value="1" hidden>
                                                     {% if product.product_type != 'услуга' %}
-                                                    <button type="submit" class="btn btn-danger bg-black border-0 btn-outline-none">В корзину</button>
+                                                    <button type="submit" class="btn btn-danger btn-lg bg-black border-0 btn-outline-none">В корзину</button>
                                                     {% else %}
-                                                    <a class="btn btn-danger bg-black border-0 btn-outline-none" href="{{ product.get_absolute_url }}">
+                                                    <a class="btn btn-danger btn-lg bg-black border-0 btn-outline-none" href="{{ product.get_absolute_url }}">
                                                         Подробнее
                                                     </a>
                                                     {% endif %}

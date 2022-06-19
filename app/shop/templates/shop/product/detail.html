@@ -57,7 +57,8 @@
                             <div class="easyzoom easyzoom--overlay">
                                 <a href="{{ product.video.url }}">
                                     <video 
-                                    class="w-100"                                     
+                                    class="w-100"
+                                    preload="auto"                                  
                                     poster="{{ product.video_shot.url }}"
                                     controls="controls">
                                         <source src="{{ product.video.url }}">
@@ -116,7 +117,7 @@
                             data-url-remove="{% url 'shop:cart_remove_loop' product.id %}"
                             data-url-loop-off="{% url 'shop:cart_loop_off' product.id %}"
                             style="
-                                max-width: 160px;
+                                max-width: 90px;
                                 margin-left: -7px;
                                 zoom: 0.4;
                                 cursor: pointer;
@@ -135,7 +136,7 @@
                             class="form-check-input ml-5 {% if request.session.cart|get_key:product.id %}del-service{% endif %}" type="checkbox" name="price_install" value="1"
                             data-url="{% url 'shop:cart_add' product.id %}" 
                             style="
-                            max-width: 260px;
+                            max-width: 230px;
                             zoom: 0.4;
                             cursor: pointer;" 
                             {% if request.session.cart|get_product_total_price_install:product.id %} checked {% endif %}>
@@ -203,13 +204,13 @@
                            {% if product.image_base %}data-image="{{product.image_base.url}}"{% endif %}
                            data-description="{{product.description_short}}"
                            data-lang="ru"
-                           data-curtain 
+                           data-curtain data-use-links
                            data-size="l" 
                            data-color-scheme="blackwhite" 
                            data-limit="0"
                            data-direction="vertical"
                            data-popup-direction="top"
-                           data-more-button-type="short" data-services="vkontakte,odnoklassniki,telegram,viber,whatsapp,moimir"></div>
+                           data-more-button-type="short" data-services="vkontakte,odnoklassniki,telegram,viber,whatsapp,moimir,messenger"></div>
                         </div>
                     </div>
                 </div>

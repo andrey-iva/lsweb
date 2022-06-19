@@ -62,7 +62,7 @@ class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
         return mark_safe(u'<img width="250" src="%s" />' % str(obj.video_shot.url))
 
     def preview_video(self, obj):
-        return mark_safe(u'<video width="500" controls="controls"><source src="%s"></video>' % str(obj.video.url))
+        return mark_safe(u'<video width="500" preload="metadata" controls="controls"><source src="%s"></video>' % str(obj.video.url))
 # end import - export
 
 class OrderItemInline(admin.TabularInline):

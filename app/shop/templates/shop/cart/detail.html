@@ -84,7 +84,7 @@
 
                         {% if product.product_type == 'кронштейн' and product.attribute != 'loop' %}
                         <li class="item_install list-group-item bg-light mt-1">
-                            <span style="font-size: 16px;">Установка кронштейна: <b>{{currency}}{{product.price_install}}</b></span>
+                            <span style="font-size: 16px;">Установка кронштейна </span>
                                 <input type="checkbox" class="form-check-input" name="price_install" value="1" class="d-loop"
                                 style="
                                     max-width: 110px;
@@ -93,7 +93,7 @@
                                     cursor: pointer;
                                 " {% if item.total_price_install > 0 %} checked {% endif %}>
                             <br>
-                            <span style="font-size: 16px;">Петля для якорного крепления: <b>{{currency}}{{get_loop_price}}</b></span>
+                            <span style="font-size: 16px;">Петля для якорного крепления </span>
                                 <input
                                 id="add_anchor"
                                 class="form-check-input"
@@ -163,7 +163,7 @@
                         <li class="list-group-item">
                             <img height="100" src="/static/shop/images/work_cart.png">
                             <a href="{{ product.get_absolute_url }}">
-                                <img height="100" src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}">
+                                <img height="120" src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}">
                             </a>
                         </li>
                         <li class="list-group-item font-weight-bold"><span class="text-danger">Установка: </span> <i> {{product.name}}</i></li>

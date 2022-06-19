@@ -758,7 +758,7 @@
                     data-direction="vertical"\
                     data-popup-direction="top"\
                     data-more-button-type="short"\
-                    data-services="vkontakte,odnoklassniki,telegram,viber,whatsapp,moimir"\
+                    data-services="vkontakte,odnoklassniki,telegram,viber,whatsapp,moimir,messenger"\
                     ></div>\
                 </div>\
             </div>\
