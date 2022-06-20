@@ -24,7 +24,7 @@
     }
 </style>
 
-<div class="cart-main-area pt-115 pb-120">
+<div class="cart-main-area pt-115 pb-120 overflow-hidden">
     <div class="container" id="cart-container">
         {% if cart|length %}
         <h3 id="scroll_to_cart_title" class="cart-page-title mb-4">Выбранные товары</h3>
@@ -33,7 +33,7 @@
           {% for item in cart %}
           {% with product=item.product %}
           <form action="" method="post" class="col mb-4 cart-detail-products"
-            data-product-id="{{product.id}}" 
+            data-product-id="{{product.id}}"
             data-product-attr="{{product.attribute}}"
             data-marker-url="{% url 'shop:set_loop_marker_on' product.id %}"
             data-marker-loop="{{item.loop}}">
@@ -65,9 +65,12 @@
                         {% with p=i.product %}
 
                             {% if i.loop_quantity > 0 %}
-                            <li class="list-group-item font-weight-bold"><span class="text-danger">Вместе с:</span> <i>{{p.name}}</i></li>
+                            <li class="list-group-item font-weight-bold">
+                                <span class="text-danger">Вместе с:</span>
+                                <i><a href="{{ p.get_absolute_url }}">{{p.name}}</a></i>
+                            </li>
                             {% endif %}
-                                                    
+
                         {% endwith %}
                         {% endfor %}
                         {% endif %}
@@ -84,7 +87,7 @@
 
                         {% if product.product_type == 'кронштейн' and product.attribute != 'loop' %}
                         <li class="item_install list-group-item bg-light mt-1">
-                            <span style="font-size: 16px;">Установка кронштейна </span>
+                            <span class="font-weight-bold">Установка кронштейна </span>
                                 <input type="checkbox" class="form-check-input" name="price_install" value="1" class="d-loop"
                                 style="
                                     max-width: 110px;
@@ -93,7 +96,7 @@
                                     cursor: pointer;
                                 " {% if item.total_price_install > 0 %} checked {% endif %}>
                             <br>
-                            <span style="font-size: 16px;">Петля для якорного крепления </span>
+                            <span class="font-weight-bold">Петля для якорного крепления </span>
                                 <input
                                 id="add_anchor"
                                 class="form-check-input"
@@ -108,7 +111,7 @@
                         </li>
                         {% endif %}
 
-                        
+
                     </ul>
                     <div class="mt-20">
                         <div class="product-quantity pro-details-quality text-center mt-5">
@@ -149,24 +152,19 @@
           <div class="col mb-4">
             <div class="card mb-3 border-0">
               <div class="row no-gutters">
-<!--                 <div class="col-md-3">
-                  <a href="{{ product.get_absolute_url }}">
-                   <img class="w-100" src="/static/shop/images/work_cart.png">
-                  </a>
-                </div> -->
-                <div class="col-12">
+                <div class="col-md-2">
+                    <a href="{{ product.get_absolute_url }}">
+                        <img class="w-100" src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}">
+                    </a>
+                </div>
+                <div class="col-10">
                   <div class="card-body">
-<!--                     <h4 class="card-title">
-                        Установка кронштейна
-                    </h4> -->
+                    <!-- <h4 class="card-title"></h4> -->
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            <img height="100" src="/static/shop/images/work_cart.png">
-                            <a href="{{ product.get_absolute_url }}">
-                                <img height="120" src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}">
-                            </a>
+                        <li class="list-group-item font-weight-bold">
+                            <span class="text-danger">Установка: </span>
+                            <i><a href="{{ product.get_absolute_url }}">{{product.name}}</a></i>
                         </li>
-                        <li class="list-group-item font-weight-bold"><span class="text-danger">Установка: </span> <i> {{product.name}}</i></li>
                         <!-- <li class="list-group-item"></li> -->
                         <li class="list-group-item">За единицу:
                             <span style="position: absolute; right: 0;" class="font-weight-bold">
@@ -194,7 +192,7 @@
         </div>
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-12">
-                <div class="row mt-2">                 
+                <div class="row mt-2">
                     <div class="col-md-7">
                         <div class="cart-shiping-update-wrapper">
                             <div class="cart-shiping-update pt-0 mt-0">
@@ -202,7 +200,7 @@
                                 <a href="{% url 'shop:cart_clear' %}">Очистить</a>
                             </div>
                             <div class="cart-clear text-center">
-                                
+
                             </div>
                         </div>
                     </div>
@@ -221,10 +219,10 @@
         </div>
         {% else %}
         <div class="text-center">
-	        <h3>Ваша корзина пуста</h3>
-	        <a class="btn btn-danger" href="{% url 'shop:product_list' %}">Перейти к покупкам</a>
+            <h3>Ваша корзина пуста</h3>
+            <a class="btn btn-danger" href="{% url 'shop:product_list' %}">Перейти к покупкам</a>
         </div>
-        
+
         {% endif %}
     </div>
 </div>

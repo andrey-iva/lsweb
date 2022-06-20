@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'shop.apps.ShopConfig',
     'django_summernote',
     'import_export',
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -141,13 +142,14 @@ MEDIA_ROOT = 'media/'
 MEDIA_URL = 'media/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+CELERY_RESULT_BACKEND = 'django-db'
 
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
         'console': {
-            'format': '[%(asctime)s %(levelname)-1s] START %(message)s END'
+            'format': '[%(asctime)s %(levelname)-1s] %(message)s'
         },
         # 'file': {
         #     'format': '%(asctime)s %(name)-1s %(levelname)-1s %(message)s'

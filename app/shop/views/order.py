@@ -6,15 +6,15 @@ from django.views.decorators.http import require_POST
 from django.core.mail import send_mail
 from yookassa import Configuration, Payment
 
-from threading import Thread
+from threading import Thread, Lock
 from decimal import Decimal
 
 from ..cart import Cart
 from ..models import OrderItem, Order
-from .. import PAYMENT_REDIRECT_PAGE, ADMIN_EMAIL
+from .. import PAYMENT_REDIRECT_PAGE, PAYMENT_WAITING_TIME, ADMIN_EMAIL
 from pprint import pprint
 
-logging.basicConfig(format='%(asctime)s: %(message)s', level=logging.INFO, datefmt='%H:%M:%S')
+lock = Lock()
 
 def get_subject(order_id):
     return f'iSOFIX-MSK Заказ №{order_id}'
@@ -46,8 +46,10 @@ class OrderCreateForm(forms.ModelForm):
             'phone', 'email', 'notes'
         ]
 
-def payment_status(payment_id, order):
-    # logging.info("Thread %s: starting", payment_id)
+def payment_status(payment_id, order, wait_time):
+    '''Отслеживание состояния платежа'''
+    logging.debug("Thread %s: starting", payment_id)
+    # lock.acquire()
     payment = Payment.find_one(payment_id)
     status = payment.status
     paid = payment.paid
@@ -55,18 +57,21 @@ def payment_status(payment_id, order):
     
     # print(pickle.loads(r))
     while status == 'pending':
-        if count == 600:
+        if count == wait_time:
             order.yookassa_status = 'unknown'
             order.save()
-            # logging.info("Thread %s: finishing", payment_id)
+            logging.debug("Thread %s: finishing", payment_id)
             return
         payment = Payment.find_one(payment_id)
         status = payment.status
         paid = payment.paid
-        # print('status>>', status)
-        count += 1
-        time.sleep(1)
-    # print('status>>', status)
+        if status == 'succeeded':
+            break
+        if status == 'canceled':
+            break
+        count += 5
+        time.sleep(5)
+
     order.yookassa_status = payment.status
     if status == 'succeeded':
         order.paid = paid
@@ -74,7 +79,8 @@ def payment_status(payment_id, order):
         order.yookassa_amount = payment.amount.value
         order.yookassa_full_info = pickle.dumps(payment)
     order.save()
-    # logging.info("Thread %s: finishing", payment_id)
+    # lock.release()
+    logging.debug("Thread %s: finishing", payment_id)
 
 def get_percent(total_price, percent):
     return (total_price / Decimal(100)) * Decimal(percent)
@@ -132,7 +138,7 @@ def order_create(request):
                 request.session['payment_id'] = str(payment.id)
                 request.session.modified = True
 
-                Thread(target=payment_status, args=(payment.id, order)).start()
+                Thread(target=payment_status, args=(payment.id, order, PAYMENT_WAITING_TIME)).start()
                 Thread(target=send_mail, args=(
                         get_subject(order.id),
                         get_message(order.id, order.first_name),
@@ -170,6 +176,8 @@ def order_created(request):
 
     if payment_id and order_id:
         payment = Payment.find_one(payment_id)
+        logging.debug('Order crested PAYMENT status {%s}', payment.status)
+        # если клиет вернулся status penging
         data['status'] = payment.status
         data['paid']   = payment.paid
     

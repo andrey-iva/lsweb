@@ -3,6 +3,7 @@ from yookassa import Configuration
 Configuration.account_id = '916494'
 Configuration.secret_key = 'test_ptA6-o_oaTCYnc9R0Fvh-WIXe50UNgXKIUob2qZT86I'
 PAYMENT_REDIRECT_PAGE    = 'http://127.0.0.1:8000/order/created/'
+PAYMENT_WAITING_TIME     = 600
 
 #cdek
 PROD = False
@@ -25,7 +26,7 @@ TARIFF_CODES = {
 
 # app
 
-CART_SESSION_ID       = 'cart'
-GRAND_TOTAL_ID        = 'gt'
-NO_IMAGE_PATH         = '/static/shop/images/no_image/placeholder.jpg'
-ADMIN_EMAIL           = 'admin@mail.com'
+CART_SESSION_ID = 'cart'
+GRAND_TOTAL_ID  = 'gt'
+NO_IMAGE_PATH   = '/static/shop/images/no_image/placeholder.jpg'
+ADMIN_EMAIL     = 'admin@mail.com'
