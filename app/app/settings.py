@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'shop.apps.ShopConfig',
     'django_summernote',
     'import_export',
-    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -52,6 +51,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'shop.shop_midd.shop_middleware'
 ]
 
 ROOT_URLCONF = 'app.urls'
@@ -142,7 +143,13 @@ MEDIA_ROOT = 'media/'
 MEDIA_URL = 'media/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-CELERY_RESULT_BACKEND = 'django-db'
+
+# SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+# SESSION_COOKIE_AGE = 60
+
+
+# CELERY_RESULT_BACKEND = 'django-db'
+
 
 LOGGING = {
     'version': 1,

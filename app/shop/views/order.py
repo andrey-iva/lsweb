@@ -6,15 +6,13 @@ from django.views.decorators.http import require_POST
 from django.core.mail import send_mail
 from yookassa import Configuration, Payment
 
-from threading import Thread, Lock
+from threading import Thread
 from decimal import Decimal
 
 from ..cart import Cart
 from ..models import OrderItem, Order
 from .. import PAYMENT_REDIRECT_PAGE, PAYMENT_WAITING_TIME, ADMIN_EMAIL
 from pprint import pprint
-
-lock = Lock()
 
 def get_subject(order_id):
     return f'iSOFIX-MSK Заказ №{order_id}'
@@ -46,10 +44,11 @@ class OrderCreateForm(forms.ModelForm):
             'phone', 'email', 'notes'
         ]
 
-def payment_status(payment_id, order, wait_time):
+def payment_status(payment_id, order_id, wait_time):
     '''Отслеживание состояния платежа'''
+    order = Order.objects.get(pk=order_id)
     logging.debug("Thread %s: starting", payment_id)
-    # lock.acquire()
+
     payment = Payment.find_one(payment_id)
     status = payment.status
     paid = payment.paid
@@ -79,7 +78,7 @@ def payment_status(payment_id, order, wait_time):
         order.yookassa_amount = payment.amount.value
         order.yookassa_full_info = pickle.dumps(payment)
     order.save()
-    # lock.release()
+
     logging.debug("Thread %s: finishing", payment_id)
 
 def get_percent(total_price, percent):
@@ -138,7 +137,7 @@ def order_create(request):
                 request.session['payment_id'] = str(payment.id)
                 request.session.modified = True
 
-                Thread(target=payment_status, args=(payment.id, order, PAYMENT_WAITING_TIME)).start()
+                Thread(target=payment_status, args=(payment.id, order.id, PAYMENT_WAITING_TIME)).start()
                 Thread(target=send_mail, args=(
                         get_subject(order.id),
                         get_message(order.id, order.first_name),

@@ -1,13 +1,3 @@
-import logging, time
-from app.celery import app
-
-@app.task
-def add():
-	for i in range(5):
-		logging.info('Celery add task-%s', i)
-		time.sleep(2)
-
-
 # from celery import task
 # from django.core.mail import send_mail
 # from .models import Order
