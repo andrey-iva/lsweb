@@ -7881,6 +7881,13 @@ textarea:focus {
 }
 
 /*-------- 6. About us style ---------*/
+h1.main-title {
+  font-size: 26px;
+  font-family: "Jost", sans-serif;
+  line-height: 36px;
+  margin: 23px 0 51px;
+  width: 95%;
+}
 .about-us-content h3 {
   font-size: 24px;
   font-weight: bold;
@@ -7904,11 +7911,26 @@ textarea:focus {
     margin: 15px 0 40px;
     width: 100%;
   }
+  h1.main-title {
+    font-size: 22px;
+    font-family: "Jost", sans-serif;
+    line-height: 34px;
+    margin: 15px 0 40px;
+    width: 100%;
+  }
 }
 
 @media only screen and (max-width: 767px) {
   .about-us-content p {
     font-size: 18px;
+    line-height: 34px;
+    margin: 10px 0 30px;
+    width: 100%;
+  }
+
+  h1.main-title {
+    font-size: 20px;
+    font-family: "Jost", sans-serif;
     line-height: 34px;
     margin: 10px 0 30px;
     width: 100%;

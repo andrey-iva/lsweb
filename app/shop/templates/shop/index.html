@@ -73,38 +73,71 @@
                 <div class="col-lg-1 col-md-1">
                 </div>
                 <div class="col-lg-11 col-md-11">
-                    <div class="about-us-content">
-                        <h3>Содержание</h3>
-                        <div class="text-secondary">
-                            <p>Центр по продаже, разработке и установке кронштейнов ISOFIX на любые сиденья автомобилей, а так же решения по одновременной установке трех автокресел с креплениями ISOFIX на заднее сиденье.</p>
-                        </div>
+                    <div class="about-us-content about-main">
+                        <h1 class="main-title text-dark">Центр по продаже, разработке и установке кронштейнов ISOFIX на любые сиденья автомобилей, а так же решения по одновременной установке трех автокресел с креплениями ISOFIX на заднее сиденье.</h1>
                         <p>
-                            <a class="text-danger" href="#t1">- Компания ISOFIX-MSK</a><br>
-                            <a class="text-danger" href="#t2">- Что такое ISOFIX</a><br>
-                            <a class="text-danger" href="#t3">- Кронштейны ISOFIX на любую машину</a><br>
-                            <a class="text-danger" href="#t4">- Приспособления для установки нескольких автокресел на заднее сиденье</a><br>
-                            <a class="text-danger" href="#t5">- Центр по установке креплений ISOFIX</a><br>
-                            <a class="text-danger" href="#t6">- Детская безопасность в машине</a><br>
-                            <a class="text-danger" href="#t7">- График работы и контакты</a><br>
-                        </p>
+                            <a class="text-dark" href="#t1"><span class="text-danger">-</span> Компания ISOFIX-MSK</a><br>
+                            <a class="text-dark" href="#t2"><span class="text-danger">-</span> Что такое ISOFIX</a><br>
+                            <a class="text-dark" href="#t3"><span class="text-danger">-</span> Кронштейны ISOFIX на любую машину</a><br>
+                            <a class="text-dark" href="#t4"><span class="text-danger">-</span> Приспособления для установки нескольких автокресел на заднее сиденье</a><br>
+                            <a class="text-dark" href="#t5"><span class="text-danger">-</span> Центр по установке креплений ISOFIX</a><br>
+                            <a class="text-dark" href="#t6"><span class="text-danger">-</span> Детская безопасность в машине</a><br>
+                            <a class="text-dark" href="#t7"><span class="text-danger">-</span> График работы и контакты</a><br>
+                        </p>                     
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+{% if products|length %}
+<div class="blog-area">
+    <div class="container">
+        <div class="section-title-tab-wrap mb-25">
+            <div class="section-title-4">
+                <!-- <h2>Каталог</h2> -->
+            </div>
+            <div class="btn-style-6 ml-60">
+                <a href="{% url 'shop:shop_page' %}">Каталог</a>
+            </div>
+        </div>
+        <div class="d-flex flex-nowrap scroll-m" style="overflow-x: scroll;">
+            {% if products %}
+            {% for product in products %}
+            <div class="col-lg-3 col-md-6 col-sm-12 col-12">
+                <div class="blog-wrap mb-3">
+                    <div class="blog-img mb-3">
+                        <a href="{{ product.get_absolute_url }}">
+                            <img src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}" alt="">
+                        </a>
+                    </div>
+                    <div class="blog-content about-main text-center">
+                        <h3 style="line-height: 16px;">
+                            <a class="h6" href="{{ product.get_absolute_url }}">
+                            {{ product.name }}
+                            </a>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
 <!-- end Содержание -->
 <!-- Компания ISOFIX-MSK -->
-<div class="about-us-area pt-85">
+<div class="about-us-area pt-100">
     <div class="container">
         <div class="about-content-pb pb-0">
             <div class="row">
                 <div class="col-lg-1 col-md-1"></div>
                 <div class="col-lg-11 col-md-11">
                     <div class="about-us-content">
-                        <h3 id="t1">Компания ISOFIX-MSK</h3>
-                        <div class="text-secondary">
-                            <p>Компания ISOFIX-MSK – производственный и инженерный центр по разработке, изготовлению, продаже и установке креплений ISOFIX на передние, задние и сиденья третьего ряда любых автомобилей.</p>
+                        <!-- <h3 id="t1">Компания ISOFIX-MSK</h3> -->
+                        <div>
+                            <p id="t1"><span class="h5 font-weight-bold">Компания ISOFIX-MSK</span> – производственный и инженерный центр по разработке, изготовлению, продаже и установке креплений ISOFIX на передние, задние и сиденья третьего ряда любых автомобилей.</p>
                             <p>Компания создана в 2019 году и объединяет в себе узкопрофильных специалистов машиностроения, инженеров установщиков, высококвалифицированных производственников.</p>
                             <p>Основная задача компании – обеспечение надежными и безопасными креплениями ISOFIX в соответствии с стандартом безопасности тех автомобильных сидений, в которых они не предусмотрены штатной комплектацией, а так же производство вспомогательных аксессуаров для одновременной установки трех автокресел на заднем сиденье, либо  смещения закрепленных автокресел к дверям с целью создания пространства между ними для дополнительного пассажира.
                             </p>
@@ -124,7 +157,7 @@
 </div>
 <!-- end Компания ISOFIX-MSK -->
 <!-- Что такое ISOFIX -->
-<div class="about-us-area pt-85">
+<div class="about-us-area pt-60">
     <div class="container">
         <div class="about-content-pb pb-0">
             <div class="row">
@@ -132,10 +165,10 @@
                 </div>
                 <div class="col-lg-11 col-md-11">
                     <div class="about-us-content">
-                        <h3 id="t2">Что такое ISOFIX</h3>
+                        <!-- <h3 id="t2">Что такое ISOFIX</h3> -->
                         <div class="text-secondary">
-                            <p>
-                                ISOFIX (ИЗОФИКС) — это международный стандарт для производителей автомобилей, который предусматривает установку во все машины однообразных элементов крепления детских автокресел. Элементами крепления являются петли ISOFIX – «П»-образные высокопрочные металлические прутки диаметром 6 мм, которые приварены либо к кузову автомобиля, либо к каркасу сиденья. Автокресла с замками ISOFIX можно установить абсолютно в любую машину, где есть петли изофикс.
+                            <p id="t2">
+                                <span class="h5 font-weight-bold">Что такое ISOFIX.</span> ISOFIX (ИЗОФИКС) — это международный стандарт для производителей автомобилей, который предусматривает установку во все машины однообразных элементов крепления детских автокресел. Элементами крепления являются петли ISOFIX – «П»-образные высокопрочные металлические прутки диаметром 6 мм, которые приварены либо к кузову автомобиля, либо к каркасу сиденья. Автокресла с замками ISOFIX можно установить абсолютно в любую машину, где есть петли изофикс.
                             </p>
                             <p>
                                 Крепления ISOFIX решают важную проблему – исключают возможность сделать ошибку при креплении детского кресла на ремни, что может привести к травмам ребенка при экстренном торможении, а так же упрощает и ускоряет крепление детского кресла. По статистике 70% установок детских автокресел с использованием обычных ремней безопасности происходит с нарушением инструкций, тогда как с системой ISOFIX автокресла устанавливаются правильно в 95% случаев. Забудьте про возню с ремнями, их перекруты, слабое натяжение и вставку в специальные проушины.
@@ -151,7 +184,7 @@
 </div>
 <!-- end  Что такое ISOFIX -->
 <!-- Кронштейны ISOFIX на любую машину -->
-<div class="about-us-area pt-85">
+<div class="about-us-area pt-50">
     <div class="container">
         <div class="about-content-pb pb-0">
             <div class="row">
@@ -159,9 +192,10 @@
                 </div>
                 <div class="col-lg-11 col-md-11">
                     <div class="about-us-content">
-                        <h3 id="t3">Кронштейны ISOFIX на любую машину</h3>
+                        <!-- <h3 id="t3">Кронштейны ISOFIX на любую машину</h3> -->
                         <div class="text-secondary">
-                            <p>
+                            <p id="t3">
+                                <span class="h5 font-weight-bold">Кронштейны ISOFIX на любую машину.</span>
                                 Кронштейны ISOFIX от ISOFIX-MSK разрабатываются индивидуально под каркасы автомобильных сидений, учитывают все механизмы перемещения, расположение приводов, проводов и воздуховодов. Крепление кронштейнов предусматривается в силовые элементы каркасов на болтовые соединения в имеющиеся технологические отверстия или узлы сопряжения.
                             </p>
                             <p>
@@ -171,13 +205,13 @@
                             <p>
                                 Узнать есть ли кронштейн на Вашу машину можно по нашему каталогу с использованием фильтра по марке и модели машины.
                             </p>
-                            <p>
+<!--                             <p>
                                 <div class="row">
                                     <div class="col-lg-3 col-sm-12 col-12">
                                         <a class="w-100 btn btn-danger btn-lg btn-block" href="{% url 'shop:shop_page' %}?products=кронштейн">Кронштейны</a>
                                     </div>
                                 </div>
-                            </p>
+                            </p> -->
                             <p>
                                 Если в каталоге отсутствует интересующая вас модель — значит с вашей машиной мы еще не сталкивались. В этом случае мы готовы осуществить разработку кронштейна под Ваш автомобиль при предоставлении доступа к нужному сиденью. Срок разработки и изготовления новой модели — до двух недель с момента снятия замеров с каркаса сиденья.
 
@@ -190,24 +224,64 @@
         </div>
     </div>
 </div>
+{% if brackets|length %}
+<div class="blog-area pt-0">
+    <div class="container">
+        <div class="section-title-tab-wrap mb-25">
+            <div class="section-title-4">
+                <!-- <h2>Каталог</h2> -->
+            </div>
+            <div class="btn-style-6 ml-60">
+                <a href="{% url 'shop:shop_page' %}?products=кронштейн">Кронштейны</a>
+            </div>
+        </div>
+        <div class="d-flex flex-nowrap scroll-m" style="overflow-x: scroll;">
+            {% if brackets %}
+            {% for bracket in brackets %}
+            <div class="col-lg-3 col-md-6 col-sm-12 col-12">
+                <div class="blog-wrap mb-3">
+                    <div class="blog-img mb-3">
+                        <a href="{{ bracket.get_absolute_url }}">
+                            <img src="{% if bracket.image_base %}{{ bracket.image_base.url }}{% else %}{{ no_image }}{% endif %}" alt="">
+                        </a>
+                    </div>
+                    <div class="blog-content about-main text-center">
+                        <h3 style="line-height: 16px;">
+                            <a class="h6" href="{{ bracket.get_absolute_url }}">
+                            {{ bracket.name }}
+                            </a>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
 <!-- end input -->
 <!-- Приспособления для установки нескольких автокресел на заднее сиденье -->
-<div class="about-us-area pt-85">
+<div class="about-us-area pt-110">
     <div class="container">
-        <div class="about-content-pb pb-20">
+        <div class="about-content">
             <div class="row">
                 <div class="col-lg-1 col-md-1">
                 </div>
                 <div class="col-lg-11 col-md-11">
                     <div class="about-us-content">
-                        <h3 id="t4">Приспособления для установки нескольких<br>автокресел на заднее сиденье</h3>
+                        <!-- <h3 id="t4">Приспособления для установки нескольких автокресел на заднее сиденье</h3> -->
                         <div class="text-secondary">
-                            <p class="h4 text-dark font-italic">
-                                Компания ISOFIX-MSK является производителем кронштейн-реек для следующих задач:
-                                <br> - одновременная установка трех автокресел с изофикс на заднее сиденье.
-                                <br> - смещение закрепленных на изофикс автокресел к дверям для расширения пространства по центру под пассажира или третье автокресло.
-                                <br> - установка одного автокресла в центр заднего сиденья.
-                                <br> - одновременная установка на изофикс двух автокресел в центр и край заднего сиденья.
+                            <p id="t4">
+                                 <span class="h5 font-weight-bold">Приспособления для установки нескольких автокресел на заднее сиденье.</span>
+
+                                <br><br>Компания ISOFIX-MSK является производителем кронштейн-реек для следующих задач:
+                                <br> - <span class="text-dark">одновременная установка трех автокресел с изофикс на заднее сиденье.</span>
+                                <br> - <span class="text-dark">смещение закрепленных на изофикс автокресел к дверям для расширения пространства по центру под пассажира или третье автокресло.</span>
+                                <br> - <span class="text-dark">установка одного автокресла в центр заднего сиденья.</span>
+                                <br> - <span class="text-dark">одновременная установка на изофикс двух автокресел в центр и край заднего сиденья.</span>
+                                
 
                             </p>
                             <p>
@@ -223,7 +297,7 @@
                                     </div>
                                 </div>
                             </p> -->
-                            <p class="text-center thumb-wrap video-second"></p>
+                            <!-- <p class="text-center thumb-wrap video-second"></p> -->
 <!--                             <button class="btn btn-danger btn-lg btn-block" id="v2">
                                 Видео обзор кронштейн-рейки ISOFIX-MSK.
                             </button>
@@ -237,9 +311,45 @@
         </div>
     </div>
 </div>
+{% if rails|length %}
+<div class="blog-area">
+    <div class="container">
+        <div class="section-title-tab-wrap mb-25">
+            <div class="section-title-4">
+                <!-- <h2>Каталог</h2> -->
+            </div>
+            <div class="btn-style-6 ml-60">
+                <a href="{% url 'shop:shop_page' %}?products=рейка">Рейки</a>
+            </div>
+        </div>
+        <div class="d-flex flex-nowrap scroll-m" style="overflow-x: scroll;">
+            {% if rails %}
+            {% for rail in rails %}
+            <div class="col-lg-3 col-md-6 col-sm-12 col-12">
+                <div class="blog-wrap mb-3">
+                    <div class="blog-img mb-3">
+                        <a href="{{ rail.get_absolute_url }}">
+                            <img src="{% if rail.image_base %}{{ rail.image_base.url }}{% else %}{{ no_image }}{% endif %}" alt="">
+                        </a>
+                    </div>
+                    <div class="blog-content about-main text-center">
+                        <h3 style="line-height: 16px;">
+                            <a class="h6" href="{{ rail.get_absolute_url }}">
+                            {{ rail.name }}
+                            </a>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
 <!-- end Приспособления для установки нескольких автокресел на заднее сиденье -->
 <!-- Центр по установке креплений ISOFIX -->
-<div id="t5" class="deal-area pt-150 pb-130 bg-img" style="background-image:url(/static/shop/assets/images/bg/bg-1.jpg);">
+<div id="t5" class="deal-area pt-150 pb-130 mt-100 bg-img" style="background-image:url(/static/shop/assets/images/bg/bg-1.jpg);">
     <div class="container">
         <div class="deal-content-1">
             <span>г.Москва, ул.Щорса, д.8, стр.1</span>
@@ -286,9 +396,45 @@
         </div>
     </div>
 </div>
+{% if services|length %}
+<div class="blog-area">
+    <div class="container">
+        <div class="section-title-tab-wrap mb-25">
+            <div class="section-title-4">
+                <!-- <h2>Каталог</h2> -->
+            </div>
+            <div class="btn-style-6 ml-60">
+                <a href="{% url 'shop:shop_page' %}?products=услуга">Услуги</a>
+            </div>
+        </div>
+        <div class="d-flex flex-nowrap scroll-m" style="overflow-x: scroll;">
+            {% if services %}
+            {% for service in services %}
+            <div class="col-lg-4 col-md-6 col-sm-12 col-12">
+                <div class="blog-wrap mb-3">
+                    <div class="blog-img mb-3">
+                        <a href="{{ service.get_absolute_url }}">
+                            <img src="{% if service.image_base %}{{ service.image_base.url }}{% else %}{{ no_image }}{% endif %}" alt="">
+                        </a>
+                    </div>
+                    <div class="blog-content about-main text-center">
+                        <h3 style="line-height: 16px;">
+                            <a class="h5" href="{{ service.get_absolute_url }}">
+                            {{ service.name }}
+                            </a>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
 <!-- end Центр по установке креплений ISOFIX -->
 <!-- Детская безопасность в машине -->
-<div class="about-us-area pt-150">
+<div class="about-us-area pt-110">
     <div class="container">
         <div class="about-content-pb">
             <div class="row">
@@ -296,8 +442,11 @@
                 </div>
                 <div class="col-lg-11 col-md-11">
                     <div class="about-us-content">
-                        <h3 id="t6" class="text-center mb-5">Детская безопасность в машине</h3>
+                        <!-- <h3 id="t6" class="mb-5">Детская безопасность в машине</h3> -->
                         <div class="text-secondary">
+                            <p id="t6">
+                                <span class="h5 font-weight-bold">Детская безопасность в машине</span>
+                            </p>
                             <div class="row row-cols-1 row-cols-lg-2">
 
                               <div class="col mb-4">
@@ -382,7 +531,7 @@
 </div>
 <!-- end Детская безопасность в машине -->
 <!-- График работы и контакты -->
-<div class="about-us-area pt-85">
+<div class="about-us-area">
     <div class="container">
         <div class="about-content-pb">
             <div class="row">
@@ -390,7 +539,9 @@
                 </div>
                 <div class="col-lg-11 col-md-11">
                     <div class="about-us-content">
-                        <h3 id="t7">График работы и контакты</h3>
+                        <p id="t7">
+                            <span class="h5 font-weight-bold">График работы и контакты</span>
+                        </p>
                         <p class="text-dark font-weight-bold">
                             <i class="text-danger icon-location-pin "></i>
                             <span class="pl-2">г. Москва, Солнцево, ул.Щорса, д.8 стр.1 – автокомплекс “Buncar”</span>
@@ -434,7 +585,7 @@
 </div>
 <!-- end График работы и контакты -->
 {% if posts|length %}
-<div class="blog-area pt-60 pb-175">
+<div class="blog-area pb-175">
     <div class="container">
         <div class="section-title-tab-wrap mb-55">
             <div class="section-title-4">
@@ -444,7 +595,7 @@
                 <a href="{% url 'shop:post_list' %}">Все статьи</a>
             </div>
         </div>
-        <div class="d-flex flex-nowrap" style="overflow-x: scroll;">
+        <div class="d-flex flex-nowrap scroll-m" style="overflow-x: scroll;">
             {% if posts %}
             {% for post in posts %}
             <div class="col-lg-3 col-md-6 col-sm-12 col-12">

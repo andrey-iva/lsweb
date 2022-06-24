@@ -6,7 +6,7 @@ from django import forms
 from pprint import pprint
 
 from ..models import Message
-from ..models import Post
+from ..models import Post, Product
 
 class MessageCreateForm(forms.ModelForm):
     class Meta:
@@ -15,13 +15,22 @@ class MessageCreateForm(forms.ModelForm):
 
 def home(request):
 	try:
-		posts = Post.objects.all()[0:9]
+		posts    = Post.objects.filter(status='published')[0:10]
+		products = Product.objects.filter(available=True)
+
+		brackets = products.filter(product_type='кронштейн')[0:10]
+		rails    = products.filter(product_type='рейка')[0:10]
+		services = products.filter(product_type='услуга')[0:10]
+
 	except Exception as e:
 		logging.debug(e)
-		posts = []
 
 	return render(request, 'shop/index.html', {
 			'posts': posts,
+			'brackets': brackets,
+			'rails': rails,
+			'services': services,
+			'products': products[0:10],
 		})
 
 def about(request):

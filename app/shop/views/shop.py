@@ -256,7 +256,7 @@ def product_filter(request):
         fields['year'] = year
     # change selects
     if brand_car or model_car or seat_type or year:
-        products = Product.objects.filter(**fields)[0:36]
+        products = Product.objects.filter(**fields)[0:100]
 
         retval = {
             'products': [],
