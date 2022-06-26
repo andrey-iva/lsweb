@@ -97,26 +97,22 @@
                 <h2>Каталог</h2>
             </div> -->
             <div class="btn-style-6 ml-3">
-                <a href="{% url 'shop:shop_page' %}">Каталог</a>
+                <a href="{% url 'shop:shop_page' %}">Каталог >></a>
             </div>
         </div>
         <div class="d-flex flex-nowrap scroll-m" style="overflow-x: scroll;">
             {% if products %}
             {% for product in products %}
             <div class="col-lg-3 col-md-6 col-sm-12 col-12">
-                <div class="blog-wrap mb-3">
-                    <div class="blog-img mb-3">
-                        <a href="{{ product.get_absolute_url }}">
-                            <img src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}" alt="">
-                        </a>
+                <div class="card blog-wrap border-0">
+                    <div class="blog-img">
+                    <a href="{{ product.get_absolute_url }}">
+                        <img class="card-img-top" src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}" alt="">
+                    </a>
                     </div>
-                    <div class="blog-content about-main text-center">
-                        <h3 style="line-height: 16px;">
-                            <a class="h5" href="{{ product.get_absolute_url }}">
-                            {{ product.name }}
-                            </a>
-                        </h3>
-                    </div>
+                  <div class="card-body text-center font-weight-bold about-main">
+                    <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+                  </div>
                 </div>
             </div>
             {% endfor %}
@@ -228,26 +224,22 @@
                 <h2>Каталог</h2>
             </div> -->
             <div class="btn-style-6 ml-3">
-                <a href="{% url 'shop:shop_page' %}?products=кронштейн">Кронштейны</a>
+                <a href="{% url 'shop:shop_page' %}?products=кронштейн">Кронштейны >></a>
             </div>
         </div>
         <div class="d-flex flex-nowrap scroll-m" style="overflow-x: scroll;">
             {% if brackets %}
             {% for bracket in brackets %}
             <div class="col-lg-3 col-md-6 col-sm-12 col-12">
-                <div class="blog-wrap mb-3">
-                    <div class="blog-img mb-3">
-                        <a href="{{ bracket.get_absolute_url }}">
-                            <img src="{% if bracket.image_base %}{{ bracket.image_base.url }}{% else %}{{ no_image }}{% endif %}" alt="">
-                        </a>
+                <div class="card blog-wrap border-0">
+                    <div class="blog-img">
+                    <a href="{{ bracket.get_absolute_url }}">
+                        <img class="card-img-top" src="{% if bracket.image_base %}{{ bracket.image_base.url }}{% else %}{{ no_image }}{% endif %}">
+                    </a>
                     </div>
-                    <div class="blog-content about-main text-center">
-                        <h3 style="line-height: 16px;">
-                            <a class="h5" href="{{ bracket.get_absolute_url }}">
-                            {{ bracket.name }}
-                            </a>
-                        </h3>
-                    </div>
+                  <div class="card-body text-center font-weight-bold about-main">
+                    <a href="{{ bracket.get_absolute_url }}">{{ bracket.name }}</a>
+                  </div>
                 </div>
             </div>
             {% endfor %}
@@ -310,26 +302,22 @@
                 <h2>Каталог</h2>
             </div> -->
             <div class="btn-style-6 ml-3">
-                <a href="{% url 'shop:shop_page' %}?products=рейка">Рейки</a>
+                <a href="{% url 'shop:shop_page' %}?products=рейка">Рейки >></a>
             </div>
         </div>
         <div class="d-flex flex-nowrap scroll-m" style="overflow-x: scroll;">
             {% if rails %}
             {% for rail in rails %}
             <div class="col-lg-3 col-md-6 col-sm-12 col-12">
-                <div class="blog-wrap mb-3">
-                    <div class="blog-img mb-3">
-                        <a href="{{ rail.get_absolute_url }}">
-                            <img src="{% if rail.image_base %}{{ rail.image_base.url }}{% else %}{{ no_image }}{% endif %}" alt="">
-                        </a>
+                <div class="card blog-wrap border-0">
+                    <div class="blog-img">
+                    <a href="{{ rail.get_absolute_url }}">
+                        <img class="card-img-top" src="{% if rail.image_base %}{{ rail.image_base.url }}{% else %}{{ no_image }}{% endif %}">
+                    </a>
                     </div>
-                    <div class="blog-content about-main text-center">
-                        <h3 style="line-height: 16px;">
-                            <a class="h5" href="{{ rail.get_absolute_url }}">
-                            {{ rail.name }}
-                            </a>
-                        </h3>
-                    </div>
+                  <div class="card-body text-center font-weight-bold about-main">
+                    <a href="{{ rail.get_absolute_url }}">{{ rail.name }}</a>
+                  </div>
                 </div>
             </div>
             {% endfor %}
@@ -394,26 +382,22 @@
                 <h2>Каталог</h2>
             </div> -->
             <div class="btn-style-6 ml-3">
-                <a href="{% url 'shop:shop_page' %}?products=услуга">Услуги</a>
+                <a href="{% url 'shop:shop_page' %}?products=услуга">Услуги >></a>
             </div>
         </div>
         <div class="d-flex flex-nowrap scroll-m" style="overflow-x: scroll;">
             {% if services %}
             {% for service in services %}
             <div class="col-lg-4 col-md-6 col-sm-12 col-12">
-                <div class="blog-wrap mb-3">
-                    <div class="blog-img mb-3">
-                        <a href="{{ service.get_absolute_url }}">
-                            <img src="{% if service.image_base %}{{ service.image_base.url }}{% else %}{{ no_image }}{% endif %}" alt="">
-                        </a>
+                <div class="card blog-wrap border-0">
+                    <div class="blog-img">
+                    <a href="{{ service.get_absolute_url }}">
+                        <img class="card-img-top" src="{% if service.image_base %}{{ service.image_base.url }}{% else %}{{ no_image }}{% endif %}">
+                    </a>
                     </div>
-                    <div class="blog-content about-main text-center">
-                        <h3 style="line-height: 16px;">
-                            <a class="h5" href="{{ service.get_absolute_url }}">
-                            {{ service.name }}
-                            </a>
-                        </h3>
-                    </div>
+                  <div class="card-body text-center font-weight-bold about-main">
+                    <a href="{{ service.get_absolute_url }}">{{ service.name }}</a>
+                  </div>
                 </div>
             </div>
             {% endfor %}
