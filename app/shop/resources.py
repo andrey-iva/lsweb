@@ -3,7 +3,15 @@ from import_export.widgets import ForeignKeyWidget
 from django.template.defaultfilters import slugify
 
 from .lbs import clean_string
-from .models import Category, Product
+from .models import Category, Product, ProductImage
+
+class ProductImageResource(resources.ModelResource):
+
+    class Meta:
+        model = ProductImage
+        skip_unchanged = True
+        # exclude = ('full_url',)
+        # report_skipped = False
 
 class ForeignkeyRequiredWidget(ForeignKeyWidget):
     def clean(self, value, row=None, *args, **kwargs):

@@ -14,7 +14,7 @@ class Category(models.Model):
     class Meta:
         ordering = ('name',)
         verbose_name = 'Категорию'
-        verbose_name_plural = '-Категории'
+        verbose_name_plural = 'Категории'
 
     def __str__(self):
         return self.name
@@ -175,7 +175,7 @@ class Product(models.Model):
     class Meta:
         ordering = ('id',)
         verbose_name = 'Товар'
-        verbose_name_plural = '-Товары'
+        verbose_name_plural = 'Товары'
         indexes = (
             models.Index(fields=('id', 'slug')),
         )
@@ -197,7 +197,8 @@ class ProductImage(models.Model):
     image = models.ImageField(upload_to='products/%Y/%m/%d', blank=True)
 
     class Meta:
-        verbose_name_plural = 'Дополнительные изображения'
+        ordering = ('id',)
+        verbose_name_plural = 'галерея'
 
     def __str__(self):
         return self.image.url
@@ -239,7 +240,7 @@ class Order(models.Model):
     class Meta:
         ordering = ('-created',)
         verbose_name = 'Заказ'
-        verbose_name_plural = '-Заказы'
+        verbose_name_plural = 'Заказы'
 
     def __str__(self):
         return f'Order {self.id}'

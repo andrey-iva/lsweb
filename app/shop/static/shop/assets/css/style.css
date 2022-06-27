@@ -9638,8 +9638,9 @@ h1.main-title {
 }
 
 .single-product-wrap:hover .product-content-wrap-2 {
-  opacity: 0;
-  visibility: hidden;
+  color: red;
+  /*opacity: 0;*/
+  /*visibility: hidden;*/
 }
 
 .single-product-wrap:hover .product-content-position {

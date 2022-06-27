@@ -4,7 +4,11 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 
 from .models import Category, Product, ProductImage, Order, OrderItem, Post, Message
-from .resources import ProductResource
+from .resources import ProductResource, ProductImageResource
+
+@admin.register(ProductImage)
+class ProductImageAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    list_display = ['id', 'product', 'image']
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
@@ -31,7 +35,7 @@ class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     search_help_text = 'Поиск по названию'
     resource_class = ProductResource
     inlines = [ProductImageInline,]
-    search_fields = ['name']
+    search_fields = ['name', 'item_number']
     fields = [
         'category', 'name', 'slug', 'price', 'price_install',
         'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type',
@@ -40,7 +44,7 @@ class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
         'video_shot', 'preview_shot', 'video', 'preview_video',
     ]
     list_display = [
-        'id', 'name', 'price', 'price_install',
+        'id', 'name', 'item_number', 'price', 'price_install',
         'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type',
         'service_type', 'available', 'image_base', 'video', 'video_shot', 'description_short',
         'description_full', 'seo_title', 'seo_key', 'seo_desc',
