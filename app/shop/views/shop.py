@@ -79,7 +79,7 @@ def product_list(request, category_slug=None):
     category = None
 
     categories = Category.objects.all()
-    products = Product.objects.all()
+    products = Product.objects.order_by('-image_base').all()
     # products = Product.objects.filter(available=True)
 
     brands = {}
