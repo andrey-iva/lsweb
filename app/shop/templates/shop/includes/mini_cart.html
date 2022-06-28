@@ -17,11 +17,13 @@
                     <div class="cart-title">
                         <h4 class="pb-0 mb-1"><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h4>
                         <div style="font-size: 12px;">
-                            Товар: {{ item.quantity }} × {{ currency }}{{ item.price }}
+                            <i class="fa fa-shopping-cart" aria-hidden="true"></i> {{ item.quantity }} × 
+                            <span class="format_currency">{{ item.price }}</span>
                         </div>
                         {% if item.price_install > 0 %}
                         <div style="font-size: 12px;">
-                            Монтаж: {{item.quantity }} × {{currency}}{{ item.price_install }}
+                            <i class="fa fa-wrench" aria-hidden="true"></i> {{item.quantity }} × 
+                            <span class="format_currency">{{ item.price_install }}</span>
                         </div>
                         {% endif %}
                     </div>
@@ -37,7 +39,7 @@
             </ul>
             <div id="no_enpty_mini_cart" class="{% if cart|length == 0 %}d-none{% endif %}">
                 <div class="cart-total">
-                    <h4>Подитог: <span id="cart-mini-sub-total">{{ currency }}{{ cart.get_total_price }}</span></h4>
+                    <h4>Подитог: <span id="cart-mini-sub-total" class="format_currency">{{ cart.get_total_price }}</span></h4>
                 </div>
                 <div class="cart-checkout-btn">
                     <a class="btn-hover cart-btn-style" href="{% url 'shop:cart_detail' %}">Корзина</a>

@@ -99,7 +99,12 @@ $( function() {
                 var grandTotal = (parseFloat(response["grand_total"]) + parseFloat(tax)).toFixed(2)
 
                 if (parseInt(grandTotal)) {
-                    $("#order_grand_total").text( (CURRENCY + grandTotal.toString()).replace(".", ",") )
+                    // $("#order_grand_total").text( (CURRENCY + grandTotal.toString()).replace(".", ",") )
+                    var formatSum = new Intl.NumberFormat('ru-RU', {
+                        style: 'currency', 
+                        currency: 'RUB' 
+                    }).format( grandTotal )
+                    $("#order_grand_total").text(formatSum)
                 }
             } catch(err) {
                 console.error("addPercent error")

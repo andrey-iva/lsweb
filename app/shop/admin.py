@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 
 from .models import Category, Product, ProductImage, Order, OrderItem, Post, Message
-from .resources import ProductResource, ProductImageResource
+from .resources import ProductResource, ProductImageResource, PostResource
 
 @admin.register(ProductImage)
 class ProductImageAdmin(ImportExportModelAdmin, admin.ModelAdmin):
@@ -84,7 +84,7 @@ class OrderAdmin(admin.ModelAdmin):
     inlines = [OrderItemInline]
 
 @admin.register(Post)
-class PostAdmin(SummernoteModelAdmin):
+class PostAdmin(ImportExportModelAdmin, SummernoteModelAdmin):
     summernote_fields = ('body',)
     list_display = ('title', 'slug', 'author', 'publish', 'status')
     list_filter = ('status', 'created', 'publish', 'author')

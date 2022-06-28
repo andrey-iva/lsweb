@@ -19,12 +19,14 @@
         <div class="card border-0 col-md-10 col-sm-12 col-12 m-auto">
             <div class="card-header pl-2" id="headingOne">
                 <h2 class="mb-0">
-                    <button class="btn btn-link text-left text-dark collapsed btn-outline-none" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    <!-- <i class="fa fa-angle-down" aria-hidden="true"></i> -->
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    <button class="paymaent_btn_first paymaent_btn btn btn-link text-left text-dark collapsed btn-outline-none" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
                         Самовывоз с автокомплекса Buncar (г.Москва, ул.Щорса, д.8 корп.1)
                     </button>
                 </h2>
             </div>
-            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+            <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                 <div class="card-body">
                     <h4 class="text-danger mb-2">Способы оплаты</h4>
                     <ol class="text-dark">
@@ -40,7 +42,8 @@
         <div class="card border-0 col-md-10 col-sm-12 col-12 m-auto">
             <div class="card-header pl-2" id="headingTwo">
                 <h2 class="mb-0">
-                    <button class="btn btn-link text-left text-dark collapsed btn-outline-none" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    <button class="paymaent_btn btn btn-link text-left text-dark collapsed btn-outline-none" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                         Доставка до адреса покупателя (СДЭК)
                     </button>
                 </h2>
@@ -58,7 +61,8 @@
         <div class="card border-0 col-md-10 col-sm-12 col-12 m-auto">
             <div class="card-header pl-2" id="headingThree">
                 <h2 class="mb-0">
-                    <button class="btn btn-link text-left text-dark collapsed btn-outline-none" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    <button class="paymaent_btn btn btn-link text-left text-dark collapsed btn-outline-none" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
                         Доставка в пункты выдачи транспортной компании СДЭК
                     </button>
                 </h2>
@@ -76,7 +80,8 @@
         <div class="card border-0 col-md-10 col-sm-12 col-12 m-auto">
             <div class="card-header pl-2" id="headingFour">
                 <h2 class="mb-0">
-                    <button class="btn btn-link text-left text-dark collapsed btn-outline-none" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    <button class="paymaent_btn btn btn-link text-left text-dark collapsed btn-outline-none" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
                         Доставка другой транспортной компанией
                     </button>
                 </h2>
@@ -93,4 +98,27 @@
         </div>
     </div>
 </div>
+
+{% endblock %}
+
+{% block paymaentjs %}
+<script>
+    $(".paymaent_btn_first").trigger("click")
+    $(".paymaent_btn_first").prev().removeClass("fa-angle-right")
+    $(".paymaent_btn_first").prev().addClass("fa-angle-down")
+
+    $(".paymaent_btn").on("click", function(e) {
+        $(".paymaent_btn").prev().removeClass("fa-angle-down")
+        $(".paymaent_btn").prev().addClass("fa-angle-right")
+
+        if ($(this).attr("aria-expanded") === "false") {
+            $(this).prev().removeClass("fa-angle-right")
+            $(this).prev().addClass("fa-angle-down")
+            
+        } else {
+            $(this).prev().removeClass("fa-angle-down")
+            $(this).prev().addClass("fa-angle-right")
+        }
+    });
+</script>
 {% endblock %}

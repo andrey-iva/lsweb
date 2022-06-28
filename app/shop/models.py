@@ -294,7 +294,8 @@ class Post(models.Model):
                                related_name='blog_posts',
                                verbose_name='автор')
     image_preview = models.ImageField(upload_to='blog_posts/%Y/%m/%d', 
-                                     null=True, 
+                                     null=True,
+                                     blank=True,
                                      verbose_name='изображение')
     body_preview = models.TextField(verbose_name='отрывок статьи')
     body = models.TextField(verbose_name='текст статьи')

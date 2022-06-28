@@ -18,7 +18,7 @@
                             <h1 class="animated">Кронштейны ISOFIX<br>на передние и задние<br>сиденья</h1>
                             <p class="animated">Для самостоятельной установки.<br>Конструкции по маркам машины.</p>
                             <div class="btn-style-1">
-                                <a class="animated btn-1-padding-1" href="product-details.html">Подробнее</a>
+                                <a class="animated btn-1-padding-1" href="#t3">Подробнее</a>
                             </div>
                         </div>
                     </div>
@@ -37,7 +37,7 @@
                                 Для размещения двух кресел и взрослого человека.
                             </p>
                             <div class="btn-style-1">
-                                <a class="animated btn-1-padding-1" href="product-details.html">Подробнее</a>
+                                <a class="animated btn-1-padding-1" href="#t4">Подробнее</a>
                             </div>
                         </div>
                     </div>
@@ -56,7 +56,7 @@
                                 Подбор и разработка новых моделей
                             </p>
                             <div class="btn-style-1">
-                                <a class="animated btn-1-padding-1" href="product-details.html">Подробнее</a>
+                                <a class="animated btn-1-padding-1" href="#t5">Подробнее</a>
                             </div>
                         </div>
                     </div>
@@ -501,18 +501,20 @@
 </div>
 <!-- end Детская безопасность в машине -->
 <!-- График работы и контакты -->
-<!-- <div class="about-us-area">
+<div class="about-us-area">
     <div class="container">
         <div class="about-content-pb">
             <div class="row">
-                <div>
+                <div class="col-12">
                     <div class="about-us-content">
                         <h3 id="t7">
                             График работы и контакты
                         </h3>
                         <p class="text-dark font-weight-bold">
                             <i class="text-danger icon-location-pin "></i>
-                            <span class="pl-2">г. Москва, Солнцево, ул.Щорса, д.8 стр.1 – автокомплекс “Buncar”</span>
+                            <a class="hv pl-2" href="https://yandex.ru/maps/?rtext=~55.645283,37.403216">
+                            г. Москва, Солнцево, ул.Щорса, д.8 стр.1 – автокомплекс “Buncar”
+                            </a>
                         </p>
                         <p>
                             Автокомплекс расположен в действующем бомбоубежище под жилым домом, заезд с правого торца дома если стоять лицом к подъездам, от торца поверните направо, через 30 м развернитесь на 180 градусов под железную арку, спуск между белыми стенками под дом.
@@ -533,7 +535,7 @@
                                     <i class="text-danger icon-screen-smartphone"></i>
                                     <span class="pl-2">Телефон</span></h5>
                                 <p>
-                                    +7 (495) 179-65-27
+                                    <a class="text-secondary" href="tel:+79651116527">+7-965-111-65-27</a>
                                 </p>
                             </div>
                             <div class="col-lg-4 col-md-4 col-12">
@@ -550,7 +552,7 @@
             </div>
         </div>
     </div>
-</div> -->
+</div>
 <!-- end График работы и контакты -->
 {% if posts|length %}
 <div class="blog-area pb-175">
@@ -570,7 +572,7 @@
                 <div class="blog-wrap mb-30">
                     <div class="blog-img mb-25">
                         <a href="{{ post.get_absolute_url }}">
-                            <img src="{% if post.image_preview %}{{post.image_preview.url}}{% else %}{{no_image}}{% endif %}">
+                            <img src="{% if post.image_preview %}{{post.image_preview.url}}{% else %}/static/shop/images/no_image/blog_placeholder.jpg{% endif %}">
                         </a>
                     </div>
                     <div class="blog-content">

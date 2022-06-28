@@ -1,5 +1,17 @@
 (function($) {
     "use strict";
+
+    function formatPrice(cls) {
+        var formatCurrency = $(cls)
+        formatCurrency.each(function() {
+            var formatSum = new Intl.NumberFormat('ru-RU', {
+                style: 'currency', 
+                currency: 'RUB' 
+            }).format( parseInt($(this).text().trim()) )
+            $(this).text(formatSum)
+        });
+    }
+    formatPrice(".format_currency")
     //
 
     $("#v1").click(function(e) {
@@ -601,6 +613,8 @@
 
     // модальное окно с карточкой товара
 
+    
+
     $('.quick_view').on('click', function (e) {
         $("script#sh").remove()
         var modal = $("#modal_body_q")
@@ -677,17 +691,18 @@
                 // )
             }
 
-            var loopElem = 'Петля для якорного крепления <b style="color: black;">'+ CURRENCY + quickView.data("productLoopPrice") +'</b>\
+            var loopElem = '<div class="h5 font-weight-bold mb-3">Дополнительные услуги:</div>\
+            <span class="h6">Петля для якорного крепления <b style="color: black;" class="format_curr">'+ quickView.data("productLoopPrice") +'</b>\
             <input id="anchor" class="form-check-input" type="checkbox" name="loop" \
             style="\
                 max-width: 120px;\
                 margin-left: -7px;\
                 zoom: 0.4;\
                 cursor: pointer;\
-                " '+ (isLoop === "True" ? "checked" : "") +'>'
+                " '+ (isLoop === "True" ? "checked" : "") +'></span>'
             var loopCheckbox = isBracket() ? loopElem : ""  
 
-            var installElem = 'Установка кронштейна <b style="color: black;">'+ CURRENCY + quickView.data("productPriceInstall") +'</b>\
+            var installElem = 'Установка кронштейна <b style="color: black;" class="format_curr">'+ quickView.data("productPriceInstall") +'</b>\
             <input class="form-check-input" type="checkbox" name="price_install" value="1" \
             style="\
                 max-width: 320px;\
@@ -722,18 +737,18 @@
             </div>\
             <p>' + product["description"] + '</p>\
             <div class="pro-details-price">\
-                <span>' + CURRENCY + product["price"] + '</span>\
+                <span><b class="format_curr">' + product["price"] + '</b></span>\
+            </div>\
+            <div>\
+                '+ loopCheckbox +'\
+            </div>\
+            <div class="mb-3 mt-3">\
+                <span class="h6">'+ installCheckbox +'</span>\
             </div>\
             <div class="product-quantity pro-details-quality">\
                 <div class="cart-plus-minus">\
                     <input class="cart-plus-minus-box" type="text" name="qtybutton" value="'+ productQuantity +'" disabled>\
                 </div>\
-            </div>\
-            <div>\
-                <span class="h6">'+ loopCheckbox +'</span>\
-            </div>\
-            <div class="mb-1">\
-                <span class="h6">'+ installCheckbox +'</span>\
             </div>\
             <div class="product-details-meta mt-1">\
                 <ul>\
@@ -767,7 +782,7 @@
 </div>'
             modal.html(modalContent)
             $("body").append('<script id="sh" src="https://yastatic.net/share2/share.js"></script>')
-console.log(window.location.origin)
+            formatPrice(".format_curr")
             // .not('.slick-initialized')
             $('.quickview-slide-active').not('.slick-initialized').slick({
                 // lazyLoad: 'ondemand',
@@ -1273,6 +1288,7 @@ console.log(window.location.origin)
                             $(".cart_info").html("<i class='icon-basket-loaded'></i><span class='black'>" + responseData.cart_length + "</span>" + responseData.sub_total)
                             $(".cart_middle").html("<i class='icon-basket-loaded'></i><span class='pro-count black'>" + responseData.cart_length + "</span>")
                             // цена товаров в мини корзине
+
                             $("#cart-mini-sub-total").text(responseData.sub_total)
 
                             if (parseInt(responseData.cart_length) === 0) {
@@ -1319,7 +1335,15 @@ console.log(window.location.origin)
                 $(".cart_info").html("<i class='icon-basket-loaded'></i><span class='black'>" + responseData.cart_length + "</span>" + responseData.sub_total)
                 $(".cart_middle").html("<i class='icon-basket-loaded'></i><span class='pro-count black'>" + responseData.cart_length + "</span>")
                 // цена товаров в мини корзине
-                $("#cart-mini-sub-total").text(responseData.sub_total)
+
+                function formatP(price) {
+                    return new Intl.NumberFormat('ru-RU', {
+                        style: 'currency', 
+                        currency: 'RUB' 
+                    }).format( price )
+                }
+
+                $("#cart-mini-sub-total").text( formatP(parseInt(responseData.sub_total.slice(1))) )
 
                 var htm = ""
                 var installSum = 0
@@ -1330,9 +1354,9 @@ console.log(window.location.origin)
 
                     var install = ""
                     if (parseInt(responseData[k]["price_install"].slice(1)) > 0) {
-                        install = "<div style='font-size: 12px ;'>Монтаж: " +
+                        install = "<div style='font-size: 12px ;'><i class='fa fa-wrench' aria-hidden='true'></i> " +
                                 responseData[k]["quantity"] + " × " +
-                                responseData[k]["price_install"] + "</div>"
+                                formatP(parseInt(responseData[k].price_install.slice(1))) + "</div>"
                     }
 
                     htm += "<li class='single-product-cart cart-detail-mini-delete'>\
@@ -1343,9 +1367,9 @@ console.log(window.location.origin)
                             </div>\
                             <div class='cart-title'>\
                                 <h4 class='pb-0 mb-1'><a href='" + responseData[k]["product_url"] + "'>" + responseData[k]["name"] + "</a></h4>\
-                                <div style='font-size: 12px ;'>Товар: " +
+                                <div style='font-size: 12px ;'><i class='fa fa-shopping-cart' aria-hidden='true'></i> " +
                                 responseData[k]["quantity"] + " × " +
-                                responseData[k]["price"] + "</div>" + install + "\
+                                formatP(parseInt(responseData[k].price.slice(1))) + "</div>" + install + "\
                             </div>\
                             <div class='cart-delete'>\
                                 <form action='/cart/remove/" + k + "/' method='post' data-product-attr='"+ responseData[k]["attribute"] +"'>\

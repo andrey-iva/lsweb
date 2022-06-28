@@ -75,13 +75,13 @@
                         {% endfor %}
                         {% endif %}
                         <li class="list-group-item">За еденицу:
-                            <span style="position: absolute; right: 0;" class="font-weight-bold">
-                                 1 x {{ currency }}{{ item.price }}
+                            <span style="position: absolute; right: 0;">
+                                 1 x <b class="format_currency">{{ item.price }}</b>
                             </span>
                         </li>
                         <li class="list-group-item">За все:
-                            <span style="position: absolute; right: 0;" class="product-subtotal text-danger font-weight-bold">
-                                 {{ item.quantity }} x {{ currency }}{{ item.total_price }}
+                            <span style="position: absolute; right: 0;" class="product-subtotal text-danger">
+                                 {{ item.quantity }} x <b class="format_currency">{{ item.total_price }}</b>
                             </span>
                         </li>
 
@@ -167,13 +167,13 @@
                         </li>
                         <!-- <li class="list-group-item"></li> -->
                         <li class="list-group-item">За единицу:
-                            <span style="position: absolute; right: 0;" class="font-weight-bold">
-                                1 x {{ currency }}{{ item.price_install }}
+                            <span style="position: absolute; right: 0;">
+                                1 x <b class="format_currency">{{ item.price_install }}</b>
                             </span>
                         </li>
                         <li class="list-group-item">За все:
-                            <span style="position: absolute; right: 0;" class="product-subtotal text-danger font-weight-bold">
-                                {{ item.quantity }} x {{ currency }}{{ item.total_price_install }}
+                            <span style="position: absolute; right: 0;" class="product-subtotal text-danger">
+                                {{ item.quantity }} x <b class="format_currency">{{ item.total_price_install }}</b>
                             </span>
                         </li>
                     </ul>
@@ -210,7 +210,7 @@
                             <div class="title-wrap mb-50">
                                 <h4 class="cart-bottom-title section-bg-gary-cart">Итого</h4>
                             </div>
-                            <h4 id="grand_total" class="grand-totall-title GT">Подитог <span>{{ currency }}{{ cart.get_total_price }}</span></h4>
+                            <h4 id="grand_total" class="grand-totall-title GT">Подитог <span class="format_currency">{{ cart.get_total_price }}</span></h4>
                             <a href="{% url 'shop:order_create' %}">Оформить заказ</a>
                         </div>
                     </div>

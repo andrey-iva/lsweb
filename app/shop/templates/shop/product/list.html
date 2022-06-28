@@ -215,7 +215,7 @@
                                         <div class="product-content-wrap-2 text-center">
                                             <h3><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
                                             <div class="product-price-2">
-                                                <span>{{ currency }}{{ product.price }}</span>
+                                                <span class="format_currency">{{ product.price }}</span>
                                             </div>
                                         </div>
 <!--                                         <div class="product-content-wrap-2 product-content-position text-center">
@@ -282,7 +282,7 @@
                                             <div class="pro-list-price">
                                                 <!-- <span class="new-price">$35.45</span> -->
                                                 <!-- <span class="old-price">$45.80</span> -->
-                                                <span>{{ currency }}{{ product.price }}</span>
+                                                <span class="format_currency">{{ product.price }}</span>
                                             </div>
                                             <p>{{ product.description_short }}</p>
                                             <p>

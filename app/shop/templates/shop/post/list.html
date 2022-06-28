@@ -22,7 +22,9 @@
             <div class="col-lg-4 col-md-6 col-12 col-sm-6">
                 <div class="blog-wrap mb-40">
                     <div class="blog-img mb-20">
-                        <a href="{{ post.get_absolute_url }}"><img src="{{ post.image_preview.url }}" alt="blog-img"></a>
+                        <a href="{{ post.get_absolute_url }}">
+                            <img src="{% if post.image_preview %}{{post.image_preview.url}}{% else %}/static/shop/images/no_image/blog_placeholder.jpg{% endif %}">
+                        </a>
                     </div>
                     <div class="blog-content">
                         <div class="blog-meta">

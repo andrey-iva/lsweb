@@ -4,7 +4,7 @@ from django.views.decorators.http import require_POST
 from pprint import pprint
 
 import requests as r
-import json, time
+import json, time, logging
 
 from .. import PROD, CLIENT_ID, CLIENT_SECRET, FROM_LOCATION, TARIFF_CODES
 
@@ -49,6 +49,8 @@ def get_token_cdek():
 			'grant_type': GRANT_TYPE,
 			'client_id': CLIENT_ID,
 			'client_secret': CLIENT_SECRET,})
+	    logging.error('get_token_cdek STATUS: %s', 
+	    	'Не авторизирован 401' if response.status_code == 401 else response.status_code)
 	    if response.status_code == 200:
 	        return response.json()
 	    time.sleep(0.2)
@@ -57,6 +59,8 @@ def get_token_cdek():
 
 def access_header():
 	TOKEN_CDEK = get_token_cdek()
+	logging.debug('TOKEN_CDEK: %s', TOKEN_CDEK)
+
 	if TOKEN_CDEK:
 		access_token = TOKEN_CDEK['access_token']
 		token_type = TOKEN_CDEK['token_type']
@@ -92,6 +96,8 @@ def get_tarifflist(cdek_id, country_iso_code, city, address, packages):
 	DATA['packages'] = packages
 	
 	headers = access_header()
+	logging.debug('Headers: %s', headers)
+	assert headers is not None
 	headers['Content-type'] = 'application/json'
 
 	tariffs = []

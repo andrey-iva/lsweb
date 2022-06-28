@@ -16,9 +16,9 @@ class MessageCreateForm(forms.ModelForm):
 def home(request):
 	try:
 		posts    = Post.objects.filter(status='published')[0:10]
-		products = Product.objects.filter(available=True).order_by('-image_base')
+		products = Product.objects.filter(available=True).order_by('?')
 
-		brackets = products.filter(product_type='кронштейн')[6:16]
+		brackets = products.filter(product_type='кронштейн')[0:10]
 		rails    = products.filter(product_type='рейка')[0:10]
 		services = products.filter(product_type='услуга')[0:10]
 
@@ -30,7 +30,10 @@ def home(request):
 			'brackets': brackets,
 			'rails': rails,
 			'services': services,
-			'products': products[7:17],
+			'products': products[0:10],
+			# 'bracket_rand_url': brackets[0].get_absolute_url(),
+			# 'rail_rand_url': rails[0].get_absolute_url(),
+			# 'service_rand_url': services[0].get_absolute_url(),
 		})
 
 def about(request):

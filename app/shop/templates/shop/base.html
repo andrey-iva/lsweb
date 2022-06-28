@@ -47,6 +47,7 @@
     <link rel="stylesheet" href="/static/shop/assets/css/plugins/plugins.min.css">
     <link rel="stylesheet" href="/static/shop/assets/js/inttel/css/intlTelInput.min.css">
     <link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/css/suggestions.min.css" rel="stylesheet" />
+    <!-- <link rel="stylesheet" href="/static/shop/assets/css/plugins/jquery-ui.css"> -->
     <link rel="stylesheet" href="/static/shop/assets/css/style.css">
     <!-- Use the minified version files listed below for better performance and remove the files listed above
     
@@ -150,7 +151,9 @@
     .about-main a:hover {
         color:  red;
     }
-
+    .hv:hover {
+        color:  red;
+    }
     </style>
 </head>
 
@@ -215,6 +218,7 @@
 
     {% block orderjs %}{% endblock %}
     {% block productjs %}{% endblock %}
+    {% block paymaentjs %}{% endblock %}
     <script src="/static/shop/assets/js/main.js"></script>
 </body>
 

@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage,\
                                   PageNotAnInteger
 from django.views.generic import ListView
-from ..models import Post
+from ..models import Post, Product
 '''
 https://isofix-msk.ru/blog/instrukciya-isofix/
 https://isofix-msk.ru/blog/neskolko-kresel/
@@ -32,9 +32,12 @@ def post_list(request):
 def post_detail(request, post):
     post = get_object_or_404(Post, slug=post,
                                    status='published')
+    
     return render(request,
                   'shop/post/detail.html',
-                  {'post': post})
+            {
+                  'post': post,
+            })
 
 
 class PostListView(ListView):

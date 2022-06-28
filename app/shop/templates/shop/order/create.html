@@ -167,10 +167,10 @@
                                         <li class="border-bottom border-danger">
                                             {{ item.product.name }}
                                             <br><b>Товар: </b>
-                                            <span>{{item.quantity}} &times; {{currency}}{{item.total_price}}</span>
+                                            <span>{{item.quantity}} &times; <b class="font-weight-normal format_currency">{{item.total_price}}</b></span>
                                             {% if item.price_install > 0 %}
                                             <br><b>Установка: </b>
-                                            <span>{{item.quantity}} &times; {{currency}}{{item.price_install}}</span>
+                                            <span>{{item.quantity}} &times; <b class="font-weight-normal format_currency">{{item.price_install}}</b></span>
                                             {% endif %}
                                         </li>
                                         {% endfor %}
@@ -178,7 +178,7 @@
                                 </div>
                                 <div class="your-order-info order-subtotal">
                                     <ul>
-                                        <li>Подитог <span>{{currency}}{{cart.get_total_price}} </span></li>
+                                        <li>Подитог <span><b class="font-weight-normal format_currency">{{cart.get_total_price}}</b></span></li>
                                     </ul>
                                 </div>
                                 <div class="your-order-info order-shipping">
@@ -189,7 +189,11 @@
                                 <div class="your-order-info order-total">
                                     <div id="hidden_gtand_total" hidden>{{cart.get_total_price}}</div>
                                     <ul>
-                                        <li>Итог <span id="order_grand_total">{{currency}}{{cart.get_total_price}} </span></li>
+                                        <li>Итог 
+                                            <span id="order_grand_total">
+                                            <b class="font-weight-normal format_currency">{{cart.get_total_price}}</b>
+                                            </span>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>

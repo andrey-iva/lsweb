@@ -21,9 +21,9 @@
             <div class="col-lx-10 col-lg-10 col-md-12 col-sm-12 col-12 m-auto">
                 <div class="blog-details-wrapper">
                     <div class="blog-details-top">
-                        <div class="blog-details-img">
-                            <img alt="" src="{{ post.image_preview.url }}">
-                        </div>
+<!--                         <div class="blog-details-img">
+                            <img src="{% if post.image_preview %}{{post.image_preview.url}}{% else %}/static/shop/images/no_image/blog_placeholder.jpg{% endif %}">
+                        </div> -->
                         <div class="blog-details-content">
                             <div class="blog-meta-2 pb-3">
                             	<h1>{{ post.title }}</h1>

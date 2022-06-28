@@ -3,7 +3,13 @@ from import_export.widgets import ForeignKeyWidget
 from django.template.defaultfilters import slugify
 
 from .lbs import clean_string
-from .models import Category, Product, ProductImage
+from .models import Category, Product, ProductImage, Post
+
+class PostResource(resources.ModelResource):
+
+    class Meta:
+        model = Post
+        skip_unchanged = True
 
 class ProductImageResource(resources.ModelResource):
 

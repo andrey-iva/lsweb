@@ -102,15 +102,16 @@
                     <div class="pro-details-price">
                         <!-- <span class="new-price">$75.72</span> -->
                         <!-- <span class="old-price">$95.72</span> -->
-                        <span>{{ currency }}{{ product.price }}</span>
+                        <span><b class="format_currency">{{ product.price }}</b></span>
                     </div>
                     <div>
                         {% if product.product_type != 'рейка' %}
 
                         {% if product.product_type != 'услуга' %}
                         {% if product.attribute != 'loop' %}
+                        <div class="h5 font-weight-bold mb-3">Дополнительные услуги:</div>
                         <span class="h6">
-                            Петля для якорного крепления <b style="color: black;">{{currency}}{{ product_loop.price }}</b>
+                            Петля для якорного крепления <b class="format_currency" style="color: black;">{{ product_loop.price }}</b>
                             <input 
                             id="add_anchor" 
                             class="form-check-input {% if request.session.cart|get_key:product.id %}del-loop{% endif %}" 
@@ -130,9 +131,9 @@
 
                         {% endif %}
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 mt-3">
                         {% if product.product_type != 'рейка' and product.attribute != 'loop' and product.product_type != 'услуга'%}
-                            <span class="h6">Установка кронштейна <b style="color: black;">{{currency}}{{ product.price_install }}</b> </span>
+                            <span class="h6">Установка кронштейна <b class="format_currency" style="color: black;">{{ product.price_install }}</b> </span>
 
                             <input 
                             class="form-check-input ml-5 {% if request.session.cart|get_key:product.id %}del-service{% endif %}" type="checkbox" name="price_install" value="1"
