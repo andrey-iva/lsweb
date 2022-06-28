@@ -109,8 +109,8 @@
 
                         {% if product.product_type != 'услуга' %}
                         {% if product.attribute != 'loop' %}
-                        <div class="h5 font-weight-bold mb-3">Дополнительные услуги:</div>
-                        <span class="h6">
+                        <div class="h6 font-weight-bold mb-3">Дополнительные услуги:</div>
+                        <span class="text-dark">
                             Петля для якорного крепления <b class="format_currency" style="color: black;">{{ product_loop.price }}</b>
                             <input 
                             id="add_anchor" 
@@ -133,13 +133,13 @@
                     </div>
                     <div class="mb-3 mt-3">
                         {% if product.product_type != 'рейка' and product.attribute != 'loop' and product.product_type != 'услуга'%}
-                            <span class="h6">Установка кронштейна <b class="format_currency" style="color: black;">{{ product.price_install }}</b> </span>
+                            <span class="text-dark">Установка кронштейна <b class="format_currency" style="color: black;">{{ product.price_install }}</b> </span>
 
                             <input 
                             class="form-check-input ml-5 {% if request.session.cart|get_key:product.id %}del-service{% endif %}" type="checkbox" name="price_install" value="1"
                             data-url="{% url 'shop:cart_add' product.id %}" 
                             style="
-                            max-width: 230px;
+                            max-width: 180px;
                             zoom: 0.4;
                             cursor: pointer;" 
                             {% if request.session.cart|get_product_total_price_install:product.id %} checked {% endif %}>

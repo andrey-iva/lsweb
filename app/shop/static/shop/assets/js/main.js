@@ -691,8 +691,8 @@
                 // )
             }
 
-            var loopElem = '<div class="h5 font-weight-bold mb-3">Дополнительные услуги:</div>\
-            <span class="h6">Петля для якорного крепления <b style="color: black;" class="format_curr">'+ quickView.data("productLoopPrice") +'</b>\
+            var loopElem = '<div class="h6 font-weight-bold mb-3">Дополнительные услуги:</div>\
+            <span class="text-dark">Петля для якорного крепления <b style="color: black;" class="format_curr">'+ quickView.data("productLoopPrice") +'</b>\
             <input id="anchor" class="form-check-input" type="checkbox" name="loop" \
             style="\
                 max-width: 120px;\
@@ -743,7 +743,7 @@
                 '+ loopCheckbox +'\
             </div>\
             <div class="mb-3 mt-3">\
-                <span class="h6">'+ installCheckbox +'</span>\
+                <span class="text-dark">'+ installCheckbox +'</span>\
             </div>\
             <div class="product-quantity pro-details-quality">\
                 <div class="cart-plus-minus">\
