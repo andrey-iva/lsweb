@@ -4,7 +4,7 @@ from django.views.decorators.http import require_POST
 from pprint import pprint
 
 import requests as r
-import json, time, logging
+import json, time, logging, csv, os
 
 from .. import PROD, CLIENT_ID, CLIENT_SECRET, FROM_LOCATION, TARIFF_CODES
 
@@ -68,18 +68,48 @@ def access_header():
 
 @require_POST
 def get_cities(request):
+	''' посказки в input файлы .json с разной структурой '''
 	country_iso_code = request.POST.get('country_iso_code')
 
-	for i in range(0, ATTEMPTS):
-		if country_iso_code:
-			response = r.get(CITIES_URL, {
-				'country_codes': [country_iso_code],
-				'size': 1
-			}, headers=access_header())
+	if country_iso_code:
+		if country_iso_code == 'RU':
+			templates = ''
+			c = []
+			with open(os.path.join( os.path.dirname(__file__) , 'cities', 'ru.json'), encoding='utf-8-sig') as file:
+				templates = json.load(file)
 
-			if response.status_code == 200:
-				return HttpResponse(response.text)
-		time.sleep(0.2)
+			for item in templates:
+				c.append(item['Город'])
+			c.append('Москва')
+			c.append('Санкт-Петербург')
+			c.append('Севастополь')
+			c.append('Зеленоград')
+			c.remove('Ростов')
+
+			return HttpResponse(json.dumps(c))
+
+	if country_iso_code:
+		if country_iso_code == 'KZ':
+			templates = ''
+			c = []
+			with open(os.path.join( os.path.dirname(__file__) , 'cities', 'kz.json'), encoding='utf-8') as file:
+				templates = json.load(file)
+
+			for item in templates.values():
+				c.append(item)
+			return HttpResponse(json.dumps(c))
+
+	if country_iso_code:
+		if country_iso_code == 'BY':
+			templates = ''
+			c = []
+			with open(os.path.join( os.path.dirname(__file__) , 'cities', 'by.json'), encoding='utf-8') as file:
+				templates = json.load(file)
+
+			for item in templates:
+				c.append(item['name'])
+			return HttpResponse(json.dumps(c))
+	
 	return HttpResponse(json.dumps([]))
 
 @require_POST

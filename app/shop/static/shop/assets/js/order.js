@@ -143,7 +143,7 @@ $( function() {
         }
         var tariffs_list = $(".tariffs_list")
         var deliveryPoints = tariffs.pop()
-        console.log(tariffs)
+        // console.log(tariffs)
         console.log(deliveryPoints)
 
         var tariffListHTML = ""
@@ -491,6 +491,7 @@ $( function() {
         // До пункта выдачи СДЭК
         $("#cdek_hidden").prop("hidden", true)
         if ( parseInt($(this).val()) === 2 ) {
+            $("#country_point").trigger("change")
             $("#country").empty()
             clientInfo.attr("hidden", false)
             $("#cdek_hidden").prop("hidden", false)
@@ -799,52 +800,35 @@ $( function() {
     //     onSelect: function(suggestion) {}
     // });
     // order create end
+    
+    $("#country_point").change(function(e) {
+        console.log($(this).val())
+        $.ajax({
+            url: CDEK_CITIES_URL,
+            method: "POST",
+            data: {
+               "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+               "country_iso_code": $(this).val(),
+            }
+        }).done(function(response) {
+            response = JSON.parse(response)
+            console.log("length:", response.length)
+            
+            $( "#city" ).autocomplete({
+                source: response,
+                minLength: 3,
+                delay: 500,
+                select: function( event, ui ) {
+                    cdekFN()
+                },
+                open: function( event, ui ) {
 
-    // CDEK_CITIES_URL
-//     {
-//     "code": 79971,
-//     "city": "Киекбаево",
-//     "country_code": "RU",
-//     "country": "Россия",
-//     "region": "Башкортостан респ.",
-//     "region_code": 27,
-//     "sub_region": "Бурзянский р-н",
-//     "postal_codes": [
-//         "453588"
-//     ],
-//     "longitude": 57.259308,
-//     "latitude": 53.044003,
-//     "time_zone": "Asia/Yekaterinburg"
-// }
-    // $.ajax({
-    //     url: CDEK_CITIES_URL,
-    //         method: "POST",
-    //         data: {
-    //             "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
-    //             // "country_iso_code": $("select[name=country_point]").val(),
-    //             "country_iso_code": "RU",
-    //         },
-    // }).done(function(response) {
-    //     response = JSON.parse(response)
-    //     console.log(response)
-    //     return
-    //     var cities = {}
-    //     for (var item of response) {
-    //         var subRegion = (typeof item.sub_region !== "undefined" ? ", "+item.sub_region : "")
-    //         cities[item.city + ', ' + item.region + subRegion] = item.code
-    //     }
-    //     // console.log(cities)
-    //     $( "#city" ).autocomplete({
-    //         source: Object.keys(cities),
-    //         minLength: 3,
-    //         select: function( event, ui ) {
-
-    //         },
-    //         open: function( event, ui ) {
-
-    //         }
-    //     });
-    // })
+                }
+            });
+        
+        })
+    })
+    
 
     function tariffsListSpiner() {
         $(".tariffs_list").html(
@@ -855,8 +839,9 @@ $( function() {
         </div>')
     }
 
+    $(".search_cities").click(function(e) { cdekFN() })
 
-    $(".search_cities").click(function(e) {
+    function cdekFN() {
         tariffsListSpiner()
         var csrf = $("input[name=csrfmiddlewaretoken]").val()
         console.log($("#city").val().trim().replaceAll(" ", "-"))
@@ -898,7 +883,6 @@ $( function() {
                     printTariffs(response, {
                         data: {geo_lat: info.latitude, geo_lon: info.longitude} 
                     })
-                    console.log(response)
                 })
 
             } else {
@@ -947,7 +931,7 @@ $( function() {
             //     });
             // }
         })
-    })
+    }
 });
 
     // $("#country").suggestions({
