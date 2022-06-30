@@ -67,16 +67,35 @@ def access_header():
 		return {'Authorization': token_type + ' ' + access_token}
 
 @require_POST
+def get_cities(request):
+	country_iso_code = request.POST.get('country_iso_code')
+
+	for i in range(0, ATTEMPTS):
+		if country_iso_code:
+			response = r.get(CITIES_URL, {
+				'country_codes': [country_iso_code],
+				'size': 1
+			}, headers=access_header())
+
+			if response.status_code == 200:
+				return HttpResponse(response.text)
+		time.sleep(0.2)
+	return HttpResponse(json.dumps([]))
+
+@require_POST
 def get_city(request):
 	''' возвращает cdek_id н.п '''
 	cities = []
 	country_iso_code = request.POST.get('country_iso_code')
 	city = request.POST.get('city')
 
+	logging.debug('City CDEK: %s', city)
+	logging.debug('iso codes CDEK: %s', country_iso_code)
+	
 	for i in range(0, ATTEMPTS):
 		if country_iso_code and city:
 			response = r.get(CITIES_URL, {
-				'country_codes': [country_iso_code], 
+				'country_codes': [country_iso_code],
 				'city': [city]
 			}, headers=access_header())
 

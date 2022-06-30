@@ -1046,6 +1046,17 @@
         // $("#triffs_list").html('<li><input data-delivery-name="standard" data-delivery-sum="0" type="radio" name="tariff_code" value="standard"> Standard <span>'+CURRENCY+'0.00</span></li>')
         // $("#ser").html('<input maxlength="50" type="text" name="city" id="city" placeholder="Ваш город" required>')
 
+        // hidden buttons update
+        currentForm.find("input.cart_detail_install_bracket").on("change", function(e) {
+            currentForm.find("div.cart_detail_install_bracket_spiner").removeClass("d-none")
+            currentForm.find("button.btn_update").trigger("click")
+            currentForm.find("button.btn_update").trigger("submit")
+        });
+        currentForm.find("input.cart_detail_install_loop").on("change", function(e) {
+            currentForm.find("div.cart_detail_install_loop_spiner").removeClass("d-none")
+            currentForm.find("button.btn_update").trigger("click")
+            currentForm.find("button.btn_update").trigger("submit")
+        });
         currentForm.submit(function(e) {
             e.preventDefault()
             var currentForm = $(this)

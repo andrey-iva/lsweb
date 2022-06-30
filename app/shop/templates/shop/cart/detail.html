@@ -57,7 +57,7 @@
                 <div class="col-md-9">
                   <div class="card-body">
                     <h4 class="card-title">
-                        <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+                        <a class="hv" href="{{ product.get_absolute_url }}">{{ product.name }}</a>
                     </h4>
                     <ul class="list-group list-group-flush">
                         {% if product.attribute == 'loop' %}
@@ -67,14 +67,14 @@
                             {% if i.loop_quantity > 0 %}
                             <li class="list-group-item font-weight-bold">
                                 <span class="text-danger">Вместе с:</span>
-                                <i><a href="{{ p.get_absolute_url }}">{{p.name}}</a></i>
+                                <a class="hv" href="{{ p.get_absolute_url }}">{{p.name}}</a>
                             </li>
                             {% endif %}
 
                         {% endwith %}
                         {% endfor %}
                         {% endif %}
-                        <li class="list-group-item">За еденицу:
+<!--                         <li class="list-group-item">За еденицу:
                             <span style="position: absolute; right: 0;">
                                  1 x <b class="format_currency">{{ item.price }}</b>
                             </span>
@@ -83,12 +83,25 @@
                             <span style="position: absolute; right: 0;" class="product-subtotal text-danger">
                                  {{ item.quantity }} x <b class="format_currency">{{ item.total_price }}</b>
                             </span>
+                        </li> -->
+
+                        <li class="list-group-item">Стоимость:
+                            <span style="position: absolute; right: 0;" class="product-subtotal">
+                                 {{ item.quantity }} x <b class="format_currency">{{ item.total_price }}</b>
+                            </span>
                         </li>
 
                         {% if product.product_type == 'кронштейн' and product.attribute != 'loop' %}
                         <li class="item_install list-group-item bg-light mt-1">
-                            <span class="font-weight-bold">Установка кронштейна </span>
-                                <input type="checkbox" class="form-check-input" name="price_install" value="1" class="d-loop"
+                            <div class='spinner-border spinner-border-sm cart_detail_install_bracket_spiner d-none' role='status'>
+                                <span class='sr-only'>Загрузка...</span>
+                            </div>
+
+                                <span class="font-weight-bold">Установка кронштейна </span>
+                                <input 
+                                type="checkbox" 
+                                class="form-check-input d-loop cart_detail_install_bracket" 
+                                name="price_install" value="1"
                                 style="
                                     max-width: 110px;
                                     max-height: 40px;
@@ -96,10 +109,14 @@
                                     cursor: pointer;
                                 " {% if item.total_price_install > 0 %} checked {% endif %}>
                             <br>
-                            <span class="font-weight-bold">Петля для якорного крепления </span>
+                            <div class='spinner-border spinner-border-sm cart_detail_install_loop_spiner d-none' role='status'>
+                                <span class='sr-only'>Загрузка...</span>
+                            </div>
+
+                                <span class="font-weight-bold">Петля для якорного крепления </span>
                                 <input
                                 id="add_anchor"
-                                class="form-check-input"
+                                class="form-check-input cart_detail_install_loop"
                                 type="checkbox" name="loop"
                                 style="
                                     max-width: 80px;
@@ -113,7 +130,7 @@
 
 
                     </ul>
-                    <div class="mt-20">
+                    <div class="mt-20 d-none">
                         <div class="product-quantity pro-details-quality text-center mt-5">
                             <div class="cart-plus-minus">
                                 <input class="cart-plus-minus-box" type="text" name="qtybutton" value="{{ item.quantity }}" disabled>
@@ -152,21 +169,22 @@
           <div class="col mb-4">
             <div class="card mb-3 border-0">
               <div class="row no-gutters">
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <a href="{{ product.get_absolute_url }}">
                         <img class="w-100" src="{% if product.image_base %}{{ product.image_base.url }}{% else %}{{ no_image }}{% endif %}">
                     </a>
                 </div>
-                <div class="col-10">
+                <div class="col-9">
                   <div class="card-body">
                     <!-- <h4 class="card-title"></h4> -->
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item font-weight-bold">
                             <span class="text-danger">Установка: </span>
-                            <i><a href="{{ product.get_absolute_url }}">{{product.name}}</a></i>
+                            <a class="hv" href="{{ product.get_absolute_url }}">
+                                {{product.name}}
+                            </a>
                         </li>
-                        <!-- <li class="list-group-item"></li> -->
-                        <li class="list-group-item">За единицу:
+<!--                         <li class="list-group-item">За единицу:
                             <span style="position: absolute; right: 0;">
                                 1 x <b class="format_currency">{{ item.price_install }}</b>
                             </span>
@@ -175,7 +193,14 @@
                             <span style="position: absolute; right: 0;" class="product-subtotal text-danger">
                                 {{ item.quantity }} x <b class="format_currency">{{ item.total_price_install }}</b>
                             </span>
+                        </li> -->
+
+                        <li class="list-group-item">Стоимость:
+                            <span style="position: absolute; right: 0;" class="product-subtotal">
+                                {{ item.quantity }} x <b class="format_currency">{{ item.total_price_install }}</b>
+                            </span>
                         </li>
+
                     </ul>
                     </div>
                   </div>

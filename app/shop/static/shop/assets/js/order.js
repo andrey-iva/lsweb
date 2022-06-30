@@ -143,6 +143,7 @@ $( function() {
         }
         var tariffs_list = $(".tariffs_list")
         var deliveryPoints = tariffs.pop()
+        console.log(tariffs)
         console.log(deliveryPoints)
 
         var tariffListHTML = ""
@@ -267,6 +268,7 @@ $( function() {
                     })
                 }
 
+                
                 ymaps.ready(init);
 
                 function init () {
@@ -554,9 +556,9 @@ $( function() {
                 if (document.getElementById("base")) {
                     $([document.documentElement, document.body]).animate({
                         scrollTop: $("#base").offset().top
-                    }, 1000);
+                    }, 500);
                 }
-            }, 1000)
+            }, 500)
         }
 
         $("input[name=delivery_name]").each(function() {
@@ -576,7 +578,8 @@ $( function() {
     }
 
     // cdek start
-    $("#city").suggestions({
+    // #city
+    $("#x").suggestions({
       token: token,
       type: "ADDRESS",
       hint: false,
@@ -731,75 +734,224 @@ $( function() {
 
     // order create start
     // Инициализирует подсказки по ФИО на указанном элементе
-    function init($surname, $name) {
-      var self = {};
-      self.$surname = $surname;
-      self.$name = $name;
+    // function init($surname, $name) {
+    //   var self = {};
+    //   self.$surname = $surname;
+    //   self.$name = $name;
 
-      var fioParts = ["NAME", "SURNAME"];
-      $.each([$surname, $name], function(index, $el) {
-        var sgt = $el.suggestions({
-          token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
-          type: "NAME",
-          triggerSelectOnSpace: false,
-          hint: "",
-          noCache: true,
-          params: {
-            // каждому полю --- соответствующая подсказка
-            parts: [fioParts[index]]
-          },
-        });
-      });
-    };
+    //   var fioParts = ["NAME", "SURNAME"];
+    //   $.each([$surname, $name], function(index, $el) {
+    //     var sgt = $el.suggestions({
+    //       token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
+    //       type: "NAME",
+    //       triggerSelectOnSpace: false,
+    //       hint: "",
+    //       noCache: true,
+    //       params: {
+    //         // каждому полю --- соответствующая подсказка
+    //         parts: [fioParts[index]]
+    //       },
+    //     });
+    //   });
+    // };
 
 
-    init($("#first_name"), $("#last_name"));
+    // init($("#first_name"), $("#last_name"));
 
     // // Город, улица, дом, квартира
-    $("#address").suggestions({
-      token: token,
-      type: "ADDRESS",
-      onSelect: function(suggestion) {
-        $("#postal_code").val(suggestion['data']['postal_code'])
-        $("input[name=address_full_info]").val(JSON.stringify((suggestion)) )
-      },
-      constraints: {
-         locations: [
-            { country_iso_code: "RU" },
-            { country_iso_code: "BY" },
-            { country_iso_code: "KZ" },
-         ],
-      },
-    });
+    // $("#address").suggestions({
+    //   token: token,
+    //   type: "ADDRESS",
+    //   onSelect: function(suggestion) {
+    //     $("#postal_code").val(suggestion['data']['postal_code'])
+    //     $("input[name=address_full_info]").val(JSON.stringify((suggestion)) )
+    //   },
+    //   constraints: {
+    //      locations: [
+    //         { country_iso_code: "RU" },
+    //         { country_iso_code: "BY" },
+    //         { country_iso_code: "KZ" },
+    //      ],
+    //   },
+    // });
+
+    // $("#region").suggestions({
+    //     token: token,
+    //     type: "ADDRESS",
+    //     onSelect: function(suggestion) {},
+    //     constraints: {
+    //      locations: [
+    //         { country_iso_code: "RU" },
+    //         { country_iso_code: "BY" },
+    //         { country_iso_code: "KZ" },
+    //      ],
+    //   },
+    // });
+
+    // $("#postal_code").suggestions({
+    //     token: token,
+    //     type: "postal_unit"
+    // });
+
+    // $("#email").suggestions({
+    //     token: token,
+    //     type: "EMAIL",
+    //     onSelect: function(suggestion) {}
+    // });
+    // order create end
+
+    // CDEK_CITIES_URL
+//     {
+//     "code": 79971,
+//     "city": "Киекбаево",
+//     "country_code": "RU",
+//     "country": "Россия",
+//     "region": "Башкортостан респ.",
+//     "region_code": 27,
+//     "sub_region": "Бурзянский р-н",
+//     "postal_codes": [
+//         "453588"
+//     ],
+//     "longitude": 57.259308,
+//     "latitude": 53.044003,
+//     "time_zone": "Asia/Yekaterinburg"
+// }
+    // $.ajax({
+    //     url: CDEK_CITIES_URL,
+    //         method: "POST",
+    //         data: {
+    //             "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
+    //             // "country_iso_code": $("select[name=country_point]").val(),
+    //             "country_iso_code": "RU",
+    //         },
+    // }).done(function(response) {
+    //     response = JSON.parse(response)
+    //     console.log(response)
+    //     return
+    //     var cities = {}
+    //     for (var item of response) {
+    //         var subRegion = (typeof item.sub_region !== "undefined" ? ", "+item.sub_region : "")
+    //         cities[item.city + ', ' + item.region + subRegion] = item.code
+    //     }
+    //     // console.log(cities)
+    //     $( "#city" ).autocomplete({
+    //         source: Object.keys(cities),
+    //         minLength: 3,
+    //         select: function( event, ui ) {
+
+    //         },
+    //         open: function( event, ui ) {
+
+    //         }
+    //     });
+    // })
+
+    function tariffsListSpiner() {
+        $(".tariffs_list").html(
+        '<div class="d-flex justify-content-center">\
+            <div class="spinner-border" role="status">\
+                <span class="sr-only">Loading...</span>\
+            </div>\
+        </div>')
+    }
+
+
+    $(".search_cities").click(function(e) {
+        tariffsListSpiner()
+        var csrf = $("input[name=csrfmiddlewaretoken]").val()
+        console.log($("#city").val().trim().replaceAll(" ", "-"))
+        $.ajax({
+            url: CDEK_CITY_URL,
+            method: "POST",
+            data: {
+                "csrfmiddlewaretoken": csrf,
+                "city": $("#city").val().trim().replaceAll(" ", "-"),
+                "country_iso_code": $("select[name=country_point]").val(),
+            },
+        }).done(function(response) {
+            return response
+        }).done(function(data) {
+            data = JSON.parse(data)
+            if (!data.length) {
+                printErr("Данное направление в службе СДЕК отсутствует.")
+            }
+
+            if (data.length === 1) {
+                var info = data[0]
+                var address = info.country + ", " + info.region + ", " + info.city
+                var countryCode = info.country_code
+                var cityCode = info.code
+
+                $.ajax({
+                    url: CDEK_TARIFFLIST_URL,
+                    method: "POST",
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    data: {
+                        "csrfmiddlewaretoken": csrf,
+                        "cdek_id": cityCode,
+                        "country_iso_code": countryCode,
+                        "city": info.city,
+                        "address": address,
+                    },
+                }).done(function(response) {
+                    response = JSON.parse(response)
+                    printTariffs(response, {
+                        data: {geo_lat: info.latitude, geo_lon: info.longitude} 
+                    })
+                    console.log(response)
+                })
+
+            } else {
+                printErr("Данное направление в службе СДЕК отсутствует.")
+            }
+
+            // if (data.length > 1) {
+            //     var infoList = {}
+            //     var pointsListHTML = "<option>Уточните ваш Н/П</option>"
+            //     for (var info of data) {
+            //         var subRegion = (typeof info.sub_region !== "undefined") ? ", " + info.sub_region : ""
+            //         var address = info.country + ", " + info.region + ", " + info.city + subRegion
+            //         var countryCode = info.country_code
+            //         var cityCode = info.code
+
+            //         pointsListHTML += "<option value='"+cityCode+"'>"+address+"</option>"
+
+            //         infoList[cityCode] = {
+            //             city: info.city,
+            //             address: address,
+            //             countryCode: countryCode,
+            //             cityCode: cityCode,
+            //             geo: {geo_lat: info.latitude, geo_lon: info.longitude}
+            //         }
+            //     }
+
+            //     $(".plist").removeClass("d-none")
+            //     $("#points_list").html(pointsListHTML)
+
+            //     $("#points_list").on("change", function(e) {
+            //         var code = $(this).val()
+            //         $.ajax({
+            //             url: CDEK_TARIFFLIST_URL,
+            //             method: "POST",
+            //             headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            //             data: {
+            //                 "csrfmiddlewaretoken": csrf,
+            //                 "cdek_id": infoList[code].cityCode,
+            //                 "country_iso_code": infoList[code].countryCode,
+            //                 "city": infoList[code].city,
+            //                 "address": infoList[code].address,
+            //             },
+            //         }).done(function(response) {
+
+            //         })
+            //     });
+            // }
+        })
+    })
+});
 
     // $("#country").suggestions({
     //     token: "17a564feb19fabf1391ab53059b81a6a2012b9a9",
     //     type: "country",
     //     onSelect: function(suggestion) {}
     // });
-
-    $("#region").suggestions({
-        token: token,
-        type: "ADDRESS",
-        onSelect: function(suggestion) {},
-        constraints: {
-         locations: [
-            { country_iso_code: "RU" },
-            { country_iso_code: "BY" },
-            { country_iso_code: "KZ" },
-         ],
-      },
-    });
-
-    $("#postal_code").suggestions({
-        token: token,
-        type: "postal_unit"
-    });
-
-    $("#email").suggestions({
-        token: token,
-        type: "EMAIL",
-        onSelect: function(suggestion) {}
-    });
-    // order create end
-});

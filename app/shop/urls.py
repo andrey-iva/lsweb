@@ -59,6 +59,7 @@ urlpatterns = [
 	path('cdek/', include([
 		path('tariffs/', cdek.tarifflist, name='tarifflist'),
 		path('city/', cdek.get_city, name='get_city'),
+		path('cities/', cdek.get_cities, name='get_cities'),
 	])),
 	path('404/', error.page_not_found),
 	path('400/', error.bad_request),
