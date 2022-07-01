@@ -38,8 +38,11 @@
                                 <li><a href="{% url 'shop:policy' %}">Политика сайта </a></li>    
                             </ul>
                         </li>
-                        <li class="menu-item-has-children">
-                            <a href="{% url 'shop:post_list' %}">обзоры </a>
+                        <li class="menu-item-has-children "><a href="#">Обзоры </a>
+                            <ul class="dropdown">
+                                <li><a href="{% url 'shop:post_list' %}">Статьи </a></li>       
+                                <li><a href="{% url 'shop:video_list' %}">Видео </a></li>       
+                            </ul>
                         </li>
                     </ul>
                 </nav>
@@ -52,9 +55,13 @@
             </div>
             <div class="mobile-contact-info mobile-header-padding-border-4">
                 <ul>
-                    <li><i class="icon-phone "></i> <a href="tel:+79651116527">+7-965-111-65-27</a></li>
+                    <li><i class="icon-phone "></i> <a class="hv" href="tel:+79651116527">+7-965-111-65-27</a></li>
                     <li><i class="icon-envelope-open "></i> INFO@ISOFIX-MSK.RU</li>
-                    <li><i class="icon-home"></i> г. Москва, Солнцево, ул.Щорса, д.8 стр.1 – автокомплекс “Buncar”</li>
+                    <li><i class="icon-home"></i>
+                        <a class="hv pl-2" href="https://yandex.ru/maps/?rtext=~55.645283,37.403216">
+                        г. Москва, Солнцево, ул.Щорса, д.8 стр.1 – автокомплекс “Buncar”
+                        </a>
+                    </li>
                 </ul>
             </div>
             <div class="mobile-social-icon">

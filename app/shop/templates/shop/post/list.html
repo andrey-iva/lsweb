@@ -14,7 +14,7 @@
         </div>
     </div>
 </div>
-
+<!-- ... -->
 <div class="blog-area pt-120 pb-120">
     <div class="container">
         <div class="row">
@@ -34,8 +34,8 @@
                                 <li>{{ post.author }}</li>
                             </ul>
                         </div>
-                        <h1><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h1>
-                        <p>{{ post.body_preview|truncatewords:20|linebreaks }}</p>
+                        <h1><a href="{{ post.get_absolute_url }}">{{ post.title|truncatewords:7 }}</a></h1>
+                        <p>{{ post.body_preview|truncatewords:10|linebreaks }}</p>
                     </div>
                 </div>
             </div>

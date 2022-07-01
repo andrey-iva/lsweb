@@ -51,6 +51,9 @@ def contact(request, message=None):
 def policy(request):
 	return render(request, 'shop/policy.html')
 
+def video_list(request):
+	return render(request, 'shop/video.html')
+
 @require_POST
 def contact_send_message(request):
 	successMessage = 'Ваше сообщение отправлено!'

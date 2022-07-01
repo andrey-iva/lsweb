@@ -81,7 +81,12 @@
                                                 <li><a href="{% url 'shop:policy' %}">Политика сайта </a></li>         
                                             </ul>
                                         </li>
-                                        <li><a href="{% url 'shop:post_list' %}">ОБЗОРЫ </a></li>
+                                        <li><a href="#">ОБЗОРЫ </a>
+                                            <ul class="sub-menu-style">
+                                                <li><a href="{% url 'shop:post_list' %}">Статьи </a></li>       
+                                                <li><a href="{% url 'shop:video_list' %}">Видео </a></li>       
+                                            </ul>
+                                        </li>
                                         <!-- <li><a href="#">ДОСТАВКА И ОПЛАТА </a></li>
                                         <li><a href="#">КОНТАКТЫ </a></li>
                                         <li><a href="#">О НАС </a></li> -->

@@ -132,13 +132,13 @@ $( function() {
         // $(".search_city_err_msg").text(message)
         setTimeout(function() {
             // $(".search_city_err_msg").text("")
-            $(".tariffs_list").html("<p>Ничего не найдено!</p>")
+            $(".tariffs_list").html("<p style='color: black;'>Ничего не найдено!</p>")
         }, 3000)
     };
 
     function printTariffs(tariffs, s) {
         if (!tariffs.length) {
-            $(".tariffs_list").html("<p>Ничего не найдено</p>")
+            $(".tariffs_list").html("<p style='color: black;'>Ничего не найдено!</p>")
             return
         }
         var tariffs_list = $(".tariffs_list")
@@ -368,7 +368,7 @@ $( function() {
         } else {
             // $(".tariffs_list").html(tariffListHTML)
             console.log(tariffListHTML)
-            $(".tariffs_list").html("<p>Пункты выдачи закозов не найдены.</p>")
+            $(".tariffs_list").html("<p style='color: black;'>Ничего не найдено!</p>")
         }
     };
 

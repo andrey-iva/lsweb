@@ -10,7 +10,7 @@
                 <li>
                     <a href="{% url 'shop:home' %}">Главная</a>
                 </li>
-                <li class="active">{{ post.title }}</li>
+                <li class="active">{{ post.title|truncatewords:4 }}</li>
             </ul>
         </div>
     </div>

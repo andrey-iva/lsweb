@@ -3,7 +3,7 @@ from yookassa import Configuration
 Configuration.account_id = '916494'
 Configuration.secret_key = 'test_ptA6-o_oaTCYnc9R0Fvh-WIXe50UNgXKIUob2qZT86I'
 PAYMENT_REDIRECT_PAGE    = 'http://127.0.0.1:8000/order/created/'
-PAYMENT_WAITING_TIME     = 600
+PAYMENT_WAITING_TIME     = 900
 
 #cdek
 PROD = False
