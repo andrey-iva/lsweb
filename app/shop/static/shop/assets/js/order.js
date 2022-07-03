@@ -136,6 +136,13 @@ $( function() {
         }, 3000)
     };
 
+    function formatCurr(f) {
+        return new Intl.NumberFormat('ru-RU', {
+            style: 'currency', 
+            currency: 'RUB' 
+        }).format(f)
+    }
+
     function printTariffs(tariffs, s) {
         if (!tariffs.length) {
             $(".tariffs_list").html("<p style='color: black;'>Ничего не найдено!</p>")
@@ -179,20 +186,22 @@ $( function() {
                 name="tariff"\
                 value="'+ (totalSum ? totalSum : deliverySum) +'"\
                 >'+ tariffName +' (до '+ periodMax +' дней) \
-                <span class="text-danger">'+ CURRENCY + (totalSum ? totalSum : deliverySum) +'</span>'
+                <span>'+ formatCurr( (totalSum ? totalSum : deliverySum) ) +'</span>'
 
-                tariffListHTML += '<div class="ml-4" style="font-size: 12px;">-Доставка <span>₽'+ deliverySum +'</span></div>'
+                // tariffListHTML += '<div class="badge badge-danger detail" style="cursor: pointer;">Подробнее</div><div class="d-none">'
+                tariffListHTML += '<div class="ml-3" style="font-size: 12px;">-Доставка <span>'+ formatCurr(deliverySum) +'</span></div>'
                 
                 for (var service of tariffs[i]["services"]) {
                     if (service["code"] === "INSURANCE") {
-                        tariffListHTML += '<div class="ml-4" style="font-size: 12px;">-Страховка <span>₽'+ service["sum"] +'</span></div>'
+                        tariffListHTML += '<div class="ml-3" style="font-size: 12px;">-Страховка <span>'+ formatCurr(service["sum"]) +'</span></div>'
                     }
-                    if (service["code"].match(/^CARTON_FILLER/)) {
-                        tariffListHTML += '<div class="ml-4" style="font-size: 12px;">-Упаковка <span>₽'+ service["sum"] +'</span></div>'
+                    if (service["code"].match(/^WASTE_PAPER/)) {
+                        tariffListHTML += '<div class="ml-3" style="font-size: 12px;">-Упаковка <span>'+ formatCurr(service["sum"]) +'</span></div>'
                     }
                 }
-                tariffListHTML += '<div class="ml-4" style="font-size: 12px;">-Вес <span>'+ weightCalc +'г</span></div>'
-                tariffListHTML += '<div class="ml-4" style="font-size: 12px;">-Стоимость <span>₽'+ totalSum +'</span></div>'
+                
+                tariffListHTML += '<div class="ml-3 text-danger" style="font-size: 12px;">-Стоимость <span>'+ formatCurr(totalSum) +'</span></div>'
+                // tariffListHTML += '</div>'
                 tariffListHTML += '</li>'
             }
         }
@@ -206,6 +215,9 @@ $( function() {
             //     $(".tariffs_list").find("input[data-tariff-code='483']").prop("checked", true)
             // }
             setDefaultPayment()
+            // $(".detail").on("click", function(e) {
+            //     $(this).next().toggleClass("d-none")
+            // })
 
             $("input[name=tariff]").each(function() {
                 if ($(this).prop("checked")) {

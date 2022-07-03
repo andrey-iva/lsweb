@@ -1,4 +1,4 @@
-tt.pyfrom yookassa import Configuration
+from yookassa import Configuration
 
 Configuration.account_id = '916494'
 Configuration.secret_key = 'test_ptA6-o_oaTCYnc9R0Fvh-WIXe50UNgXKIUob2qZT86I'
@@ -10,7 +10,14 @@ PAYMENT_WAITING_TIME     = 900
 # CLIENT_ID     = 'EMscd6r9JnFiQ3bLoyjJY6eM78JrJceI'
 # CLIENT_SECRET = 'PjLZkKBHEiLK3YsjtNrt3TGNG0ahs3kG'
 
+PROD = True
+CLIENT_ID     = 'J0WbjKwXqA6EaIv3BHGw26B4YHnXiG0g'
+CLIENT_SECRET = 'fBTBvteAjRPyjwWpKbqg9Vd1YkU1UQmh'
 
+# order.js
+BOX = 'WASTE_PAPER'
+
+WEIGHT = 1500
 # 55.645283, 37.403216
 FROM_LOCATION = {
 	'code': 44,

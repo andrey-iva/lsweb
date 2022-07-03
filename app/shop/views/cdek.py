@@ -6,7 +6,7 @@ from pprint import pprint
 import requests as r
 import json, time, logging, csv, os
 
-from .. import PROD, CLIENT_ID, CLIENT_SECRET, FROM_LOCATION, TARIFF_CODES
+from .. import PROD, CLIENT_ID, CLIENT_SECRET, FROM_LOCATION, TARIFF_CODES, BOX, WEIGHT
 from ..cart import Cart
 
 if PROD:
@@ -154,8 +154,6 @@ def get_tarifflist(DATA):
 def tarifflist(request):
 	''' калькулятор по тарифам '''
 	cart = Cart(request)
-	packages = [{'weight': 1500 + len(cart) }]
-	services = [{'code': 'WASTE_PAPER', 'parameter': len(cart)}]
 
 	cdek_id          = request.POST.get('cdek_id')
 	country_iso_code = request.POST.get('country_iso_code')
@@ -170,7 +168,7 @@ def tarifflist(request):
 	# 	# 'address': address, 
 	# 	'packages': packages})
 
-	if cdek_id:
+	if cdek_id:		
 		tariffs = get_tarifflist({
 			'type': 1,
 			'currency': 1,
@@ -181,13 +179,20 @@ def tarifflist(request):
 				'country_code': country_iso_code,
 				'city': city,
 			},
-			'packages': [{'weight': 1500} for i in range(0, len(cart))],
+			# 'packages': [{'weight': WEIGHT} for i in range(0, len(cart))],
+			'packages': [{
+				'weight': item['product'].weight * item['quantity']
+			} for item in cart if item['quantity'] > 0],
 			'services': [
-				{'code': 'CARTON_FILLER', 'parameter': len(cart)},
+				{'code': BOX, 'parameter': len(cart)},
 				{'code': 'INSURANCE', 'parameter': str(int(cart.get_total_price())) },
 			],
 		})
-		logging.debug('Packeges: %s', [{'weight': 1500} for i in range(0, len(cart))])
+		
+		logging.debug('Packeges: %s', [{
+				'weight': item['product'].weight * item['quantity']
+			} for item in cart if item['quantity'] > 0])
+
 		if tariffs:
 			# pprint(tariffs)
 			for i in range(0, ATTEMPTS):

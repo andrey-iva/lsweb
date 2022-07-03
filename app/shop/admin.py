@@ -38,20 +38,20 @@ class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     search_fields = ['name', 'item_number']
     fields = [
         'category', 'name', 'slug', 'price', 'price_install',
-        'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type',
+        'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type', 'weight',
         'service_type', 'available', 'attribute', 'image_base', 'preview', 'description_short',
         'description_full', 'seo_title', 'seo_key', 'seo_desc',
         'video_shot', 'preview_shot', 'video', 'preview_video',
     ]
     list_display = [
         'id', 'name', 'item_number', 'price', 'price_install',
-        'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type',
+        'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type', 'weight',
         'service_type', 'available', 'image_base', 'video', 'video_shot', 'description_short',
         'description_full', 'seo_title', 'seo_key', 'seo_desc',
     ]
     list_editable = [
         'name', 'price', 'price_install',
-        'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type',
+        'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type', 'weight',
         'service_type', 'available', 'image_base', 'video', 'video_shot', 'description_short',
         'description_full', 'seo_title', 'seo_key', 'seo_desc',
     ]

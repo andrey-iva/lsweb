@@ -43,6 +43,8 @@ class ProductResource(resources.ModelResource):
     seat_type = fields.Field(attribute='seat_type', column_name='Тип сиденья')
     product_type = fields.Field(attribute='product_type', column_name='Тип продукта')
     service_type = fields.Field(attribute='service_type', column_name='Тип Услуги')
+    weight = fields.Field(attribute='weight', column_name='Вес товара в граммах')
+    # box = fields.Field(attribute='box', column_name='Тип упаковки')
     available = fields.Field(attribute='available', column_name='Есть в наличии')
     image_base = fields.Field(attribute='image_base', column_name='Изображение')
     video = fields.Field(attribute='video', column_name='Видео')
