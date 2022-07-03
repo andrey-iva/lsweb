@@ -6,9 +6,13 @@ PAYMENT_REDIRECT_PAGE    = 'http://127.0.0.1:8000/order/created/'
 PAYMENT_WAITING_TIME     = 900
 
 #cdek
-PROD = False
-CLIENT_ID     = 'EMscd6r9JnFiQ3bLoyjJY6eM78JrJceI'
-CLIENT_SECRET = 'PjLZkKBHEiLK3YsjtNrt3TGNG0ahs3kG'
+# PROD = False
+# CLIENT_ID     = 'EMscd6r9JnFiQ3bLoyjJY6eM78JrJceI'
+# CLIENT_SECRET = 'PjLZkKBHEiLK3YsjtNrt3TGNG0ahs3kG'
+
+PROD = True
+CLIENT_ID     = 'J0WbjKwXqA6EaIv3BHGw26B4YHnXiG0g'
+CLIENT_SECRET = 'fBTBvteAjRPyjwWpKbqg9Vd1YkU1UQmh'
 
 # 55.645283, 37.403216
 FROM_LOCATION = {
@@ -21,7 +25,9 @@ FROM_LOCATION = {
 TARIFF_CODES = {
 	'136': 'Посылка склад-склад',
 	# '137': 'Посылка склад-дверь',
-	# '482': 'Экспресс склад-дверь',
+	# '138': 'Посылка дверь-склад',
+	# '139': 'Посылка дверь-дверь',
+	# '483': 'Экспресс склад-склад',
 }
 
 # app

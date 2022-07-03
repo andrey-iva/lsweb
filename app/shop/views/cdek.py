@@ -7,6 +7,7 @@ import requests as r
 import json, time, logging, csv, os
 
 from .. import PROD, CLIENT_ID, CLIENT_SECRET, FROM_LOCATION, TARIFF_CODES
+from ..cart import Cart
 
 if PROD:
 	GRANT_TYPE          = 'client_credentials'
@@ -22,24 +23,6 @@ else:
 	TARIFF_URL          = 'https://api.edu.cdek.ru/v2/calculator/tariff'
 	CITIES_URL          = 'https://api.edu.cdek.ru/v2/location/cities'
 	DELIVERY_POINTS_URL = 'https://api.edu.cdek.ru/v2/deliverypoints'
-
-DATA = {
-	'type': 1,
-	'currency': 1,
-	'lang': 'rus',
-	'from_location': FROM_LOCATION,
-	'to_location': {
-		# 'code': '',
-		# 'country_code': '',
-		# 'city': '',
-		# 'address': address
-	},
-	# 'packages': [{}],
-	'services': [
-		# {'code': 'WASTE_PAPER', 'parameter': '1'},
-		# {'code': 'INSURANCE', 'parameter': '2'},
-	],
-}
 
 ATTEMPTS = 3
 
@@ -135,14 +118,8 @@ def get_city(request):
 
 	return HttpResponse(json.dumps([]))
 
-def get_tarifflist(cdek_id, country_iso_code, city, address, packages):
+def get_tarifflist(DATA):
 	''' калькулятор по тарифам '''
-	DATA['to_location'] = {
-		'code': cdek_id,
-		'country_code': country_iso_code,
-		'city': city,
-	}
-	DATA['packages'] = packages
 	
 	headers = access_header()
 	logging.debug('Headers: %s', headers)
@@ -176,16 +153,9 @@ def get_tarifflist(cdek_id, country_iso_code, city, address, packages):
 @require_POST
 def tarifflist(request):
 	''' калькулятор по тарифам '''
-	packages = []
-
-	for product in request.session['cart'].values():
-		for i in range(0, int(product['quantity'])):
-			packages.append({
-				'weight': 1500,
-				'length': 50,
-				'width': 20,
-				'height': 10
-			})
+	cart = Cart(request)
+	packages = [{'weight': 1500 + len(cart) }]
+	services = [{'code': 'WASTE_PAPER', 'parameter': len(cart)}]
 
 	cdek_id          = request.POST.get('cdek_id')
 	country_iso_code = request.POST.get('country_iso_code')
@@ -201,18 +171,29 @@ def tarifflist(request):
 	# 	'packages': packages})
 
 	if cdek_id:
-		tariffs = get_tarifflist(
-			cdek_id=cdek_id,
-			country_iso_code=country_iso_code,
-			city=city, 
-			address=address, 
-			packages=packages)
+		tariffs = get_tarifflist({
+			'type': 1,
+			'currency': 1,
+			'lang': 'rus',
+			'from_location': FROM_LOCATION,
+			'to_location': {
+				'code': cdek_id,
+				'country_code': country_iso_code,
+				'city': city,
+			},
+			'packages': [{'weight': 1500} for i in range(0, len(cart))],
+			'services': [
+				{'code': 'CARTON_FILLER', 'parameter': len(cart)},
+				{'code': 'INSURANCE', 'parameter': str(int(cart.get_total_price())) },
+			],
+		})
+		logging.debug('Packeges: %s', [{'weight': 1500} for i in range(0, len(cart))])
 		if tariffs:
 			# pprint(tariffs)
 			for i in range(0, ATTEMPTS):
 				delivery_points = r.get(DELIVERY_POINTS_URL, {
 					'city_code': cdek_id,
-					'type': 'ALL',
+					'type': 'PVZ',
 				}, headers=access_header())
 				
 				if delivery_points.status_code == 200:

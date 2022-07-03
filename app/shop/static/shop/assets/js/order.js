@@ -143,7 +143,7 @@ $( function() {
         }
         var tariffs_list = $(".tariffs_list")
         var deliveryPoints = tariffs.pop()
-        // console.log(tariffs)
+        console.log(tariffs)
         console.log(deliveryPoints)
 
         var tariffListHTML = ""
@@ -179,13 +179,32 @@ $( function() {
                 name="tariff"\
                 value="'+ (totalSum ? totalSum : deliverySum) +'"\
                 >'+ tariffName +' (до '+ periodMax +' дней) \
-                <span>'+ CURRENCY + (totalSum ? totalSum : deliverySum) +'</span></li>'
+                <span class="text-danger">'+ CURRENCY + (totalSum ? totalSum : deliverySum) +'</span>'
+
+                tariffListHTML += '<div class="ml-4" style="font-size: 12px;">-Доставка <span>₽'+ deliverySum +'</span></div>'
+                
+                for (var service of tariffs[i]["services"]) {
+                    if (service["code"] === "INSURANCE") {
+                        tariffListHTML += '<div class="ml-4" style="font-size: 12px;">-Страховка <span>₽'+ service["sum"] +'</span></div>'
+                    }
+                    if (service["code"].match(/^CARTON_FILLER/)) {
+                        tariffListHTML += '<div class="ml-4" style="font-size: 12px;">-Упаковка <span>₽'+ service["sum"] +'</span></div>'
+                    }
+                }
+                tariffListHTML += '<div class="ml-4" style="font-size: 12px;">-Вес <span>'+ weightCalc +'г</span></div>'
+                tariffListHTML += '<div class="ml-4" style="font-size: 12px;">-Стоимость <span>₽'+ totalSum +'</span></div>'
+                tariffListHTML += '</li>'
             }
         }
 
         if (deliveryPoints.length) {
             $(".tariffs_list").html(tariffListHTML)
             $(".tariffs_list").find("input[data-tariff-code='136']").prop("checked", true)
+            // if ($("select[name=country_point]").val() === "RU") {
+            //     $(".tariffs_list").find("input[data-tariff-code='136']").prop("checked", true)
+            // } else {
+            //     $(".tariffs_list").find("input[data-tariff-code='483']").prop("checked", true)
+            // }
             setDefaultPayment()
 
             $("input[name=tariff]").each(function() {
@@ -228,7 +247,7 @@ $( function() {
             $(".maps").empty();
             $(".maps").append(
                 "<div class='delivery-title border-0'>\
-                    <h3>Постаматы и Пункты выдачи заказов</h3>\
+                    <h3>Пункты выдачи заказов</h3>\
                     <div id=\"map\"></div>\
                 </div>"
             )
@@ -819,12 +838,14 @@ $( function() {
                 minLength: 3,
                 delay: 500,
                 select: function( event, ui ) {
-                    cdekFN()
+                    // $(".search_cities").trigger("click")
                 },
                 open: function( event, ui ) {
 
                 }
             });
+
+            // $("#city").select(function(e) { cdekFN() })
         
         })
     })
