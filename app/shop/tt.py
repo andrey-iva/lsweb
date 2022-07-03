@@ -1,4 +1,4 @@
-from yookassa import Configuration
+tt.pyfrom yookassa import Configuration
 
 Configuration.account_id = '916494'
 Configuration.secret_key = 'test_ptA6-o_oaTCYnc9R0Fvh-WIXe50UNgXKIUob2qZT86I'
