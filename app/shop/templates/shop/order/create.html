@@ -1,5 +1,6 @@
 {% extends 'shop/base.html' %}
 {% load static %}
+{% load helpers %}
 {% block title %}Оформление заказа{% endblock %}
 {% block content %}
 <style>
@@ -51,7 +52,7 @@
                         <div class="total-shipping border-0">
                             <h5>Тип доставки</h5>
                             <ul id="delivery_v">
-                                {% if cart.get_products_install_total_price == 0 %}
+                                {% if cart.get_products_install_total_price == 0 and cart|is_not_install:'услуга' %}
                                 <li><input type="radio" name="delivery_name" value="1"> До адреса клиента <span></span></li> 
                                 <li id="delivery_poin"><input type="radio" name="delivery_name" value="2"> До пункта выдачи СДЭК <span></span></li>
                                 <li class="help_text">

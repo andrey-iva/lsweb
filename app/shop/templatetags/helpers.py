@@ -10,10 +10,10 @@ register = template.Library()
 def get_key(d, k):
     return str(k) in d
 
-@register.filter
-def get_quantity(d, k):
-	if str(k) in d:
-		return d[str(k)]['quantity']
+# @register.filter
+# def get_quantity(d, k):
+# 	if str(k) in d:
+# 		return d[str(k)]['quantity']
 
 @register.filter
 def get_product_total_price_install(d, k):
@@ -43,3 +43,11 @@ def get_quantity(request, product_id):
     	if request.session[CART_SESSION_ID].get( str(product_id) ):
     		return request.session[CART_SESSION_ID][str(product_id)]['quantity']
     return '1'
+
+@register.filter
+def is_not_install(cart, k):
+	for item in cart:
+		product = item['product']
+		if product.product_type == k:
+			return False
+	return True
