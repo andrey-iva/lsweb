@@ -205,8 +205,8 @@
                 newVal = 1;
             }
         }
-        if (newVal > 100) {
-            newVal = 100
+        if (newVal > 10) {
+            newVal = 10
         }
         $button.parent().find("input").val(newVal);
     });
@@ -845,8 +845,8 @@
                         newVal = 1;
                     }
                 }
-                if (newVal > 100) {
-                    newVal = 100
+                if (newVal > 10) {
+                    newVal = 10
                 }
                 $button.parent().find("input").val(newVal);
                 quickView.data("productQuantity", newVal)

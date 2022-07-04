@@ -2,7 +2,9 @@ from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage,\
                                   PageNotAnInteger
 from django.views.generic import ListView
+from django.views.decorators.cache import cache_page
 from ..models import Post, Product
+from .. import POSTS_DETAIL_CACHE_TIME
 '''
 https://isofix-msk.ru/blog/instrukciya-isofix/
 https://isofix-msk.ru/blog/neskolko-kresel/
@@ -28,11 +30,9 @@ def post_list(request):
                  {'page': posts,
                   'posts': posts})
 
-
+# @cache_page(POSTS_DETAIL_CACHE_TIME)
 def post_detail(request, post):
-    post = get_object_or_404(Post, slug=post,
-                                   status='published')
-    
+    post = get_object_or_404(Post, slug=post, status='published')
     return render(request,
                   'shop/post/detail.html',
             {

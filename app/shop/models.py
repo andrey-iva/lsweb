@@ -14,7 +14,7 @@ class Category(models.Model):
     class Meta:
         ordering = ('name',)
         verbose_name = 'Категорию'
-        verbose_name_plural = 'Категории'
+        verbose_name_plural = '5.Категории'
 
     def __str__(self):
         return self.name
@@ -208,7 +208,7 @@ class Product(models.Model):
     class Meta:
         ordering = ('id',)
         verbose_name = 'Товар'
-        verbose_name_plural = 'Товары'
+        verbose_name_plural = '2.Товары'
         indexes = (
             models.Index(fields=('id', 'slug')),
         )
@@ -231,7 +231,7 @@ class ProductImage(models.Model):
 
     class Meta:
         ordering = ('id',)
-        verbose_name_plural = 'галерея'
+        verbose_name_plural = '6.Галерея'
 
     def __str__(self):
         return self.image.url
@@ -273,7 +273,7 @@ class Order(models.Model):
     class Meta:
         ordering = ('-created',)
         verbose_name = 'Заказ'
-        verbose_name_plural = 'Заказы'
+        verbose_name_plural = '1.Заказы'
 
     def __str__(self):
         return f'Order {self.id}'
@@ -345,7 +345,7 @@ class Post(models.Model):
 
     class Meta:
         ordering = ('publish',)
-        verbose_name_plural = 'обзоры'
+        verbose_name_plural = '3.Обзоры'
 
     def __str__(self):
         return self.title
@@ -367,4 +367,4 @@ class Message(models.Model):
 
     class Meta:
         ordering = ('status',)
-        verbose_name_plural = 'сообщения'
+        verbose_name_plural = '4.Сообщения'

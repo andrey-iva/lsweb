@@ -161,7 +161,9 @@ $( function() {
             if (tariffs[i]["errors"]) {
                 console.log(tariffs[i])
                 for (var e = 0; e < tariffs[i]["errors"].length; e++) {
-                    tariffListHTML += "<li>"+ tariffs[i]["tariff_name"] + ": " + tariffs[i]["errors"][e]["message"] +"</li>"
+                    var err = tariffs[i]["errors"][e]["message"].split(":")
+                    err = err[err.length - 1]
+                    tariffListHTML += "<li>"+ tariffs[i]["tariff_name"] + ": " + err +"</li>"
                 }
                 continue
             }
@@ -182,6 +184,7 @@ $( function() {
                 <input \
                 data-tariff-code="' + tariffCode + '"\
                 data-delivery-sum="0"\
+                data-tariff-name="'+ tariffName +'"\
                 type="radio"\
                 name="tariff"\
                 value="'+ (totalSum ? totalSum : deliverySum) +'"\
@@ -222,9 +225,13 @@ $( function() {
             $("input[name=tariff]").each(function() {
                 if ($(this).prop("checked")) {
                     $("input[name=delivery_sum]").val(this.value)
+                    $("input[name=delivery_type]").val($(this).data("tariffName"))
                 }
             });
-            $("input[name=tariff]").change(function(e) { setDefaultPayment() })
+            $("input[name=tariff]").change(function(e) {
+                setDefaultPayment()
+
+            })
 
             // Пункты выдачи заказов
             var points = []
@@ -442,7 +449,8 @@ $( function() {
             });
 
             if (option) {
-                $("input[name=address]").val("ПВЗ:" + option.text())
+                // PVZ address
+                $("input[name=address]").val(option.text())
             } else {
                 $("select[name=delivery_points]").addClass("border border-danger")
                 $([document.documentElement, document.body]).animate({

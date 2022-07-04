@@ -1,14 +1,35 @@
+import os, logging
+from dotenv import load_dotenv
 from yookassa import Configuration
 
-Configuration.account_id = '916494'
-Configuration.secret_key = 'test_ptA6-o_oaTCYnc9R0Fvh-WIXe50UNgXKIUob2qZT86I'
-PAYMENT_REDIRECT_PAGE    = 'http://127.0.0.1:8000/order/created/'
-PAYMENT_WAITING_TIME     = 900
+load_dotenv()
+# python manage.py createcachetable
+POSTS_DETAIL_CACHE_TIME = eval(os.getenv('POSTS_DETAIL_CACHE_TIME', '60'))
+PRODUCT_DETAIL_CACHE_TIME = eval(os.getenv('PRODUCT_DETAIL_CACHE_TIME', '60'))
+
+# logging.debug('SHOP loading env %s',  os.getenv('LENV') )
+# logging.debug('POSTS_DETAIL_CACHE_TIME %i',  POSTS_DETAIL_CACHE_TIME)
+# logging.debug('PRODUCT_DETAIL_CACHE_TIME %i',  PRODUCT_DETAIL_CACHE_TIME)
+
+
+Configuration.account_id = os.getenv(
+	'YOOKASSA_ACCOUNT_ID',
+	'916494'
+)
+Configuration.secret_key = os.getenv(
+	'YOOKASSA_SECRET_KEY',
+	'test_ptA6-o_oaTCYnc9R0Fvh-WIXe50UNgXKIUob2qZT86I'
+)
+PAYMENT_REDIRECT_PAGE = os.getenv(
+	'YOOKASSA_PAYMENT_REDIRECT_PAGE',
+	'http://127.0.0.1:8000/order/created/'
+)
+PAYMENT_WAITING_TIME = int(os.getenv('YOOKASSA_PAYMENT_WAITING_TIME', 900))
 
 #cdek
-PROD = False
-CLIENT_ID     = 'EMscd6r9JnFiQ3bLoyjJY6eM78JrJceI'
-CLIENT_SECRET = 'PjLZkKBHEiLK3YsjtNrt3TGNG0ahs3kG'
+PROD          = int(os.getenv('CDEK_PRODUCTION', 0))
+CLIENT_ID     = os.getenv('CLIENT_ID', 'EMscd6r9JnFiQ3bLoyjJY6eM78JrJceI')
+CLIENT_SECRET = os.getenv('CLIENT_SECRET', 'PjLZkKBHEiLK3YsjtNrt3TGNG0ahs3kG')
 
 # order.js
 BOX = 'WASTE_PAPER'
