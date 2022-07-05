@@ -354,7 +354,7 @@ $( function() {
                             $(".maps").empty();
                             $(".maps").append(
                                 "<div class='delivery-title border-0'>\
-                                    <h3>Постаматы и Пункты выдачи заказов</h3>\
+                                    <h3>Пункты выдачи заказов</h3>\
                                     <div id=\"map\"></div>\
                                 </div>"
                             )

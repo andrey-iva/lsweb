@@ -184,7 +184,7 @@ def tarifflist(request):
 				'weight': item['product'].weight * item['quantity']
 			} for item in cart if item['quantity'] > 0],
 			'services': [
-				{'code': BOX, 'parameter': len(cart)},
+				# {'code': BOX, 'parameter': len(cart)},
 				{'code': 'INSURANCE', 'parameter': str(int(cart.get_total_price())) },
 			],
 		})
