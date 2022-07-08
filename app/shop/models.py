@@ -169,6 +169,7 @@ class Product(models.Model):
         help_text='Скриншот для видео, размер скриншота должен соответствовать размеру изображения\
          товара или соотношение сторон должно быть одинаковым'
     )
+    frame_video = models.TextField(blank=True, default='')
     description_short = models.TextField(
         blank=True,
         verbose_name='Краткое описание')

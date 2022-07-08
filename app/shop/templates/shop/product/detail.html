@@ -57,6 +57,7 @@
                         {% if product.video_shot %}
                         <div class="easyzoom-style">
                             <div class="easyzoom easyzoom--overlay">
+                                {% if product.video %}
                                 <a href="{{ product.video.url }}">
                                     <video 
                                     class="w-100"
@@ -66,6 +67,13 @@
                                         <source src="{{ product.video.url }}">
                                     </video>
                                 </a>
+                                {% else %}
+                                    {% if product.frame_video %}
+                                        <div class="thumb-wrap">
+                                            {{ product.frame_video|safe }}
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
                             </div>
                         </div>
                         {% endif %}

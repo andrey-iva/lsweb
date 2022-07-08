@@ -49,6 +49,7 @@ class ProductResource(resources.ModelResource):
     image_base = fields.Field(attribute='image_base', column_name='Изображение')
     video = fields.Field(attribute='video', column_name='Видео')
     video_shot = fields.Field(attribute='video_shot', column_name='Заставка для видео')
+    frame_video = fields.Field(attribute='frame_video', column_name='Iframe')
     description_short = fields.Field(attribute='description_short', column_name='Короткое описание')
     description_full = fields.Field(attribute='description_full', column_name='Полное описание')
     seo_title = fields.Field(attribute='seo_title', column_name='SEO Заголовок')

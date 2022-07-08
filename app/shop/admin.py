@@ -41,19 +41,19 @@ class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
         'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type', 'weight',
         'service_type', 'available', 'attribute', 'image_base', 'preview', 'description_short',
         'description_full', 'seo_title', 'seo_key', 'seo_desc',
-        'video_shot', 'preview_shot', 'video', 'preview_video',
+        'video_shot', 'preview_shot', 'video', 'preview_video', 'frame_video'
     ]
     list_display = [
         'id', 'name', 'item_number', 'price', 'price_install',
         'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type', 'weight',
         'service_type', 'available', 'image_base', 'video', 'video_shot', 'description_short',
-        'description_full', 'seo_title', 'seo_key', 'seo_desc',
+        'description_full', 'seo_title', 'seo_key', 'seo_desc', 'frame_video'
     ]
     list_editable = [
         'name', 'price', 'price_install',
         'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type', 'weight',
         'service_type', 'available', 'image_base', 'video', 'video_shot', 'description_short',
-        'description_full', 'seo_title', 'seo_key', 'seo_desc',
+        'description_full', 'seo_title', 'seo_key', 'seo_desc', 'frame_video'
     ]
     list_filter = ['category', 'available', 'brand_car']
     prepopulated_fields = {'slug': ('name',)}
