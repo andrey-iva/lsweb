@@ -1,10 +1,14 @@
-import json, uuid, time, pickle, logging
+# import json
+import uuid
+import time
+import pickle
+import logging
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+# from django.http import HttpResponse
 from django import forms
-from django.views.decorators.http import require_POST
+# from django.views.decorators.http import require_POST
 from django.core.mail import send_mail
-from yookassa import Configuration, Payment
+from yookassa import Payment
 
 from threading import Thread
 from decimal import Decimal
@@ -12,12 +16,15 @@ from decimal import Decimal
 from ..cart import Cart
 from ..models import OrderItem, Order
 from .. import PAYMENT_REDIRECT_PAGE, PAYMENT_WAITING_TIME, ADMIN_EMAIL
-from pprint import pprint
+from .. import ADMIN_EMAIL_ORDER_INFO, CART_SESSION_ID
+# from pprint import pprint
+
 
 def get_subject(order_id):
     return f'iSOFIX-MSK Заказ №{order_id}'
 
-def get_message(order_id, order_name):
+
+def shopper_message(order_id, order_name):
     return f'''
 <!DOCTYPE html>
 <html lang="ru">
@@ -34,6 +41,43 @@ def get_message(order_id, order_name):
 </body>
 </html>'''
 
+
+def order_info(order_id, copy_cart):
+    order = Order.objects.get(pk=order_id)
+
+    html = ''
+    for item in copy_cart.values():
+        product = item['product']
+        install = 'Да ' + str(item['price_install']) if int(item['price_install']) > 0 else '-'
+        quantity = item['quantity']
+        html += '\n<ul>\n'
+        html += f'\t<li>{product.name}</li>\n'
+        html += f'\t<li>{product.item_number}</li>\n'
+        html += f'\t<li>{product.price}</li>\n'
+        html += f'\t<li>Кол-во: {quantity} шт</li>\n'
+        html += f'\t<li>Установка: {install}</li>\n'
+        html += '\n</ul>\n'
+
+    return f'''
+<h3>Информация о заказе №{order_id}</h3>
+<hr>
+<ul>
+    <li><b>Покупатель</b></li>
+    <li>Имя: {order.first_name}</li>
+    <li>Фамилия: {order.last_name}</li>
+    <li>Телефон: {order.phone}</li>
+    <li>Адрес: {order.address}</li>
+    <li>Доставка: {order.delivery_type}</li>
+    <li>Сумма заказа: {order.grand_total}</li>
+</ul>
+<h3>Продукты</h3>
+<hr>
+<ul>
+    {html}
+</ul>
+'''
+
+
 class OrderCreateForm(forms.ModelForm):
     class Meta:
         model = Order
@@ -44,6 +88,7 @@ class OrderCreateForm(forms.ModelForm):
             'phone', 'email', 'notes'
         ]
 
+
 def payment_status(payment_id, order_id, wait_time):
     '''Отслеживание состояния платежа'''
     order = Order.objects.get(pk=order_id)
@@ -53,7 +98,7 @@ def payment_status(payment_id, order_id, wait_time):
     status = payment.status
     paid = payment.paid
     count = 0
-    
+
     # print(pickle.loads(r))
     while status == 'pending':
         if count == wait_time:
@@ -81,11 +126,14 @@ def payment_status(payment_id, order_id, wait_time):
 
     logging.debug("Thread %s: finishing", payment_id)
 
+
 def get_percent(total_price, percent):
     return (total_price / Decimal(100)) * Decimal(percent)
 
+
 def order_create(request):
     cart = Cart(request)
+    copy_cart = request.session.get(CART_SESSION_ID).copy()
     percent = 0
     if len(cart) == 0:
         return redirect('shop:product_list')
@@ -94,12 +142,14 @@ def order_create(request):
     if request.method == 'POST':
         request_post = request.POST.copy()
         idempotence_key = uuid.uuid4()
-        
+
         if request_post['payment_method'] == '5':
             percent = get_percent(cart.get_total_price(), 5)
-        
-        request_post['grand_total'] = str( 
-            (Decimal(cart.get_total_price()) + percent) + Decimal(request_post['delivery_sum']))
+
+        gtl = Decimal(cart.get_total_price()) + percent
+        gtr = Decimal(request_post['delivery_sum'])
+        gt = gtl + gtr
+        request_post['grand_total'] = str(gt)
 
         # pprint(request_post)
         form = OrderCreateForm(request_post)
@@ -136,22 +186,36 @@ def order_create(request):
                 request.session['order_id'] = str(order.id)
                 request.session['payment_id'] = str(payment.id)
                 request.session.modified = True
-
-                Thread(target=payment_status, args=(payment.id, order.id, PAYMENT_WAITING_TIME)).start()
+                # payment status, set wait time shop/__init__
+                Thread(target=payment_status, args=(
+                    payment.id, order.id, PAYMENT_WAITING_TIME)).start()
+                # client
                 Thread(target=send_mail, args=(
-                        get_subject(order.id),
-                        get_message(order.id, order.first_name),
-                        ADMIN_EMAIL, [order.email]
-                    )).start()
+                    get_subject(order.id),
+                    shopper_message(order.id, order.first_name),
+                    ADMIN_EMAIL, [order.email]
+                )).start()
+                # admin
+                Thread(target=send_mail, args=(
+                    get_subject(order.id),
+                    order_info(order.id, copy_cart),
+                    ADMIN_EMAIL, [ADMIN_EMAIL_ORDER_INFO]
+                )).start()
 
                 return redirect(payment.confirmation.confirmation_url)
-            
+
             Thread(target=send_mail, args=(
-                    get_subject(order.id),
-                    get_message(order.id, order.first_name),
-                    ADMIN_EMAIL, [order.email]
-                 )).start()
-            request.session['order_id'] = str(order.id)    
+                get_subject(order.id),
+                shopper_message(order.id, order.first_name),
+                ADMIN_EMAIL, [order.email]
+            )).start()
+            # admin
+            Thread(target=send_mail, args=(
+                get_subject(order.id),
+                order_info(order.id, copy_cart),
+                ADMIN_EMAIL, [ADMIN_EMAIL_ORDER_INFO]
+            )).start()
+            request.session['order_id'] = str(order.id)
             request.session.modified = True
 
             return redirect('shop:order_created')
@@ -168,7 +232,7 @@ def order_create(request):
 def order_created(request):
     data = {}
     payment_id = request.session.get('payment_id')
-    order_id   = request.session.get('order_id')
+    order_id = request.session.get('order_id')
 
     if payment_id is None and order_id is None:
         return redirect('shop:shop_page')
@@ -178,8 +242,8 @@ def order_created(request):
         logging.debug('Order crested PAYMENT status {%s}', payment.status)
         # если клиет вернулся status penging
         data['status'] = payment.status
-        data['paid']   = payment.paid
-    
+        data['paid'] = payment.paid
+
     data['order_id'] = order_id
 
     if payment_id:

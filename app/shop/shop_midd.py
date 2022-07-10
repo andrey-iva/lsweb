@@ -3,6 +3,7 @@ from threading import Thread
 from django.core import management
 from django.contrib.sessions.models import Session
 
+
 def cleaner():
     logging.debug("Thread session cleaner Start")
     management.call_command('clearsessions')
@@ -20,12 +21,12 @@ def shop_middleware(get_response):
 
         # Code to be executed for each request/response after
         # the view is called.
-        
         length = Session.objects.count()
         if length >= 1000 and request.META.get('path_info'.upper()) == '/':
             cs = Thread(target=cleaner)
             cs.start()
-            logging.debug(f'({cs.name}) ID:{cs.ident} status: %s', 'DAEMON' if cs.daemon else '')
+            status_name = 'DAEMON' if cs.daemon else ''
+            logging.debug(f'({cs.name}) ID:{cs.ident} status: %s', status_name)
 
         return response
 

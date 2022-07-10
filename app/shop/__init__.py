@@ -38,4 +38,5 @@ TARIFF_CODES = {
 CART_SESSION_ID = 'cart'
 GRAND_TOTAL_ID = 'gt'
 NO_IMAGE_PATH = '/static/shop/images/no_image/placeholder.jpg'
-ADMIN_EMAIL = 'admin@mail.com'
+ADMIN_EMAIL_ORDER_INFO = 'info@isofix-msk.ru'
+ADMIN_EMAIL = 'site-admin@email.ru'
