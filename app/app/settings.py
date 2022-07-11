@@ -163,7 +163,24 @@ STATIC_ROOT = 'static/'
 MEDIA_ROOT = 'media/'
 MEDIA_URL = 'media/'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+ADMINS = (
+    ('Andrey', 'andrey.iv.cherkessk@gmail.com'),
+    ('Andrey', 'andrey.cherkessk@yandex.ru'),
+)
+MANAGERS = ADMINS
+
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = "smtp.gmail.com"
+    EMAIL_HOST_USER = "andrey.iv.cherkessk@gmail.com"
+    EMAIL_HOST_PASSWORD = 'andrey42903891'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    # EMAIL_PORT = 465
+    # EMAIL_USE_SSL = True
 
 # SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 # SESSION_COOKIE_AGE = 60

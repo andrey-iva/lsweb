@@ -1,8 +1,9 @@
 from yookassa import Configuration
 
-# python manage.py runserver_plus --cert-file cert.pem --key-file key.pem
-# python manage.py runserver_plus --cert-file ./cert.pem --key-file ./key.pem --keep-meta-shutdown localhost:9000
+# python manage.py runserver_plus --cert-file cert.pem --key-file key.pem localhost:8000
+# --keep-meta-shutdown localhost:9000
 # python manage.py createcachetable
+# python -m smtpd -n -c DebuggingServer localhost:1025
 
 POSTS_DETAIL_CACHE_TIME = 60 * 60 * 24 * 7
 PRODUCT_DETAIL_CACHE_TIME = 600
@@ -38,5 +39,6 @@ TARIFF_CODES = {
 CART_SESSION_ID = 'cart'
 GRAND_TOTAL_ID = 'gt'
 NO_IMAGE_PATH = '/static/shop/images/no_image/placeholder.jpg'
-ADMIN_EMAIL_ORDER_INFO = 'info@isofix-msk.ru'
+# ADMIN_EMAIL_ORDER_INFO = 'info@isofix-msk.ru'
+ADMIN_EMAIL_ORDER_INFO = 'andrey.cherkessk@yandex.ru'
 ADMIN_EMAIL = 'site-admin@email.ru'

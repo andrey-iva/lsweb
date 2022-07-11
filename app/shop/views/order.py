@@ -48,14 +48,15 @@ def order_info(order_id, copy_cart):
     html = ''
     for item in copy_cart.values():
         product = item['product']
-        install = 'Да ' + str(item['price_install']) if int(item['price_install']) > 0 else '-'
+        price = str(item['price_install'])
+        install = 'Да ' + price if int(item['price_install']) > 0 else '-'
         quantity = item['quantity']
         html += '\n<ul>\n'
         html += f'\t<li>{product.name}</li>\n'
         html += f'\t<li>{product.item_number}</li>\n'
         html += f'\t<li>{product.price}</li>\n'
         html += f'\t<li>Кол-во: {quantity} шт</li>\n'
-        html += f'\t<li>Установка: {install}</li>\n'
+        html += f'\t<li>Установка: {install} </li>\n'
         html += '\n</ul>\n'
 
     return f'''
@@ -131,6 +132,15 @@ def get_percent(total_price, percent):
     return (total_price / Decimal(100)) * Decimal(percent)
 
 
+def send_MAIL(subject, message, from_email, to_email):
+    logging.debug('Thread start send_EMAIL: %s', subject)
+    try:
+        send_mail(subject, message, from_email, to_email)
+    except Exception as e:
+        logging.exception('Thread finish send_EMAIL: %s', e)
+    logging.debug('Thread finish send_EMAIL: %s', subject)
+
+
 def order_create(request):
     cart = Cart(request)
     copy_cart = request.session.get(CART_SESSION_ID).copy()
@@ -190,13 +200,13 @@ def order_create(request):
                 Thread(target=payment_status, args=(
                     payment.id, order.id, PAYMENT_WAITING_TIME)).start()
                 # client
-                Thread(target=send_mail, args=(
+                Thread(target=send_MAIL, args=(
                     get_subject(order.id),
                     shopper_message(order.id, order.first_name),
                     ADMIN_EMAIL, [order.email]
                 )).start()
                 # admin
-                Thread(target=send_mail, args=(
+                Thread(target=send_MAIL, args=(
                     get_subject(order.id),
                     order_info(order.id, copy_cart),
                     ADMIN_EMAIL, [ADMIN_EMAIL_ORDER_INFO]
@@ -204,13 +214,13 @@ def order_create(request):
 
                 return redirect(payment.confirmation.confirmation_url)
 
-            Thread(target=send_mail, args=(
+            Thread(target=send_MAIL, args=(
                 get_subject(order.id),
                 shopper_message(order.id, order.first_name),
                 ADMIN_EMAIL, [order.email]
             )).start()
             # admin
-            Thread(target=send_mail, args=(
+            Thread(target=send_MAIL, args=(
                 get_subject(order.id),
                 order_info(order.id, copy_cart),
                 ADMIN_EMAIL, [ADMIN_EMAIL_ORDER_INFO]
