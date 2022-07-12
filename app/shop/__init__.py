@@ -8,6 +8,12 @@ from yookassa import Configuration
 POSTS_DETAIL_CACHE_TIME = 60 * 60 * 24 * 7
 PRODUCT_DETAIL_CACHE_TIME = 600
 
+# retailcrm
+RETAIL_SITE = 'iSOFIX-MSK-EXAMPLE'
+RETAIL_HOST = 'https://isofix-msk.retailcrm.ru'
+RETAIL_CRM_ID = '4q1dIYQYPSUdeYh7lnvmYoJmS0iEeAEb'
+
+# yookassa
 Configuration.account_id = '916494'
 Configuration.secret_key = 'test_ptA6-o_oaTCYnc9R0Fvh-WIXe50UNgXKIUob2qZT86I'
 PAYMENT_REDIRECT_PAGE = 'http://127.0.0.1:8000/order/created/'

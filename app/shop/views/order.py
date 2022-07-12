@@ -1,4 +1,5 @@
 # import json
+import retailcrm
 import uuid
 import time
 import pickle
@@ -17,7 +18,8 @@ from ..cart import Cart
 from ..models import OrderItem, Order
 from .. import PAYMENT_REDIRECT_PAGE, PAYMENT_WAITING_TIME, ADMIN_EMAIL
 from .. import ADMIN_EMAIL_ORDER_INFO, CART_SESSION_ID
-# from pprint import pprint
+from .. import RETAIL_HOST, RETAIL_CRM_ID, RETAIL_SITE
+from pprint import pprint
 
 
 def get_subject(order_id):
@@ -40,6 +42,62 @@ def shopper_message(order_id, order_name):
     </div>
 </body>
 </html>'''
+
+
+def create_retail_order(order_id, copy_cart, percent, delivery_sum):
+    logging.debug('Tread create_retail_order start: %s', order_id)
+    # client = retailcrm.v5(RETAIL_HOST, RETAIL_CRM_ID)
+    order = Order.objects.get(pk=order_id)
+    address = f'{order.country} {order.region} {order.address}'.strip()
+    order_c = {
+        # 'externalId': order_id,
+        'firstName': order.first_name,
+        'lastName': order.last_name,
+        'phone': order.phone,
+        'email': order.email,
+        'delivery': {
+            'address': {'text': address},
+        },
+        # 'payments': [
+        #     {'amount': float(order.grand_total)},
+        # ],
+    }
+    items = []
+    for item in copy_cart.values():
+        product = item['product']
+
+        items.append({
+            'productName': product.name,
+            'initialPrice': float(product.price),
+            'purchasePrice': float(product.price),
+            'quantity': item['quantity'],
+        })
+        if int(item['price_install']) > 0:
+            items.append({
+                'productName': 'Установка -> ' + product.name,
+                'initialPrice': float(item['total_price_install']),
+                'purchasePrice': float(item['total_price_install']),
+                'quantity': item['quantity'],
+            })
+
+    if int(percent) > 0:
+        items.append({
+            'productName': 'Такса 5%',
+            'initialPrice': float(percent),
+            'purchasePrice': float(percent),
+            'quantity': '1',
+        })
+    if int(delivery_sum) > 0:
+        items.append({
+            'productName': 'Стоимость доставки',
+            'initialPrice': float(delivery_sum),
+            'purchasePrice': float(delivery_sum),
+            'quantity': '1',
+        })
+    order_c['items'] = items
+    pprint(order_c)
+    # result = client.order_create(order_c, RETAIL_SITE)
+    logging.debug('Tread create_retail_order finish status: %s', 'result')
 
 
 def order_info(order_id, copy_cart):
@@ -114,8 +172,8 @@ def payment_status(payment_id, order_id, wait_time):
             break
         if status == 'canceled':
             break
-        count += 5
-        time.sleep(5)
+        count += 1
+        time.sleep(1)
 
     order.yookassa_status = payment.status
     if status == 'succeeded':
@@ -178,6 +236,8 @@ def order_create(request):
             # clear_grand_total(request)
             # send mail
             # request.session.flush()
+            Thread(target=create_retail_order,
+                   args=(order.id, copy_cart, percent, gtr)).start()
 
             if request_post['payment_method'] == 'paynow':
                 payment = Payment.create({
