@@ -226,6 +226,7 @@ $( function() {
                 if ($(this).prop("checked")) {
                     $("input[name=delivery_sum]").val(this.value)
                     $("input[name=delivery_type]").val($(this).data("tariffName"))
+                    $("input[name=tariff_code]").val($(this).data("tariffCode"))
                 }
             });
             $("input[name=tariff]").change(function(e) {
@@ -460,6 +461,9 @@ $( function() {
             }
         }
 
+        if ($("select[name=delivery_points]").val()) {
+            $("input[name=pvz_code]").val( $("select[name=delivery_points]").val() )
+        }
 
     });
 
@@ -596,7 +600,7 @@ $( function() {
                 if (document.getElementById("base")) {
                     $([document.documentElement, document.body]).animate({
                         scrollTop: $("#base").offset().top
-                    }, 500);
+                    }, 1500);
                 }
             }, 500)
         }
@@ -880,7 +884,11 @@ $( function() {
         </div>')
     }
 
-    $(".search_cities").click(function(e) { cdekFN() })
+    $(".search_cities").click(function(e) {
+        cdekFN()
+        $("input[name=cdek_city]").val( $("input[name=city]").val() ) 
+        $("input[name=cdek_country_iso]").val( $("select[name=country_point]").val() ) 
+    })
 
     function cdekFN() {
         tariffsListSpiner()

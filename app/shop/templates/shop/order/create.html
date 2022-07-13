@@ -21,7 +21,7 @@
         z-index: 100000000;
     }
 </style>
-{{ request.session.cart }}
+
 <div class="breadcrumb-area bg-gray">
     <div class="container">
         <div class="breadcrumb-content text-center">
@@ -40,7 +40,7 @@
 </div>
 {% endif %}
 
-<div class="checkout-main-area pt-120 pb-120">
+<div class="checkout-main-area pt-50 pb-120">
     <div class="container">        
         <div class="checkout-wrap pt-30">
             <div class="row pb-10 border-0">
@@ -117,6 +117,10 @@
                 <input type="hidden" maxlength="100" name="delivery_type" value="empty">
                 <input type="hidden" maxlength="100" name="delivery_sum" value="0">
                 <input type="hidden" name="address_full_info" value="empty">
+                <input type="hidden" name="cdek_city">
+                <input type="hidden" name="cdek_country_iso">
+                <input type="hidden" name="pvz_code">
+                <input type="hidden" name="tariff_code">
                 <div class="col-lg-7">
                     <div class="billing-info-wrap mr-50">
                         <h3>ДЕТАЛИ ОПЛАТЫ</h3>

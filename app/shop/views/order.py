@@ -44,9 +44,9 @@ def shopper_message(order_id, order_name):
 </html>'''
 
 
-def create_retail_order(order_id, copy_cart, percent, delivery_sum):
+def create_retail_order(order_id, copy_cart, percent, delivery_sum, params=None):
     logging.debug('Tread create_retail_order start: %s', order_id)
-    # client = retailcrm.v5(RETAIL_HOST, RETAIL_CRM_ID)
+    client = retailcrm.v5(RETAIL_HOST, RETAIL_CRM_ID)
     order = Order.objects.get(pk=order_id)
     address = f'{order.country} {order.region} {order.address}'.strip()
     order_c = {
@@ -55,9 +55,9 @@ def create_retail_order(order_id, copy_cart, percent, delivery_sum):
         'lastName': order.last_name,
         'phone': order.phone,
         'email': order.email,
-        'delivery': {
-            'address': {'text': address},
-        },
+        # 'delivery': {
+        #     'address': {},
+        # },
         # 'payments': [
         #     {'amount': float(order.grand_total)},
         # ],
@@ -82,21 +82,44 @@ def create_retail_order(order_id, copy_cart, percent, delivery_sum):
 
     if int(percent) > 0:
         items.append({
-            'productName': 'Такса 5%',
+            'productName': 'К стоимости товаров 5%',
             'initialPrice': float(percent),
             'purchasePrice': float(percent),
             'quantity': '1',
         })
-    if int(delivery_sum) > 0:
-        items.append({
-            'productName': 'Стоимость доставки',
-            'initialPrice': float(delivery_sum),
-            'purchasePrice': float(delivery_sum),
-            'quantity': '1',
-        })
+    # if int(delivery_sum) > 0:
+    #     items.append({
+    #         'productName': 'Стоимость доставки',
+    #         'initialPrice': float(delivery_sum),
+    #         'purchasePrice': float(delivery_sum),
+    #         'quantity': '1',
+    #     })
     order_c['items'] = items
+
+    delivery = {}
+    if params['city'] and params['country_iso'] and params['pvz_code'] and params['tariff']:
+        delivery = {
+            'code': 'sdek',
+            # "integrationCode": "sdek",
+            # 'cost': float(delivery_sum),
+            'address': {
+                'countryIso': params['country_iso'],
+                'city': params['city'],
+                'text': address,
+            },
+            'data': {
+                'pickuppointId': params['pvz_code'],
+                'tariff': params['tariff'],
+                # 'packages': [{'weight': 1500}],
+            },
+            'services': {
+                'code': 'INSURANCE',
+            },
+        }
+
+    order_c['delivery'] = delivery
     pprint(order_c)
-    # result = client.order_create(order_c, RETAIL_SITE)
+    result = client.order_create(order_c, RETAIL_SITE)
     logging.debug('Tread create_retail_order finish status: %s', 'result')
 
 
@@ -237,7 +260,13 @@ def order_create(request):
             # send mail
             # request.session.flush()
             Thread(target=create_retail_order,
-                   args=(order.id, copy_cart, percent, gtr)).start()
+                   args=(order.id, copy_cart, percent, gtr, {
+                       'city': request.POST.get('cdek_city'),
+                       'country_iso': request.POST.get('cdek_country_iso'),
+                       'pvz_code': request.POST.get('pvz_code'),
+                       'tariff': request.POST.get('tariff_code'),
+                   }.copy())
+                   ).start()
 
             if request_post['payment_method'] == 'paynow':
                 payment = Payment.create({
@@ -271,6 +300,9 @@ def order_create(request):
                     order_info(order.id, copy_cart),
                     ADMIN_EMAIL, [ADMIN_EMAIL_ORDER_INFO]
                 )).start()
+                # retail
+                # Thread(target=create_retail_order, args=(
+                #     order.id, copy_cart, percent, gtr, payment.id)).start()
 
                 return redirect(payment.confirmation.confirmation_url)
 
@@ -287,6 +319,9 @@ def order_create(request):
             )).start()
             request.session['order_id'] = str(order.id)
             request.session.modified = True
+
+            # Thread(target=create_retail_order,
+            #        args=(order.id, copy_cart, percent, gtr)).start()
 
             return redirect('shop:order_created')
         else:
