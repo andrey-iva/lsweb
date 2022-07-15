@@ -91,12 +91,14 @@ $( function() {
             method: "POST",
             data: {
                 "percent": percent,
+                "delivery_sum": tax, 
                 "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
             },
         }).done(function(response) {
             try {
                 var response = JSON.parse(response)
-                var grandTotal = (parseFloat(response["grand_total"]) + parseFloat(tax)).toFixed(2)
+                var grandTotal = response["grand_total"]
+                // var grandTotal = (parseFloat(response["grand_total"]) + parseFloat(tax)).toFixed(2)
 
                 if (parseInt(grandTotal)) {
                     // $("#order_grand_total").text( (CURRENCY + grandTotal.toString()).replace(".", ",") )
@@ -211,7 +213,33 @@ $( function() {
 
         if (deliveryPoints.length) {
             $(".tariffs_list").html(tariffListHTML)
-            $(".tariffs_list").find("input[data-tariff-code='136']").prop("checked", true)
+            
+            var deliveryV = parseInt($("input[name=delivery_name]:checked").val())
+             console.log('>>>>>',deliveryV)
+            // До адреса клиента
+            if (deliveryV === 1) {
+                $(".tariffs_list li").each(function(e) {
+                   
+                    if ($(this).find("input[data-tariff-code='137']").val()) {
+                        $(this).find("input[data-tariff-code='137']").prop("checked", true)
+                        $(".delivery_points_list").remove()
+                    } else {
+                        $(this).empty()
+                    }
+                })
+            }
+
+            if (deliveryV === 2) {
+                $(".tariffs_list li").each(function(e) {
+                    if ($(this).find("input[data-tariff-code='136']").val()) {
+
+                        $(this).find("input[data-tariff-code='136']").prop("checked", true)
+                    } else {
+                        $(this).empty()
+                    }
+                })
+            }
+            // $(".tariffs_list").find("input[data-tariff-code='136']").prop("checked", true)
             // if ($("select[name=country_point]").val() === "RU") {
             //     $(".tariffs_list").find("input[data-tariff-code='136']").prop("checked", true)
             // } else {
@@ -226,7 +254,7 @@ $( function() {
                 if ($(this).prop("checked")) {
                     $("input[name=delivery_sum]").val(this.value)
                     $("input[name=delivery_type]").val($(this).data("tariffName"))
-                    $("input[name=tariff_code]").val($(this).data("tariffCode"))
+                    // $("input[name=tariff_code]").val($(this).data("tariffCode"))
                 }
             });
             $("input[name=tariff]").change(function(e) {
@@ -504,43 +532,61 @@ $( function() {
         $("#order_create").removeClass("d-none")
 
         // До адреса клиента
-        if ( parseInt($(this).val()) === 1 ) {
-            clientInfo.attr("hidden", false)
+        // if ( parseInt($(this).val()) === 1 ) {
+        //     $("#country_point").trigger("change")
+        //     $("#country").empty()
+        //     clientInfo.attr("hidden", false)
+        //     $("#cdek_hidden").prop("hidden", false)
 
-            deliveryTypeInfoText.text("До адреса клиента")
-            hiddenInputDeliveryType.val("До адреса клиента")
+        //     deliveryTypeInfoText.text("До адреса клиента")
+        //     hiddenInputDeliveryType.val("До адреса клиента")
 
-            $("#country").prop('required',true)
-            $("#client_info input").each(function() {
-                this.required = true
-            });
+        //     $(".maps").removeClass("d-none");
 
-            $(".payment_method_1").addClass('d-none')
-            $("input[name=payment_method]").change(function(e) {
-                var val = parseInt(this.value)
-                if (val === PERCENT) {
-                    addPercent(val, 0)
-                } else {
-                    addPercent(0, 0)
-                }
-            });
-            // setDefaultPayment()
-            if (document.getElementById("order_create")) {
-                $([document.documentElement, document.body]).animate({
-                    scrollTop: $("#order_create").offset().top
-                }, 1000);
-            }
-        }
-        // До пункта выдачи СДЭК
+        //     $("#country").prop('required', false)
+        //     $("#client_info input").each(function() {
+        //         this.required = true
+        //     });
+
+        //     $(".field_hidden").each(function() {
+        //         $(this).find("input").prop("required", false)
+        //         this.hidden = true
+        //     })
+
+        //     $(".payment_method_1").addClass('d-none')
+        //     $("input[name=payment_method]").change(function(e) {
+        //         var val = parseInt(this.value)
+        //         if (val === PERCENT) {
+        //             addPercent(val, 0)
+        //         } else {
+        //             addPercent(0, 0)
+        //         }
+        //     });
+        //     if (document.getElementById("order_create")) {
+        //         $([document.documentElement, document.body]).animate({
+        //             scrollTop: $("#order_create").offset().top
+        //         }, 1000);
+        //     }
+        // }
+        // До пункта выдачи СДЭК или До адреса клиента
         $("#cdek_hidden").prop("hidden", true)
-        if ( parseInt($(this).val()) === 2 ) {
+        if ( parseInt($(this).val()) === 2 || parseInt($(this).val()) === 1) {
             $("#country_point").trigger("change")
             $("#country").empty()
             clientInfo.attr("hidden", false)
             $("#cdek_hidden").prop("hidden", false)
 
-            deliveryTypeInfoText.text("До пункта выдачи СДЭК")
-            hiddenInputDeliveryType.val("До пункта выдачи СДЭК")
+            if (parseInt($(this).val()) === 2) {
+                deliveryTypeInfoText.text("До пункта выдачи СДЭК")
+                hiddenInputDeliveryType.val("До пункта выдачи СДЭК")
+            }
+
+            if (parseInt($(this).val()) === 1) {
+                deliveryTypeInfoText.text("До адреса клиента")
+                hiddenInputDeliveryType.val("До адреса клиента")
+
+                $("#delivery_addresses").removeClass('d-none')
+            }
 
             $(".maps").removeClass("d-none");
 
@@ -558,7 +604,7 @@ $( function() {
 
             $("input[name=payment_method]").change(function(e) {
                 var paymentVal = parseInt($(this).val())
-                var deliveryTax = parseInt($("input[name=tariff]:checked").val())
+                var deliveryTax = parseFloat($("input[name=tariff]:checked").val())
                 if (paymentVal === PERCENT) {
                     addPercent(paymentVal, deliveryTax)
                 } else {
@@ -623,7 +669,7 @@ $( function() {
 
     // cdek start
     // #city
-    $("#x").suggestions({
+    $("#city").suggestions({
       token: token,
       type: "ADDRESS",
       hint: false,
@@ -773,6 +819,7 @@ $( function() {
       },
     });
     // cdek end
+    // Все что ниже не работает
 
 
 
@@ -844,7 +891,7 @@ $( function() {
     // });
     // order create end
     
-    $("#country_point").change(function(e) {
+    $("#country_point-x").change(function(e) {
         console.log($(this).val())
         $.ajax({
             url: CDEK_CITIES_URL,
@@ -884,7 +931,7 @@ $( function() {
         </div>')
     }
 
-    $(".search_cities").click(function(e) {
+    $(".search_cities-x").click(function(e) {
         cdekFN()
         $("input[name=cdek_city]").val( $("input[name=city]").val() ) 
         $("input[name=cdek_country_iso]").val( $("select[name=country_point]").val() ) 

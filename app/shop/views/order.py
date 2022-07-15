@@ -12,13 +12,14 @@ from django.core.mail import send_mail
 from yookassa import Payment
 
 from threading import Thread
-from decimal import Decimal
+from decimal import Decimal, getcontext
 
 from ..cart import Cart
 from ..models import OrderItem, Order
 from .. import PAYMENT_REDIRECT_PAGE, PAYMENT_WAITING_TIME, ADMIN_EMAIL
 from .. import ADMIN_EMAIL_ORDER_INFO, CART_SESSION_ID
 from .. import RETAIL_HOST, RETAIL_CRM_ID, RETAIL_SITE
+from .. import WEIGHT
 from pprint import pprint
 
 
@@ -48,19 +49,12 @@ def create_retail_order(order_id, copy_cart, percent, delivery_sum, params=None)
     logging.debug('Tread create_retail_order start: %s', order_id)
     client = retailcrm.v5(RETAIL_HOST, RETAIL_CRM_ID)
     order = Order.objects.get(pk=order_id)
-    address = f'{order.country} {order.region} {order.address}'.strip()
+    # address = f'{order.country} {order.region} {order.address}'.strip()
     order_c = {
-        # 'externalId': order_id,
         'firstName': order.first_name,
         'lastName': order.last_name,
         'phone': order.phone,
         'email': order.email,
-        # 'delivery': {
-        #     'address': {},
-        # },
-        # 'payments': [
-        #     {'amount': float(order.grand_total)},
-        # ],
     }
     items = []
     for item in copy_cart.values():
@@ -80,47 +74,52 @@ def create_retail_order(order_id, copy_cart, percent, delivery_sum, params=None)
                 'quantity': item['quantity'],
             })
 
-    if int(percent) > 0:
-        items.append({
-            'productName': 'К стоимости товаров 5%',
-            'initialPrice': float(percent),
-            'purchasePrice': float(percent),
-            'quantity': '1',
-        })
-    # if int(delivery_sum) > 0:
-    #     items.append({
-    #         'productName': 'Стоимость доставки',
-    #         'initialPrice': float(delivery_sum),
-    #         'purchasePrice': float(delivery_sum),
-    #         'quantity': '1',
-    #     })
     order_c['items'] = items
 
     delivery = {}
     if params['city'] and params['country_iso'] and params['pvz_code'] and params['tariff']:
-        delivery = {
-            'code': 'sdek',
-            # "integrationCode": "sdek",
-            # 'cost': float(delivery_sum),
-            'address': {
-                'countryIso': params['country_iso'],
-                'city': params['city'],
-                'text': address,
-            },
-            'data': {
-                'pickuppointId': params['pvz_code'],
-                'tariff': params['tariff'],
-                # 'packages': [{'weight': 1500}],
-            },
-            'services': {
-                'code': 'INSURANCE',
-            },
-        }
+        if params['payment_method']:
+
+            paym = ''
+            if params['payment_method'] == '5':
+                paym = 'cash-on-delivery'
+                # paym = 'cash'
+                delivery_sum = delivery_sum + percent
+            if params['payment_method'] == 'paynow':
+                paym = 'bank-card'
+
+            delivery = {
+                'code': 'sdek',
+                'integrationCode': 'sdek',
+                'address': {
+                    'countryIso': params['country_iso'],
+                    'city': params['city'],
+                },
+                'data': {
+                    'pickuppointId': params['pvz_code'],
+                    'tariff': params['tariff'],
+                },
+            }
+            order_c['payments'] = [{'type': paym}]
+    else:
+        if params['payment_method'] == '0':
+            delivery = {
+                'code': 'self-delivery',
+            }
+            order_c['payments'] = [{'type': 'cash'}]
+
+        if params['payment_method'] == 'paynow':
+            delivery = {
+                'code': 'self-delivery',
+            }
+            order_c['payments'] = [{'type': 'bank-card'}]
 
     order_c['delivery'] = delivery
     pprint(order_c)
     result = client.order_create(order_c, RETAIL_SITE)
-    logging.debug('Tread create_retail_order finish status: %s', 'result')
+    # 'get_error_msg', 'get_errors', 'get_response', 'get_status_code', 'is_successful'
+    logging.debug('Retail response status: %s', result.get_response())
+    logging.debug('Tread create_retail_order finish status: %s', result.get_status_code())
 
 
 def order_info(order_id, copy_cart):
@@ -210,7 +209,8 @@ def payment_status(payment_id, order_id, wait_time):
 
 
 def get_percent(total_price, percent):
-    return (total_price / Decimal(100)) * Decimal(percent)
+    # return (total_price / Decimal(100)) * Decimal(percent)
+    return total_price * Decimal((1 + percent / 100))
 
 
 def send_MAIL(subject, message, from_email, to_email):
@@ -234,15 +234,18 @@ def order_create(request):
         request_post = request.POST.copy()
         idempotence_key = uuid.uuid4()
 
+        getcontext().prec = 6
         if request_post['payment_method'] == '5':
-            percent = get_percent(cart.get_total_price(), 5)
+            gt = (cart.get_total_price() + Decimal(request_post['delivery_sum'])) * Decimal(1 + 5.2631 / 100)
+        else:
+            gt = cart.get_total_price() + Decimal(request_post['delivery_sum'])
 
-        gtl = Decimal(cart.get_total_price()) + percent
-        gtr = Decimal(request_post['delivery_sum'])
-        gt = gtl + gtr
+        # gtl = Decimal(cart.get_total_price()) + percent
+        # gtr = Decimal(request_post['delivery_sum'])
+        # gt = gtl + gtr
         request_post['grand_total'] = str(gt)
 
-        # pprint(request_post)
+        pprint(request_post)
         form = OrderCreateForm(request_post)
         if form.is_valid():
             order = form.save()
@@ -259,14 +262,16 @@ def order_create(request):
             # clear_grand_total(request)
             # send mail
             # request.session.flush()
-            Thread(target=create_retail_order,
-                   args=(order.id, copy_cart, percent, gtr, {
-                       'city': request.POST.get('cdek_city'),
-                       'country_iso': request.POST.get('cdek_country_iso'),
-                       'pvz_code': request.POST.get('pvz_code'),
-                       'tariff': request.POST.get('tariff_code'),
-                   }.copy())
-                   ).start()
+            
+            # Thread(target=create_retail_order,
+            #        args=(order.id, copy_cart, percent, Decimal(request_post['delivery_sum']), {
+            #            'city': request.POST.get('cdek_city'),
+            #            'country_iso': request.POST.get('cdek_country_iso'),
+            #            'pvz_code': request.POST.get('pvz_code'),
+            #            'tariff': request.POST.get('tariff_code'),
+            #            'payment_method': request.POST.get('payment_method')
+            #        }.copy())
+            #        ).start()
 
             if request_post['payment_method'] == 'paynow':
                 payment = Payment.create({

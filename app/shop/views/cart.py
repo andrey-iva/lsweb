@@ -8,7 +8,9 @@ from ..models import Product
 from ..cart import Cart
 from ..ctx_proc import currency
 
-import json, logging
+import json
+import logging
+
 
 @require_POST
 def cart_add(request, product_id):
@@ -24,11 +26,11 @@ def cart_add(request, product_id):
         product = get_object_or_404(Product, id=product_id)
 
         if quantity > 0:
-            cart.add(product=product, 
-                    quantity=quantity,
-                    override_quantity=override,
-                    install=install,
-                    loop=loop)
+            cart.add(product=product,
+                     quantity=quantity,
+                     override_quantity=override,
+                     install=install,
+                     loop=loop)
 
             if request.headers.get('X-Requested-With'):
                 price = Decimal(cart.cart[str(product_id)]['price']) * quantity
@@ -36,7 +38,7 @@ def cart_add(request, product_id):
 
                 total_price = currency(request)['currency'] + str(price)
                 total_price_install = currency(request)['currency'] + str(price_install)
-                
+
                 sub_total = currency(
                     request)['currency'] + str(cart.get_total_price())
 
@@ -63,28 +65,35 @@ def add_delivery_tax(request):
             grand_total = Decimal(cart.get_total_price()) + Decimal(delivery_tax)
 
             return HttpResponse(json.dumps({
-                    'grand_total': str(grand_total)
-                }))
+                'grand_total': str(grand_total)
+            }))
 
     return HttpResponse(json.dumps({'error': 'fail add delivery tax!'}))
+
 
 @require_POST
 def add_percent(request):
     percent = request.POST.get('percent')
+    delivery_sum = request.POST.get('delivery_sum')
     grand_total = 0
 
     cart = Cart(request)
 
     if percent is not None:
         if int(percent) >= 0:
-            percent = (cart.get_total_price() / Decimal(100)) * Decimal(percent)
-            grand_total = cart.get_total_price() + percent
-            
+            percent = '5.2631' if int(percent) > 0 else '0'
+            logging.debug('percent %s', percent)
+            logging.debug('delivery_sum %s', delivery_sum)
+            percent = ((cart.get_total_price() + Decimal(delivery_sum)) /
+                       Decimal(100)) * Decimal(percent)
+            grand_total = (cart.get_total_price() + Decimal(delivery_sum)) + percent
+
             return HttpResponse(json.dumps({
-                    'grand_total': str(grand_total)
-                }))
+                'grand_total': str(grand_total)
+            }))
 
     return HttpResponse(json.dumps({'error': 'no add percent!'}))
+
 
 @require_POST
 def set_loop_marker_on(request, product_id):
@@ -94,6 +103,7 @@ def set_loop_marker_on(request, product_id):
         return HttpResponse(f'set marker for product {product_id} OK')
     return HttpResponse(f'set marker for product {product_id} FAIL')
 
+
 @require_POST
 def remove_loop_marker(request):
     for item in request.session[CART_SESSION_ID].values():
@@ -102,6 +112,7 @@ def remove_loop_marker(request):
     request.session.modified = True
     return HttpResponse('remove markers')
 
+
 @require_POST
 def cart_count_quantity(request):
     cart = Cart(request)
@@ -109,8 +120,9 @@ def cart_count_quantity(request):
     for item in cart:
         if item.get('loop_quantity'):
             quantity_on += int(item['quantity'])
-            
+
     return HttpResponse(json.dumps({'quantity_on': str(quantity_on)}))
+
 
 @require_POST
 def cart_loop_off(request, product_id):
@@ -122,6 +134,7 @@ def cart_loop_off(request, product_id):
             return HttpResponse(json.dumps({'loop_del': 'ok'}))
 
     return HttpResponse(json.dumps({'loop_del': 'no'}))
+
 
 @require_POST
 def cart_remove_loop(request, product_id):
@@ -148,9 +161,10 @@ def cart_remove_loop(request, product_id):
             if cart.session[CART_SESSION_ID].get(str(product.id)):
                 cart.session[CART_SESSION_ID][str(product.id)]['quantity'] = quantity
         cart.save()
-        
+
         return HttpResponse(json.dumps({"loop_quantity": quantity}))
     return HttpResponse(json.dumps({"loop_quantity": 'fail'}))
+
 
 @require_POST
 def cart_remove(request, product_id):
@@ -164,7 +178,7 @@ def cart_remove(request, product_id):
                 del item['loop_quantity']
         cart.save()
 
-    if request.headers.get('X-Requested-With'):       
+    if request.headers.get('X-Requested-With'):
         sub_total = currency(
             request)['currency'] + str(cart.get_total_price())
         return HttpResponse(json.dumps({
@@ -211,6 +225,7 @@ def cart_json(request):
     # else:
     #     return HttpResponse(json.dumps({'cart': 'empty'}))
     return redirect('shop:product_list')
+
 
 def cart_clear(request):
     cart = Cart(request)
