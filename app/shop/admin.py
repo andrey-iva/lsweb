@@ -41,13 +41,13 @@ class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
         'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type', 'weight',
         'service_type', 'available', 'attribute', 'image_base', 'preview', 'description_short',
         'description_full', 'seo_title', 'seo_key', 'seo_desc',
-        'video_shot', 'preview_shot', 'video', 'preview_video', 'frame_video'
+        'video_shot', 'preview_shot', 'video', 'preview_video', 'frame_video',
     ]
     list_display = [
         'id', 'name', 'item_number', 'price', 'price_install',
         'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type', 'weight',
         'service_type', 'available', 'image_base', 'video', 'video_shot', 'description_short',
-        'description_full', 'seo_title', 'seo_key', 'seo_desc', 'frame_video'
+        'description_full', 'seo_title', 'seo_key', 'seo_desc', 'frame_video',
     ]
     list_editable = [
         'name', 'price', 'price_install',
@@ -79,7 +79,7 @@ class OrderAdmin(admin.ModelAdmin):
     empty_value_display = '-empty-'
     list_display = ['id', 'first_name', 'status', 'paid', 'grand_total', 'phone', 'created']
     list_filter = ['paid', 'status', 'created']
-    exclude = ['yookassa_full_info', 'address_full_info']
+    exclude = ['yookassa_full_info']
     # list_editable = ['paid', 'status']
     inlines = [OrderItemInline]
 

@@ -5,7 +5,7 @@
 {% block content %}
 <style>
     input {
-      background-image: linear-gradient(to right, white, #f5f5f5);
+      background-image: linear-gradient(to right, white, #DCDCDC);
     }
     .suggestions-suggestions a {
         background: white;
@@ -81,7 +81,7 @@
                                     <!-- d-flex -->
                                     <div class="mt-2">
 
-                                        <input class="form-control form-control-sm bg-light outline-none border border-secondary rounded-0 mr-1" maxlength="50" type="text" name="city" id="city">
+                                        <input class="form-control bg-light outline-none border border-secondary rounded-0 mr-1" maxlength="50" type="text" name="city" id="city">
                                         <!-- <button class="btn btn-outline-dark btn-sm search_cities">Посчитать</button> -->
 
                                     </div>
@@ -118,6 +118,8 @@
                 <input type="hidden" maxlength="100" name="delivery_type" value="empty">
                 <input type="hidden" maxlength="100" name="delivery_sum" value="0">
                 <input type="hidden" name="address_full_info" value="empty">
+                <input type="hidden" name="pvz_code">
+                <input type="hidden" name="tariff_code">
                 <div class="col-lg-7">
                     <div class="billing-info-wrap mr-50">
                         <h3>ДЕТАЛИ ОПЛАТЫ</h3>
@@ -136,40 +138,54 @@
                                 </div>
                             </div>
 
-<div id="delivery_addresses" class="d-none">
+<div id="delivery_addresses" class="d-none" style="font-size: 12px;">
+    <div class="billing-info mb-20 col">
+        <label for="street">Улица <abbr class="required" title="Улица, обязательно для заполнения">*</abbr></label>
+        <input maxlength="200" type="text" name="street" id="street" value="{{request.POST.street}}">
+    </div>
     <div class="d-flex justify-content-around mt-3">
         <div id="building-text" class="w-25">
             <div>
                 <label class="label-common" for="intaro_crmbundle_ordertype_deliveryAddress_building">Дом 
                     <abbr class="required text-danger" title="Номер Дома, обязательно для заполнения">*</abbr>
                 </label>
-                <input type="text" id="intaro_crmbundle_ordertype_deliveryAddress_building" name="intaro_crmbundle_ordertype[deliveryAddress][building]" autocomplete="disabled"></div>
+                <input type="text" id="building" name="building" autocomplete="disabled" value="{{request.POST.billing}}"></div>
         </div>
         <div id="flat-text" class="w-25">
             <div>
-                <label for="intaro_crmbundle_ordertype_deliveryAddress_flat">Квартира</label>
-                <input type="text" id="intaro_crmbundle_ordertype_deliveryAddress_flat" name="intaro_crmbundle_ordertype[deliveryAddress][flat]" autocomplete="disabled"></div>
+                <label for="intaro_crmbundle_ordertype_deliveryAddress_flat">Квартира
+                    <abbr class="required text-success" title="Квартира">*</abbr>
+                </label>
+                <input type="text" id="flat" name="flat" autocomplete="disabled" value="{{request.POST.flat}}"></div>
         </div>
         <div id="house-text" class="w-25">
             <div>
-                <label for="intaro_crmbundle_ordertype_deliveryAddress_house">Строение</label>
-                <input type="text" id="intaro_crmbundle_ordertype_deliveryAddress_house" name="intaro_crmbundle_ordertype[deliveryAddress][house]" autocomplete="disabled"></div>
+                <label for="intaro_crmbundle_ordertype_deliveryAddress_house">Строение
+                    <abbr class="required text-success" title="Строение">*</abbr>
+                </label>
+                <input type="text" id="house" name="house" autocomplete="disabled" value="{{request.POST.house}}"></div>
         </div>
     </div>
-    <div class="d-flex justify-content-around mb-5">
+    <div class="d-flex justify-content-around mt-3 mb-5">
         <div id="block-text" class="w-25">
             <div>
-                <label for="intaro_crmbundle_ordertype_deliveryAddress_block">Подъезд</label>
-                <input type="number" id="intaro_crmbundle_ordertype_deliveryAddress_block" name="intaro_crmbundle_ordertype[deliveryAddress][block]" autocomplete="disabled"></div>
+                <label for="intaro_crmbundle_ordertype_deliveryAddress_block">Подъезд
+                    <abbr class="required text-success" title="Подъезд">*</abbr>
+                </label>
+                <input type="number" id="block" name="block" autocomplete="disabled" value="{{request.POST.block}}"></div>
         </div>
         <div id="floor-text" class="w-25">
             <div>
-                <label for="intaro_crmbundle_ordertype_deliveryAddress_floor">Этаж</label>
-                <input type="number" id="intaro_crmbundle_ordertype_deliveryAddress_floor" name="intaro_crmbundle_ordertype[deliveryAddress][floor]" autocomplete="disabled"></div>
+                <label for="intaro_crmbundle_ordertype_deliveryAddress_floor">Этаж
+                    <abbr class="required text-success" title="Этаж">*</abbr>
+                </label>
+                <input type="number" id="floor" name="floor" autocomplete="disabled" value="{{request.POST.floor}}"></div>
         </div>
         <div id="housing-text" class="w-25">
             <div>
-                <label for="intaro_crmbundle_ordertype_deliveryAddress_housing">Корпус</label><input type="text" id="intaro_crmbundle_ordertype_deliveryAddress_housing" name="intaro_crmbundle_ordertype[deliveryAddress][housing]" autocomplete="disabled"></div>
+                <label for="intaro_crmbundle_ordertype_deliveryAddress_housing">Корпус
+                    <abbr class="required text-success" title="Корпус">*</abbr>
+                </label><input type="text" id="housing" name="housing" autocomplete="disabled" value="{{request.POST.housing}}"></div>
         </div>
     </div>
 </div>
@@ -178,12 +194,7 @@
                             <div class="col-lg-12 field_hidden">
                                 <div class="billing-info mb-20">
                                     <label for="country">Страна <abbr class="required" title="required">*</abbr></label>
-                                    <select name="country" id="country" class="border-bottom border-secondary">
-                                        <option>Беларусь</option>
-                                        <option>Казахстан</option>
-                                        <option selected>Россия</option>
-                                    </select>
-                                    <!-- <input maxlength="50" type="text" name="country" id="country" placeholder="Страна" required> -->
+                                    <input maxlength="50" type="text" name="country" id="country" placeholder="Страна" required>
                                 </div>
                             </div>
                             <div class="col-lg-12 col-md-12 field_hidden">
@@ -204,7 +215,7 @@
                                     <input maxlength="20" type="text" name="postal_code" id="postal_code" value="{{request.POST.postal_code}}">
                                 </div>
                             </div>
-                            <div class="col-lg-12 col-md-12">
+                            <div class="col-lg-6 col-md-6">
                                 <div class="billing-info mb-20">
                                     <label for="phone">Телефон <abbr class="required" title="Телефон, обязательно для заполнения">*</abbr></label>
                                     <input maxlength="100" type="text" name="phone" id="phone" style="padding-left: 50px;" value="{{request.POST.phone}}">
@@ -270,6 +281,17 @@
                                         </li>
                                     </ul>
                                 </div>
+
+                                <ul class="mt-3" style="font-size: 12px;">
+                                    <li class="info_list_country"></li>
+                                    <li class="info_list_region"></li>
+                                    <!-- <li class="info_list_city"></li> -->
+                                    <li class="info_list_pvz"></li>
+                                    <li class="info_list_name"></li>
+                                    <li class="info_list_phone"></li>
+                                    <li class="info_list_email"></li>
+                                    <li class="info_list_address"></li>
+                                </ul>
                             </div>
                             <div id="payment-method" class="payment-method d-none">
                                 <div class="pay-top sin-payment payment_method_1">

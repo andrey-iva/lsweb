@@ -4,6 +4,7 @@ import uuid
 import time
 import pickle
 import logging
+import json
 from django.shortcuts import render, redirect
 # from django.http import HttpResponse
 from django import forms
@@ -19,7 +20,7 @@ from ..models import OrderItem, Order
 from .. import PAYMENT_REDIRECT_PAGE, PAYMENT_WAITING_TIME, ADMIN_EMAIL
 from .. import ADMIN_EMAIL_ORDER_INFO, CART_SESSION_ID
 from .. import RETAIL_HOST, RETAIL_CRM_ID, RETAIL_SITE
-from .. import WEIGHT
+from .. import WEIGHT, PERCENT
 from pprint import pprint
 
 
@@ -45,11 +46,12 @@ def shopper_message(order_id, order_name):
 </html>'''
 
 
-def create_retail_order(order_id, copy_cart, percent, delivery_sum, params=None):
+def create_retail_order(order_id, copy_cart, params=None):
     logging.debug('Tread create_retail_order start: %s', order_id)
     client = retailcrm.v5(RETAIL_HOST, RETAIL_CRM_ID)
     order = Order.objects.get(pk=order_id)
-    # address = f'{order.country} {order.region} {order.address}'.strip()
+    dadata = json.loads(order.address_full_info)
+
     order_c = {
         'firstName': order.first_name,
         'lastName': order.last_name,
@@ -76,50 +78,49 @@ def create_retail_order(order_id, copy_cart, percent, delivery_sum, params=None)
 
     order_c['items'] = items
 
+    payment_method = ''
+    # самовывоз
+    if params['payment_method'] == '0':
+        payment_method = 'cash'
+    # при получении сдек
+    if params['payment_method'] == '5':
+        payment_method = 'cash-on-delivery'
+    # картой сдек
+    if params['payment_method'] == 'paynow':
+        payment_method = 'bank-card'
+
+    # payments = [{'type': payment_method}]
+    order_c['payments'] = [{'type': payment_method}]
+
     delivery = {}
-    if params['city'] and params['country_iso'] and params['pvz_code'] and params['tariff']:
-        if params['payment_method']:
-
-            paym = ''
-            if params['payment_method'] == '5':
-                paym = 'cash-on-delivery'
-                # paym = 'cash'
-                delivery_sum = delivery_sum + percent
-            if params['payment_method'] == 'paynow':
-                paym = 'bank-card'
-
-            delivery = {
-                'code': 'sdek',
-                'integrationCode': 'sdek',
-                'address': {
-                    'countryIso': params['country_iso'],
-                    'city': params['city'],
-                },
-                'data': {
-                    'pickuppointId': params['pvz_code'],
-                    'tariff': params['tariff'],
-                },
-            }
-            order_c['payments'] = [{'type': paym}]
-    else:
-        if params['payment_method'] == '0':
-            delivery = {
-                'code': 'self-delivery',
-            }
-            order_c['payments'] = [{'type': 'cash'}]
-
-        if params['payment_method'] == 'paynow':
-            delivery = {
-                'code': 'self-delivery',
-            }
-            order_c['payments'] = [{'type': 'bank-card'}]
+    if params.get('tariff_code'):
+        delivery = {
+            'code': 'sdek',
+            'integrationCode': 'sdek',
+            'address': {
+                'countryIso': dadata['data'].get('country_iso_code', ''),
+                'city': dadata['data'].get('city_with_type', ''),
+                'region': dadata['data'].get('region_with_type', ''),
+                'city': dadata['data'].get('city_with_type', ''),
+                'street': 'ул ' + params.get('street', '').capitalize(),
+                'building': params.get('building', ''),
+                'flat': params.get('flat', ''),
+                'text': order.address,
+            },
+            'data': {
+                'pickuppointId': params.get('pvz_code', ''),
+                'tariff': params['tariff_code'],
+            },
+        }
 
     order_c['delivery'] = delivery
+
     pprint(order_c)
     result = client.order_create(order_c, RETAIL_SITE)
     # 'get_error_msg', 'get_errors', 'get_response', 'get_status_code', 'is_successful'
     logging.debug('Retail response status: %s', result.get_response())
     logging.debug('Tread create_retail_order finish status: %s', result.get_status_code())
+    # logging.debug('Tread create_retail_order finish status: %s', 'end')
 
 
 def order_info(order_id, copy_cart):
@@ -236,7 +237,8 @@ def order_create(request):
 
         getcontext().prec = 6
         if request_post['payment_method'] == '5':
-            gt = (cart.get_total_price() + Decimal(request_post['delivery_sum'])) * Decimal(1 + 5.2631 / 100)
+            gt = (cart.get_total_price() +
+                  Decimal(request_post['delivery_sum'])) * Decimal(1 + PERCENT / 100)
         else:
             gt = cart.get_total_price() + Decimal(request_post['delivery_sum'])
 
@@ -263,16 +265,8 @@ def order_create(request):
             # send mail
             # request.session.flush()
             
-            # Thread(target=create_retail_order,
-            #        args=(order.id, copy_cart, percent, Decimal(request_post['delivery_sum']), {
-            #            'city': request.POST.get('cdek_city'),
-            #            'country_iso': request.POST.get('cdek_country_iso'),
-            #            'pvz_code': request.POST.get('pvz_code'),
-            #            'tariff': request.POST.get('tariff_code'),
-            #            'payment_method': request.POST.get('payment_method')
-            #        }.copy())
-            #        ).start()
-
+            Thread(target=create_retail_order, args=(order.id, copy_cart, request_post)).start()
+            
             if request_post['payment_method'] == 'paynow':
                 payment = Payment.create({
                     'amount': {

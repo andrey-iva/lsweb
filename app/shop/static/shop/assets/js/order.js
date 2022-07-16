@@ -1,4 +1,50 @@
 $( function() {
+    // д. Дом, кв. Квартира, стр. Строение, к. Корпус
+    $("body").change(function(e) {
+        var first_name = $("#first_name").val()
+        var last_name = $("#last_name").val()
+        var phone = $("#phone").val()
+        var email = $("#email").val()
+
+        $('.info_list_name').text( first_name && last_name ? last_name + " " + first_name : "" )
+        $('.info_list_phone').text( phone ? phone : "" )
+        $('.info_list_email').text( email ? email : "" )
+
+        var address = ""
+        var street = $("input[name=street]").val()
+        address += street ? 'ул ' + street.charAt(0).toUpperCase() + street.slice(1) + ", ": ""
+
+        var building = $("input[name=building]").val()
+        address += building ? 'д ' + building + ", ": ""
+
+        var flat = $("input[name=flat]").val()
+        address += flat ? 'кв ' + flat + ", ": ""
+
+        var house = $("input[name=house]").val()
+        address += house ? 'стр ' + house + ", ": ""
+
+        var block = $("input[name=block]").val()
+        address += block ? 'пд ' + block + ", ": ""
+
+        var floor = $("input[name=floor]").val()
+        address += floor ? 'эт ' + floor + ", ": ""
+
+        var housing = $("input[name=housing]").val()
+        address += housing ? 'корп ' + housing + ", ": ""
+
+        var lIndex = address.lastIndexOf(',')
+        if (lIndex !== -1) {
+            var replacement = ""
+            address = address.substring(0, lIndex) + replacement + address.substring(lIndex + 1);
+            $("input[name=address]").val(address)
+            
+            var arr = ["street", "building", "flat", "house", "block", "floor", "housing"]
+            for (var i = 0; i < arr.length; i++) {
+               $("input[name="+ arr[i] +"]").prop("required", false) 
+            }
+        } 
+        $(".info_list_address").text(address)
+    })
 
     var token = "17a564feb19fabf1391ab53059b81a6a2012b9a9";
     // $("#map").eq(0).css("all", "initial")
@@ -215,13 +261,14 @@ $( function() {
             $(".tariffs_list").html(tariffListHTML)
             
             var deliveryV = parseInt($("input[name=delivery_name]:checked").val())
-             console.log('>>>>>',deliveryV)
+
             // До адреса клиента
             if (deliveryV === 1) {
                 $(".tariffs_list li").each(function(e) {
                    
                     if ($(this).find("input[data-tariff-code='137']").val()) {
                         $(this).find("input[data-tariff-code='137']").prop("checked", true)
+                        $("input[name=tariff_code]").val('137')
                         $(".delivery_points_list").remove()
                     } else {
                         $(this).empty()
@@ -232,8 +279,8 @@ $( function() {
             if (deliveryV === 2) {
                 $(".tariffs_list li").each(function(e) {
                     if ($(this).find("input[data-tariff-code='136']").val()) {
-
                         $(this).find("input[data-tariff-code='136']").prop("checked", true)
+                        $("input[name=tariff_code]").val('136')
                     } else {
                         $(this).empty()
                     }
@@ -290,6 +337,16 @@ $( function() {
             deliveryPointsHTML += "</select>"
             $(".delivery_points_list").removeClass("d-none")
             $(".delivery_points_list").html(deliveryPointsHTML)
+            $("select[name=delivery_points]").change(function(e) {
+                var pvz_code = $(this).val()
+                // var text_option = ''
+                // $(".delivery_points_list option").each(function() {
+                //     if ($(this).val() === pvz_code) {
+                //         text_option += "-" + $(this).text()
+                //     }
+                // })
+                $(".info_list_pvz").text(pvz_code)
+            })
 
 
             $(".maps").empty();
@@ -453,13 +510,20 @@ $( function() {
         })
 
         var cdek = false
+        var cdekV2 = false
         $("input[name=delivery_name]").each(function() {
             if (parseInt($(this).val()) === 2 && $(this).prop("checked")) {
                 cdek = true
             }
+
+            if (parseInt($(this).val()) === 1 && $(this).prop("checked")) {
+                cdek = true
+                cdekV2 = true
+            }
         });
         if ( cdek ) {
             // cdek city point
+            console.log('>>>??', $("input[name=city]").val())
             var cdekCity = $("input[name=city]")
             if (cdekCity.val() === "") {
                 cdekCity.addClass("border border-danger")
@@ -481,11 +545,14 @@ $( function() {
                 // PVZ address
                 $("input[name=address]").val(option.text())
             } else {
-                $("select[name=delivery_points]").addClass("border border-danger")
-                $([document.documentElement, document.body]).animate({
-                    scrollTop: $("#ser").offset().top
-                }, 1000);
-                return false
+                // если поле с пунктами выдачи скрыто
+                if (!cdekV2) {
+                    $("select[name=delivery_points]").addClass("border border-danger")
+                    $([document.documentElement, document.body]).animate({
+                        scrollTop: $("#ser").offset().top
+                    }, 1000);
+                    return false
+                }
             }
         }
 
@@ -579,6 +646,7 @@ $( function() {
             if (parseInt($(this).val()) === 2) {
                 deliveryTypeInfoText.text("До пункта выдачи СДЭК")
                 hiddenInputDeliveryType.val("До пункта выдачи СДЭК")
+                $("#delivery_addresses").empty()
             }
 
             if (parseInt($(this).val()) === 1) {
@@ -624,6 +692,7 @@ $( function() {
             $("#country").empty()
             clientInfo.attr("hidden", false)
             $("#shoping_center").removeClass("d-none")
+            $("#delivery_addresses").empty()
 
             deliveryTypeInfoText.text("Самовывоз или установка")
             hiddenInputDeliveryType.val("Самовывоз или установка")
@@ -682,8 +751,22 @@ $( function() {
       // bounds: "region-settlement",
       onSelect: function(suggestion) {
         resetCheckedPayment()
+
         $("input[name=address_full_info]").val(JSON.stringify((suggestion)) )
         console.log("START:", suggestion)
+
+        var country = suggestion["data"]["country"] ? suggestion["data"]["country"] : ""
+        var unrestricted_value = suggestion["unrestricted_value"] ? suggestion["unrestricted_value"] : ""
+        var postal_code = suggestion["data"]["postal_code"] ? suggestion["data"]["postal_code"] : ""
+
+        $(".info_list_country").text(country)
+        $(".info_list_region").text(unrestricted_value)
+        // $(".info_list_city").text(city_with_type)
+
+        $("input[name=country]").val(country)
+        $("input[name=region]").val(unrestricted_value)
+        $("input[name=postal_code]").val(postal_code)
+
         $(".tariffs_list").html(
         '<div class="d-flex justify-content-center">\
             <div class="spinner-border" role="status">\

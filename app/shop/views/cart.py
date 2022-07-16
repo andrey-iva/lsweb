@@ -3,7 +3,7 @@ from django.views.decorators.http import require_POST
 from django.http import HttpResponse
 from decimal import Decimal
 
-from .. import CART_SESSION_ID, NO_IMAGE_PATH
+from .. import CART_SESSION_ID, NO_IMAGE_PATH, PERCENT
 from ..models import Product
 from ..cart import Cart
 from ..ctx_proc import currency
@@ -81,7 +81,7 @@ def add_percent(request):
 
     if percent is not None:
         if int(percent) >= 0:
-            percent = '5.2631' if int(percent) > 0 else '0'
+            percent = str(PERCENT) if int(percent) > 0 else '0'
             logging.debug('percent %s', percent)
             logging.debug('delivery_sum %s', delivery_sum)
             percent = ((cart.get_total_price() + Decimal(delivery_sum)) /
