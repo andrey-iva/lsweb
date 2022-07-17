@@ -97,16 +97,16 @@ def create_retail_order(order_id, copy_cart, params=None):
         delivery = {
             'code': 'sdek',
             'integrationCode': 'sdek',
-            'cost': params.get('delivery_sum', 0),
+            # 'cost': params.get('delivery_sum', 0),
             'address': {
                 'countryIso': dadata['data'].get('country_iso_code', ''),
                 'city': dadata['data'].get('city_with_type', ''),
                 'region': dadata['data'].get('region_with_type', ''),
                 'city': dadata['data'].get('city_with_type', ''),
-                'street': 'ул ' + params.get('street', '').capitalize(),
-                'building': params.get('building', ''),
-                'flat': params.get('flat', ''),
-                'text': order.address,
+                # 'street': 'ул ' + params.get('street', '').capitalize(),
+                # 'building': params.get('building', ''),
+                # 'flat': params.get('flat', ''),
+                # 'text': order.address,
             },
             'data': {
                 'pickuppointId': params.get('pvz_code', ''),
@@ -119,8 +119,9 @@ def create_retail_order(order_id, copy_cart, params=None):
     pprint(order_c)
     result = client.order_create(order_c, RETAIL_SITE)
     # 'get_error_msg', 'get_errors', 'get_response', 'get_status_code', 'is_successful'
-    pprint(result.get_response())
-    logging.debug('Tread create_retail_order finish status: %s', result.get_status_code())
+    response = result.get_response()
+    pprint(response)
+    logging.debug('Tread create order finish status: %s', result.get_status_code())
     # logging.debug('Tread create_retail_order finish status: %s', 'end')
 
 

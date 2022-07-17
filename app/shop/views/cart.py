@@ -84,9 +84,11 @@ def add_percent(request):
             percent = str(PERCENT) if int(percent) > 0 else '0'
             logging.debug('percent %s', percent)
             logging.debug('delivery_sum %s', delivery_sum)
-            percent = ((cart.get_total_price() + Decimal(delivery_sum)) /
-                       Decimal(100)) * Decimal(percent)
-            grand_total = (cart.get_total_price() + Decimal(delivery_sum)) + percent
+            # percent = ((cart.get_total_price() + Decimal(delivery_sum)) /
+            #            Decimal(100)) * Decimal(percent)
+            # grand_total = (cart.get_total_price() + Decimal(delivery_sum)) + percent
+            p = (cart.get_total_price() + Decimal(delivery_sum)) * Decimal(percent) / Decimal(100)
+            grand_total = (cart.get_total_price() + Decimal(delivery_sum)) + p
 
             return HttpResponse(json.dumps({
                 'grand_total': str(grand_total)
