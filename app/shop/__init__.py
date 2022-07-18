@@ -9,7 +9,7 @@ POSTS_DETAIL_CACHE_TIME = 60 * 60 * 24 * 7
 PRODUCT_DETAIL_CACHE_TIME = 600
 
 # PERCENT = 5.2631
-PERCENT = 5
+PERCENT = 5.25
 
 # retailcrm
 RETAIL_SITE = 'isofix-msk-ru'
@@ -20,14 +20,15 @@ RETAIL_CRM_ID = ''
 Configuration.account_id = '916494'
 Configuration.secret_key = 'test_ptA6-o_oaTCYnc9R0Fvh-WIXe50UNgXKIUob2qZT86I'
 PAYMENT_REDIRECT_PAGE = 'http://127.0.0.1:8000/order/created/'
-PAYMENT_WAITING_TIME = 900
+PAYMENT_WAITING_TIME = 60
 
 # cdek
-# PROD = False
-# CLIENT_ID = 'EMscd6r9JnFiQ3bLoyjJY6eM78JrJceI'
-# CLIENT_SECRET = 'PjLZkKBHEiLK3YsjtNrt3TGNG0ahs3kG'
+PROD = False
+CLIENT_ID = 'EMscd6r9JnFiQ3bLoyjJY6eM78JrJceI'
+CLIENT_SECRET = 'PjLZkKBHEiLK3YsjtNrt3TGNG0ahs3kG'
 
 WEIGHT = 1500
+
 BOX = 'WASTE_PAPER'  # order.js
 # 55.645283, 37.403216
 FROM_LOCATION = {

@@ -120,7 +120,7 @@
                 <input type="hidden" name="address_full_info" value="empty">
                 <input type="hidden" name="pvz_code">
                 <input type="hidden" name="tariff_code">
-                <div class="col-lg-7">
+                <div class="col-lg-6">
                     <div class="billing-info-wrap mr-50">
                         <h3>ДЕТАЛИ ОПЛАТЫ</h3>
                         
@@ -138,58 +138,57 @@
                                 </div>
                             </div>
 
-<div id="delivery_addresses" class="d-none" style="font-size: 12px;">
-    <div class="billing-info mb-20 col">
-        <label for="street">Улица <abbr class="required" title="Улица, обязательно для заполнения">*</abbr></label>
-        <input maxlength="200" type="text" name="street" id="street" value="{{request.POST.street}}">
-    </div>
-    <div class="d-flex justify-content-around mt-3">
-        <div id="building-text" class="w-25">
-            <div>
-                <label class="label-common" for="intaro_crmbundle_ordertype_deliveryAddress_building">Дом 
-                    <abbr class="required text-danger" title="Номер Дома, обязательно для заполнения">*</abbr>
-                </label>
-                <input type="text" id="building" name="building" autocomplete="disabled" value="{{request.POST.billing}}"></div>
-        </div>
-        <div id="flat-text" class="w-25">
-            <div>
-                <label for="intaro_crmbundle_ordertype_deliveryAddress_flat">Квартира
-                    <abbr class="required text-success" title="Квартира">*</abbr>
-                </label>
-                <input type="text" id="flat" name="flat" autocomplete="disabled" value="{{request.POST.flat}}"></div>
-        </div>
-        <div id="house-text" class="w-25">
-            <div>
-                <label for="intaro_crmbundle_ordertype_deliveryAddress_house">Строение
-                    <abbr class="required text-success" title="Строение">*</abbr>
-                </label>
-                <input type="text" id="house" name="house" autocomplete="disabled" value="{{request.POST.house}}"></div>
-        </div>
-    </div>
-    <div class="d-flex justify-content-around mt-3 mb-5">
-        <div id="block-text" class="w-25">
-            <div>
-                <label for="intaro_crmbundle_ordertype_deliveryAddress_block">Подъезд
-                    <abbr class="required text-success" title="Подъезд">*</abbr>
-                </label>
-                <input type="number" id="block" name="block" autocomplete="disabled" value="{{request.POST.block}}"></div>
-        </div>
-        <div id="floor-text" class="w-25">
-            <div>
-                <label for="intaro_crmbundle_ordertype_deliveryAddress_floor">Этаж
-                    <abbr class="required text-success" title="Этаж">*</abbr>
-                </label>
-                <input type="number" id="floor" name="floor" autocomplete="disabled" value="{{request.POST.floor}}"></div>
-        </div>
-        <div id="housing-text" class="w-25">
-            <div>
-                <label for="intaro_crmbundle_ordertype_deliveryAddress_housing">Корпус
-                    <abbr class="required text-success" title="Корпус">*</abbr>
-                </label><input type="text" id="housing" name="housing" autocomplete="disabled" value="{{request.POST.housing}}"></div>
-        </div>
-    </div>
-</div>
-
+                            <div id="delivery_addresses" class="d-none" style="font-size: 12px;">
+                                <div class="billing-info mb-20 col">
+                                    <label for="street">Улица <abbr class="required" title="Улица, обязательно для заполнения">*</abbr></label>
+                                    <input maxlength="200" type="text" name="street" id="street" value="{{request.POST.street}}">
+                                </div>
+                                <div class="d-flex justify-content-around mt-3">
+                                    <div id="building-text" class="w-25">
+                                        <div>
+                                            <label class="label-common" for="intaro_crmbundle_ordertype_deliveryAddress_building">Дом 
+                                                <abbr class="required text-danger" title="Номер Дома, обязательно для заполнения">*</abbr>
+                                            </label>
+                                            <input type="text" id="building" name="building" autocomplete="disabled" value="{{request.POST.billing}}"></div>
+                                    </div>
+                                    <div id="flat-text" class="w-25">
+                                        <div>
+                                            <label for="intaro_crmbundle_ordertype_deliveryAddress_flat">Квартира
+                                                <abbr class="required text-success" title="Квартира">*</abbr>
+                                            </label>
+                                            <input type="text" id="flat" name="flat" autocomplete="disabled" value="{{request.POST.flat}}"></div>
+                                    </div>
+                                    <div id="house-text" class="w-25">
+                                        <div>
+                                            <label for="intaro_crmbundle_ordertype_deliveryAddress_house">Строение
+                                                <abbr class="required text-success" title="Строение">*</abbr>
+                                            </label>
+                                            <input type="text" id="house" name="house" autocomplete="disabled" value="{{request.POST.house}}"></div>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-around mt-3 mb-5">
+                                    <div id="block-text" class="w-25">
+                                        <div>
+                                            <label for="intaro_crmbundle_ordertype_deliveryAddress_block">Подъезд
+                                                <abbr class="required text-success" title="Подъезд">*</abbr>
+                                            </label>
+                                            <input type="number" id="block" name="block" autocomplete="disabled" value="{{request.POST.block}}"></div>
+                                    </div>
+                                    <div id="floor-text" class="w-25">
+                                        <div>
+                                            <label for="intaro_crmbundle_ordertype_deliveryAddress_floor">Этаж
+                                                <abbr class="required text-success" title="Этаж">*</abbr>
+                                            </label>
+                                            <input type="number" id="floor" name="floor" autocomplete="disabled" value="{{request.POST.floor}}"></div>
+                                    </div>
+                                    <div id="housing-text" class="w-25">
+                                        <div>
+                                            <label for="intaro_crmbundle_ordertype_deliveryAddress_housing">Корпус
+                                                <abbr class="required text-success" title="Корпус">*</abbr>
+                                            </label><input type="text" id="housing" name="housing" autocomplete="disabled" value="{{request.POST.housing}}"></div>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="col-lg-12 field_hidden">
                                 <div class="billing-info mb-20">
@@ -235,7 +234,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-5">
+                <div class="col-lg-6">
                     <div class="your-order-area">
                         <h3>ВАШ ЗАКАЗ</h3>
                         <div class="your-order-wrap gray-bg-4">

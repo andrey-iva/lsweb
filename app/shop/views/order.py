@@ -48,19 +48,62 @@ def shopper_message(order_id, order_name):
 
 def create_retail_order(order_id, copy_cart, params=None):
     logging.debug('Tread create_retail_order start: %s', order_id)
+    delivery = {}
+    dadata = {}
+    items = []
+    # seat_type = {
+    #     'Переднее пассажирское': 'front-passenger-seat',
+    #     'заднее (по центру)': 'rear-center-seat',
+    #     'Заднее правое': 'rear-right-seat',
+    #     'Заднее левое': 'rear-left-seat',
+    #     'Третий ряд': 'third-row-seat',
+    # }
+
     client = retailcrm.v5(RETAIL_HOST, RETAIL_CRM_ID)
+
+    if params['payment_method'] == 'paynow':
+        time.sleep(PAYMENT_WAITING_TIME * 2)
     order = Order.objects.get(pk=order_id)
-    dadata = json.loads(order.address_full_info)
+    order_item = OrderItem.objects.filter(pk=order_id)
+
+    logging.debug('yookassa_status: %s', order.yookassa_status)
+    logging.debug('paid status: %s', order.paid)
+
+    try:
+        dadata = json.loads(order.address_full_info)
+    except Exception as e:
+        logging.debug('address_full_info not found')
 
     order_c = {
         'firstName': order.first_name,
         'lastName': order.last_name,
         'phone': order.phone,
         'email': order.email,
+        'customerComment': params.get('notes', '')
     }
-    items = []
     for item in copy_cart.values():
         product = item['product']
+
+        if product.brand_car and product.model_car:
+            order_c['customFields'] = {
+                # 'brand_of_the_machine': '_'.join(product.brand_car.split(' ')).lower(),
+                'machine_model': product.name,
+            }
+            # if seat_type.get(product.seat_type):
+            #     order_c['customFields']['the_seat_type'] = seat_type[product.seat_type]
+
+        if product.item_number == 'razrab':
+            order_c['orderType'] = 'zamery'
+        if product.item_number == 'ustanovka' or product.item_number == 'SVARK':
+            order_c['orderType'] = 'kronshtejn-ustanovka'
+        if product.item_number == 'reyka-msk':
+            order_c['orderType'] = 'reyka'
+
+        r1 = product.item_number == 'reyka-centr-krai'
+        r2 = product.item_number == 'reyka-centr'
+        r3 = product.item_number == 'reyka-centr'
+        if r1 or r2 or r3:
+            order_c['orderType'] = 'reyka-ind'
 
         items.append({
             'productName': product.name,
@@ -70,29 +113,40 @@ def create_retail_order(order_id, copy_cart, params=None):
         })
         if int(item['price_install']) > 0:
             items.append({
-                'productName': 'Установка -> ' + product.name,
+                'productName': 'Установка [' + product.name + ']',
                 'initialPrice': float(item['total_price_install']),
                 'purchasePrice': float(item['total_price_install']),
                 'quantity': item['quantity'],
             })
+            order_c['orderType'] = 'kronshtejn-ustanovka'
 
     order_c['items'] = items
 
-    payment_method = ''
     # самовывоз
     if params['payment_method'] == '0':
-        payment_method = 'cash'
+        order_c['payments'] = [
+            {
+                'type': 'cash',
+                'status': 'payment-at-pickup'
+            },
+        ]
     # при получении сдек
     if params['payment_method'] == '5':
-        payment_method = 'cash-on-delivery'
+        order_c['payments'] = [{'type': 'cash-on-delivery'}]
     # картой сдек
     if params['payment_method'] == 'paynow':
-        payment_method = 'bank-card'
+        order_c['payments'] = [{'type': 'bank-card'}]
 
-    # payments = [{'type': payment_method}]
-    order_c['payments'] = [{'type': payment_method}]
+        if order.paid:
+            order_c['payments'] = [
+                {
+                    'type': 'bank-card',
+                    'externalId': params.get('payment_id', ''),
+                    'amount': str(order.grand_total),
+                    'status': 'paid',
+                },
+            ]
 
-    delivery = {}
     if params.get('tariff_code'):
         delivery = {
             'code': 'sdek',
@@ -103,15 +157,19 @@ def create_retail_order(order_id, copy_cart, params=None):
                 'city': dadata['data'].get('city_with_type', ''),
                 'region': dadata['data'].get('region_with_type', ''),
                 'city': dadata['data'].get('city_with_type', ''),
-                # 'street': 'ул ' + params.get('street', '').capitalize(),
-                # 'building': params.get('building', ''),
-                # 'flat': params.get('flat', ''),
-                # 'text': order.address,
+                'street': 'ул ' + params.get('street', '').capitalize(),
+                'building': params.get('building', ''),
+                'flat': params.get('flat', ''),
+                'text': order.address,
             },
             'data': {
                 'pickuppointId': params.get('pvz_code', ''),
                 'tariff': params['tariff_code'],
             },
+        }
+    else:
+        delivery = {
+            'code': 'self-delivery',
         }
 
     order_c['delivery'] = delivery
@@ -119,8 +177,7 @@ def create_retail_order(order_id, copy_cart, params=None):
     pprint(order_c)
     result = client.order_create(order_c, RETAIL_SITE)
     # 'get_error_msg', 'get_errors', 'get_response', 'get_status_code', 'is_successful'
-    response = result.get_response()
-    pprint(response)
+    pprint(result.get_response())
     logging.debug('Tread create order finish status: %s', result.get_status_code())
     # logging.debug('Tread create_retail_order finish status: %s', 'end')
 
@@ -266,9 +323,9 @@ def order_create(request):
             # clear_grand_total(request)
             # send mail
             # request.session.flush()
-            
-            Thread(target=create_retail_order, args=(order.id, copy_cart, request_post)).start()
-            
+
+            # Thread(target=create_retail_order, args=(order.id, copy_cart, request_post)).start()
+
             if request_post['payment_method'] == 'paynow':
                 payment = Payment.create({
                     'amount': {
@@ -302,8 +359,8 @@ def order_create(request):
                     ADMIN_EMAIL, [ADMIN_EMAIL_ORDER_INFO]
                 )).start()
                 # retail
-                # Thread(target=create_retail_order, args=(
-                #     order.id, copy_cart, percent, gtr, payment.id)).start()
+                request_post['payment_id'] = payment.id
+                Thread(target=create_retail_order, args=(order.id, copy_cart, request_post)).start()
 
                 return redirect(payment.confirmation.confirmation_url)
 
@@ -321,8 +378,7 @@ def order_create(request):
             request.session['order_id'] = str(order.id)
             request.session.modified = True
 
-            # Thread(target=create_retail_order,
-            #        args=(order.id, copy_cart, percent, gtr)).start()
+            Thread(target=create_retail_order, args=(order.id, copy_cart, request_post)).start()
 
             return redirect('shop:order_created')
         else:

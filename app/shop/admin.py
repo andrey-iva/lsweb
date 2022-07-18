@@ -55,7 +55,7 @@ class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
         'service_type', 'available', 'image_base', 'video', 'video_shot', 'description_short',
         'description_full', 'seo_title', 'seo_key', 'seo_desc', 'frame_video'
     ]
-    list_filter = ['category', 'available', 'brand_car']
+    list_filter = ['category', 'available', 'brand_car', 'seat_type']
     prepopulated_fields = {'slug': ('name',)}
     readonly_fields = ['preview', 'preview_shot', 'preview_video']
 

@@ -418,7 +418,11 @@ $( function() {
 
                     myMap.geoObjects.add(objectManager);
 
-                    objectManager.add(JSON.stringify(p));
+                    if ($(".tariffs_list").find("input[data-tariff-code='136']").prop("checked")) {
+                        objectManager.add(JSON.stringify(p));
+                    } else {
+                        $(".maps").find("h3").text("Точка доставки")
+                    }
 
                     objectManager.events.add('click', function(e) {
                         var objectId = e.get('objectId'),

@@ -72,6 +72,7 @@ def product_list(request, category_slug=None):
         - постраничную навигацию
         - стиль отображения товаров на странице
     """
+
     search_query = request.GET.get('search_query')
     show_products = request.GET.get('products')
 
@@ -86,7 +87,7 @@ def product_list(request, category_slug=None):
     for brand in (b for b in products.values(*['brand_car']).distinct()):
         # print(brand['brand_car'] == '')
         if brand['brand_car']:
-            brands[brand['brand_car'].lower()] = brand['brand_car']
+            brands['-'.join(brand['brand_car'].lower().split(' '))] = brand['brand_car']
 
     if category_slug is None and show_products is not None:
         products = products.filter(product_type=show_products)
@@ -148,6 +149,7 @@ def product_list(request, category_slug=None):
     except EmptyPage:
         products = paginator.page(paginator.num_pages)
 
+    brands = ['-'.join(brand.split(' ')) for brand in brands]
     return render(request, 'shop/product/list.html', {
         'category': category,
         'categories': categories,
@@ -230,6 +232,8 @@ def product_filter(request):
         return HttpResponse(json.dumps( brands ))
     # change select brand - ret selects model, year, seat-type
     if  product_type and brand_name:
+        if brand_name.upper() != 'MERCEDES-BENZ':
+            brand_name = ' '.join(brand_name.split('-'))
         fields = ['model_car', 'year', 'seat_type']
         data_filter = {'model_car': {}, 'year': {}, 'seat_type': {}}
         for item in (b for b in products.filter(product_type=product_type).filter(brand_car=brand_name).values(*fields).distinct()):
