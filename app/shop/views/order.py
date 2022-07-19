@@ -1,5 +1,5 @@
 # import json
-import retailcrm
+# import retailcrm
 import uuid
 import time
 import pickle
@@ -59,7 +59,7 @@ def create_retail_order(order_id, copy_cart, params=None):
     #     'Третий ряд': 'third-row-seat',
     # }
 
-    client = retailcrm.v5(RETAIL_HOST, RETAIL_CRM_ID)
+    # client = retailcrm.v5(RETAIL_HOST, RETAIL_CRM_ID)
 
     if params['payment_method'] == 'paynow':
         time.sleep(PAYMENT_WAITING_TIME * 2)
@@ -175,11 +175,11 @@ def create_retail_order(order_id, copy_cart, params=None):
     order_c['delivery'] = delivery
 
     pprint(order_c)
-    result = client.order_create(order_c, RETAIL_SITE)
+    # result = client.order_create(order_c, RETAIL_SITE)
     # 'get_error_msg', 'get_errors', 'get_response', 'get_status_code', 'is_successful'
-    pprint(result.get_response())
-    logging.debug('Tread create order finish status: %s', result.get_status_code())
-    # logging.debug('Tread create_retail_order finish status: %s', 'end')
+    # pprint(result.get_response())
+    # logging.debug('Tread create order finish status: %s', result.get_status_code())
+    logging.debug('Tread create_retail_order finish status: %s', 'end')
 
 
 def order_info(order_id, copy_cart):
