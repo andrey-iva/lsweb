@@ -3,22 +3,24 @@ import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.decorators.http import require_POST
-from django.urls import reverse
+# from django.urls import reverse
 from django.http import HttpResponse
 from django.db.models import Q
 
 from .. import NO_IMAGE_PATH
 from ..ctx_proc import currency
 from ..models import Category, Product, ProductImage
-from ..cart import Cart
+# from ..cart import Cart
 
 PAGINATION_SIZE = 12
 PAGINATION_SIZE_SESSION_ID = 'pagination_size'
 SORT_BY_SESSION_ID = 'sort_by'
 PRODUCT_VIEW_STYLE_SESSION_ID = 'product_view_style'
 
+
 def shop_redirect(request):
     return redirect('shop:product_list')
+
 
 def product_list_size(request, size=PAGINATION_SIZE):
     """
@@ -87,7 +89,7 @@ def product_list(request, category_slug=None):
     for brand in (b for b in products.values(*['brand_car']).distinct()):
         # print(brand['brand_car'] == '')
         if brand['brand_car']:
-            brands['-'.join(brand['brand_car'].lower().split(' '))] = brand['brand_car']
+            brands[brand['brand_car'].lower()] = brand['brand_car']
 
     if category_slug is None and show_products is not None:
         products = products.filter(product_type=show_products)
@@ -105,12 +107,10 @@ def product_list(request, category_slug=None):
     # выборка по брендам
     if len(categories.filter(slug=category_slug)) == 0 and category_slug:
         products = products.filter(brand_car=brands.get(category_slug, ''))
-
     # выборка по категориям 
     if len(categories.filter(slug=category_slug)):
         category = categories.get(slug=category_slug)
         products = products.filter(category=category)
-        
         # фильтр JS
         if request.headers.get('X-Requested-With') and request.GET.get('brand'):
             filter_fields = ['brand_car', 'model_car', 'year', 'seat_type']
@@ -135,7 +135,7 @@ def product_list(request, category_slug=None):
 
     # search form
     if search_query:
-        products = products.filter( Q(name__icontains=search_query) )
+        products = products.filter(Q(name__icontains=search_query))
 
     paginator = Paginator(products, request.session.get(
         PAGINATION_SIZE_SESSION_ID, PAGINATION_SIZE))
@@ -149,7 +149,6 @@ def product_list(request, category_slug=None):
     except EmptyPage:
         products = paginator.page(paginator.num_pages)
 
-    brands = ['-'.join(brand.split(' ')) for brand in brands]
     return render(request, 'shop/product/list.html', {
         'category': category,
         'categories': categories,
@@ -160,12 +159,14 @@ def product_list(request, category_slug=None):
         'brands': sorted(brands),
     })
 
+
 def loop_id(request):
     if request.headers.get('X-Requested-With'):
         product = get_object_or_404(Product, attribute='loop')
         return HttpResponse(json.dumps({'loop_id': product.id}))
     else:
         return redirect('shop:shop_page')
+
 
 # "{0}://{1}{2}".format(request.scheme, request.get_host(), request.path)
 def product_detail(request, slug):
@@ -232,8 +233,6 @@ def product_filter(request):
         return HttpResponse(json.dumps( brands ))
     # change select brand - ret selects model, year, seat-type
     if  product_type and brand_name:
-        if brand_name.upper() != 'MERCEDES-BENZ':
-            brand_name = ' '.join(brand_name.split('-'))
         fields = ['model_car', 'year', 'seat_type']
         data_filter = {'model_car': {}, 'year': {}, 'seat_type': {}}
         for item in (b for b in products.filter(product_type=product_type).filter(brand_car=brand_name).values(*fields).distinct()):
