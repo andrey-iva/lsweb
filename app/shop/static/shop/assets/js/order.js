@@ -1,6 +1,6 @@
 $( function() {
     // д. Дом, кв. Квартира, стр. Строение, к. Корпус
-    $("body").change(function(e) {
+    $("input").on("input", function(e) {
         var first_name = $("#first_name").val()
         var last_name = $("#last_name").val()
         var phone = $("#phone").val()
