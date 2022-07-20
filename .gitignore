@@ -2,6 +2,7 @@
 mkcert-v1.4.4-linux-amd64
 cert.pem
 key.pem
+catalog.yml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

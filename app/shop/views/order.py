@@ -58,7 +58,7 @@ def create_retail_order(order_id, copy_cart, params=None):
     #     'Третий ряд': 'third-row-seat',
     # }
 
-    # client = retailcrm.v5(RETAIL_HOST, RETAIL_CRM_ID)
+    client = retailcrm.v5(RETAIL_HOST, RETAIL_CRM_ID)
 
     if params['payment_method'] == 'paynow':
         time.sleep(PAYMENT_WAITING_TIME * 2)
@@ -80,29 +80,30 @@ def create_retail_order(order_id, copy_cart, params=None):
         'email': order.email,
         'customerComment': params.get('notes', '')
     }
+    product_t = ''
     for item in copy_cart.values():
         product = item['product']
 
-        if product.brand_car and product.model_car:
-            order_c['customFields'] = {
-                # 'brand_of_the_machine': '_'.join(product.brand_car.split(' ')).lower(),
-                'machine_model': product.name,
-            }
-            # if seat_type.get(product.seat_type):
-            #     order_c['customFields']['the_seat_type'] = seat_type[product.seat_type]
+        if product.product_type:
+            product_t += product.product_type + ' '
+            if product.product_type == 'услуга':
+                order_c['orderType'] = 'kronshtejn-ustanovka'
+        order_c['customFields'] = {
+            'machine_model': product_t,
+        }
 
-        if product.item_number == 'razrab':
-            order_c['orderType'] = 'zamery'
-        if product.item_number == 'ustanovka' or product.item_number == 'SVARK':
-            order_c['orderType'] = 'kronshtejn-ustanovka'
-        if product.item_number == 'reyka-msk':
-            order_c['orderType'] = 'reyka'
+        # if product.item_number == 'razrab':
+        #     order_c['orderType'] = 'zamery'
+        # if product.item_number == 'ustanovka' or product.item_number == 'SVARK':
+        #     order_c['orderType'] = 'kronshtejn-ustanovka'
+        # if product.item_number == 'reyka-msk':
+        #     order_c['orderType'] = 'reyka'
 
-        r1 = product.item_number == 'reyka-centr-krai'
-        r2 = product.item_number == 'reyka-centr'
-        r3 = product.item_number == 'reyka-centr'
-        if r1 or r2 or r3:
-            order_c['orderType'] = 'reyka-ind'
+        # r1 = product.item_number == 'reyka-centr-krai'
+        # r2 = product.item_number == 'reyka-centr'
+        # r3 = product.item_number == 'reyka-centr'
+        # if r1 or r2 or r3:
+        #     order_c['orderType'] = 'reyka-ind'
 
         items.append({
             'productName': product.name,
@@ -147,13 +148,15 @@ def create_retail_order(order_id, copy_cart, params=None):
             ]
 
     if params.get('tariff_code'):
+        p = 0
         # сумма наложенного платежа
-        p = (params['cart_total_price'] + Decimal(params['delivery_sum'])) * \
-            Decimal(PERCENT) / Decimal(100)
+        if params['payment_method'] == '5':
+            p = (params['cart_total_price'] + Decimal(params['delivery_sum'])) * \
+                Decimal(PERCENT) / Decimal(100)
         delivery = {
             'code': 'sdek',
             'integrationCode': 'sdek',
-            'cost': str(p + Decimal(params['delivery_sum'])),
+            'cost': str(Decimal(params['delivery_sum']) + p),
             'address': {
                 'countryIso': dadata['data'].get('country_iso_code', ''),
                 'city': dadata['data'].get('city_with_type', ''),
@@ -177,11 +180,13 @@ def create_retail_order(order_id, copy_cart, params=None):
     order_c['delivery'] = delivery
 
     pprint(order_c)
-    # result = client.order_create(order_c, RETAIL_SITE)
+    result = client.order_create(order_c, RETAIL_SITE)
     # 'get_error_msg', 'get_errors', 'get_response', 'get_status_code', 'is_successful'
-    # pprint(result.get_response())
-    # logging.debug('Tread create order finish status: %s', result.get_status_code())
-    logging.debug('Tread create_retail_order finish status: %s', 'end')
+    pprint(result.get_response())
+    if result.get_errors():
+        logging.error('Retail error: %s', result.get_errors())
+    logging.debug('Tread create order finish status: %s', result.get_status_code())
+    # logging.debug('Tread create_retail_order finish status: %s', 'end')
 
 
 def order_info(order_id, copy_cart):

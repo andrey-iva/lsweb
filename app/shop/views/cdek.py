@@ -37,7 +37,7 @@ def get_token_cdek():
             'grant_type': GRANT_TYPE,
             'client_id': CLIENT_ID,
             'client_secret': CLIENT_SECRET, })
-        logging.error('get_token_cdek STATUS: %s',
+        logging.debug('get_token_cdek STATUS: %s',
                       'Не авторизирован 401' if response.status_code == 401 else response.status_code)
         if response.status_code == 200:
             return response.json()
