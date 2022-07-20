@@ -1,4 +1,5 @@
 $( function() {
+    $("input[name=city]").focus(function(e) { $(this).val("") })
     // д. Дом, кв. Квартира, стр. Строение, к. Корпус
     $("input").on("input", function(e) {
         var first_name = $("#first_name").val()
@@ -991,17 +992,17 @@ $( function() {
             response = JSON.parse(response)
             console.log("length:", response.length)
             
-            $( "#city" ).autocomplete({
-                source: response,
-                minLength: 3,
-                delay: 500,
-                select: function( event, ui ) {
-                    // $(".search_cities").trigger("click")
-                },
-                open: function( event, ui ) {
+            // $( "#city" ).autocomplete({
+            //     source: response,
+            //     minLength: 3,
+            //     delay: 500,
+            //     select: function( event, ui ) {
+                    
+            //     },
+            //     open: function( event, ui ) {
 
-                }
-            });
+            //     }
+            // });
 
             // $("#city").select(function(e) { cdekFN() })
         

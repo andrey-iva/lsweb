@@ -1,5 +1,4 @@
-# import json
-# import retailcrm
+import retailcrm
 import uuid
 import time
 import pickle
@@ -13,7 +12,7 @@ from django.core.mail import send_mail
 from yookassa import Payment
 
 from threading import Thread
-from decimal import Decimal, getcontext
+from decimal import Decimal
 
 from ..cart import Cart
 from ..models import OrderItem, Order
@@ -63,8 +62,8 @@ def create_retail_order(order_id, copy_cart, params=None):
 
     if params['payment_method'] == 'paynow':
         time.sleep(PAYMENT_WAITING_TIME * 2)
+
     order = Order.objects.get(pk=order_id)
-    order_item = OrderItem.objects.filter(pk=order_id)
 
     logging.debug('yookassa_status: %s', order.yookassa_status)
     logging.debug('paid status: %s', order.paid)
@@ -72,7 +71,7 @@ def create_retail_order(order_id, copy_cart, params=None):
     try:
         dadata = json.loads(order.address_full_info)
     except Exception as e:
-        logging.debug('address_full_info not found')
+        logging.debug('address_full_info not found: %s', e)
 
     order_c = {
         'firstName': order.first_name,
@@ -148,10 +147,13 @@ def create_retail_order(order_id, copy_cart, params=None):
             ]
 
     if params.get('tariff_code'):
+        # сумма наложенного платежа
+        p = (params['cart_total_price'] + Decimal(params['delivery_sum'])) * \
+            Decimal(PERCENT) / Decimal(100)
         delivery = {
             'code': 'sdek',
             'integrationCode': 'sdek',
-            # 'cost': params.get('delivery_sum', 0),
+            'cost': str(p + Decimal(params['delivery_sum'])),
             'address': {
                 'countryIso': dadata['data'].get('country_iso_code', ''),
                 'city': dadata['data'].get('city_with_type', ''),
@@ -292,19 +294,25 @@ def order_create(request):
     errorMessage = None
     if request.method == 'POST':
         request_post = request.POST.copy()
+        request_post['cart_total_price'] = cart.get_total_price()
         idempotence_key = uuid.uuid4()
 
-        getcontext().prec = 6
         if request_post['payment_method'] == '5':
-            gt = (cart.get_total_price() +
-                  Decimal(request_post['delivery_sum'])) * Decimal(1 + PERCENT / 100)
+            delivery_sum = request_post['delivery_sum']
+            logging.debug('cart total: %s', cart.get_total_price())
+            logging.debug('delivery sum: %s', Decimal(delivery_sum))
+            logging.debug('percent: %s', Decimal(PERCENT))
+            p = (cart.get_total_price() +
+                 Decimal(delivery_sum)) * Decimal(PERCENT) / Decimal(100)
+            gt = (cart.get_total_price() + Decimal(delivery_sum)) + p
+            logging.debug('grand total: %s', gt)
         else:
             gt = cart.get_total_price() + Decimal(request_post['delivery_sum'])
 
         # gtl = Decimal(cart.get_total_price()) + percent
         # gtr = Decimal(request_post['delivery_sum'])
         # gt = gtl + gtr
-        request_post['grand_total'] = str(gt)
+        request_post['grand_total'] = Decimal('%.2f' % gt)
 
         pprint(request_post)
         form = OrderCreateForm(request_post)

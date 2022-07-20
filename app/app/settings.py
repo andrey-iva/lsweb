@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
-import logging
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -48,7 +47,7 @@ INSTALLED_APPS = [
     'django_summernote',
     'import_export',
 
-    "django_extensions",
+    # "django_extensions",
 ]
 
 MIDDLEWARE = [
@@ -103,11 +102,11 @@ DATABASES = {
     }
 }
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-    }
-}
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+#     }
+# }
 
 # CACHES = {
 #     'default': {
@@ -185,10 +184,6 @@ else:
 # SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 # SESSION_COOKIE_AGE = 60
 
-
-# CELERY_RESULT_BACKEND = 'django-db'
-
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -221,23 +216,7 @@ LOGGING = {
     }
 }
 
-# CORS_ALLOWED_ORIGINS = [
-#     'https://suggestions.dadata.ru',
-#     'https://api.cdek.ru',
-#     'https://api.edu.cdek.ru',
-#     'https://www.youtube.com',
-#     'https://cdn.jsdelivr.net',
-#     'https://maps.api.2gis.ru',
-#     'https://i12n.r2r.space',
-#     'https://api-maps.yandex.ru',
-# ]
-
-CORS_ALLOWED_ORIGINS = [
-    'https://googleads.g.doubleclick.net',
-    'https://static.doubleclick.net',
-    'https://yt3.ggpht.com',
-    'https://play.google.com',
-]
+# CORS_ALLOWED_ORIGINS = []
 # SESSION_COOKIE_DOMAIN = None
 
 IMPORT_EXPORT_USE_TRANSACTIONS = True
