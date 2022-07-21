@@ -1,7 +1,9 @@
 $( function() {
     $("input[name=city]").focus(function(e) { $(this).val("") })
     // д. Дом, кв. Квартира, стр. Строение, к. Корпус
-    $("input").on("input", function(e) {
+    $("input").on("input", function(e) { info() })
+    
+    function info() {
         var first_name = $("#first_name").val()
         var last_name = $("#last_name").val()
         var phone = $("#phone").val()
@@ -45,7 +47,7 @@ $( function() {
             }
         } 
         $(".info_list_address").text(address)
-    })
+    }
 
     var token = "17a564feb19fabf1391ab53059b81a6a2012b9a9";
     // $("#map").eq(0).css("all", "initial")
@@ -118,12 +120,10 @@ $( function() {
             },
         }).done(function(response) {
             var response = JSON.parse(response)
-
-            console.log('in to addDeliveryTax: ', response["grand_total"])
-
-
+            if (log) {console.log('in to addDeliveryTax: ', response["grand_total"])}
+            
             if ("error" in response) {
-                console.log(response["error"])
+                if (log) {console.log(response["error"])}
             }
         }).fail(function(err) {
             serverError(err)
@@ -156,14 +156,14 @@ $( function() {
                     $("#order_grand_total").text(formatSum)
                 }
             } catch(err) {
-                console.error("addPercent error")
+                if (log) {console.error("addPercent error")}
             }
 
             // addDeliveryTax(tax)
             // console.log('addPercent: ', response["grand_total"], 'tax: ', tax)
 
             if ("error" in response) {
-                console.log(response["error"])
+                if (log) {console.log(response["error"])}
             }
         }).fail(function(err) {
             serverError(err)
@@ -199,8 +199,10 @@ $( function() {
         }
         var tariffs_list = $(".tariffs_list")
         var deliveryPoints = tariffs.pop()
-        console.log(tariffs)
-        console.log(deliveryPoints)
+        if (log) {
+            console.log(tariffs)
+            console.log(deliveryPoints)
+        }
 
         var tariffListHTML = ""
 
@@ -208,7 +210,7 @@ $( function() {
         for (var i = 0; i < tariffs.length; i++) {
             // print tariff list
             if (tariffs[i]["errors"]) {
-                console.log(tariffs[i])
+                if (log) {console.log(tariffs[i])}
                 for (var e = 0; e < tariffs[i]["errors"].length; e++) {
                     var err = tariffs[i]["errors"][e]["message"].split(":")
                     err = err[err.length - 1]
@@ -496,7 +498,7 @@ $( function() {
 
         } else {
             // $(".tariffs_list").html(tariffListHTML)
-            console.log(tariffListHTML)
+            if (log) {console.log(tariffListHTML)}
             $(".tariffs_list").html("<p style='color: black;'>Ничего не найдено!</p>")
         }
     };
@@ -528,7 +530,7 @@ $( function() {
         });
         if ( cdek ) {
             // cdek city point
-            console.log('>>>??', $("input[name=city]").val())
+            
             var cdekCity = $("input[name=city]")
             if (cdekCity.val() === "") {
                 cdekCity.addClass("border border-danger")
@@ -743,13 +745,15 @@ $( function() {
 
     // cdek start
     // #city
-    $("#city").suggestions({
+    var city = $("#city")
+    city.suggestions({
       token: token,
       type: "ADDRESS",
       hint: false,
       bounds: "city",
       formatResult: formatResult,
       formatSelected: formatSelected,
+      count: 10,
       // token: token,
       // type: "ADDRESS",
       // hint: false,
@@ -758,7 +762,7 @@ $( function() {
         resetCheckedPayment()
 
         $("input[name=address_full_info]").val(JSON.stringify((suggestion)) )
-        console.log("START:", suggestion)
+        if (log) {console.log("START:", suggestion)}
 
         var country = suggestion["data"]["country"] ? suggestion["data"]["country"] : ""
         var unrestricted_value = suggestion["unrestricted_value"] ? suggestion["unrestricted_value"] : ""
@@ -771,6 +775,7 @@ $( function() {
         $("input[name=country]").val(country)
         $("input[name=region]").val(unrestricted_value)
         $("input[name=postal_code]").val(postal_code)
+        
 
         $(".tariffs_list").html(
         '<div class="d-flex justify-content-center">\
@@ -801,14 +806,14 @@ $( function() {
             .done(function(response) {
 
                 if (response.suggestions.length === 0) {
-                    printErr("Данное направление в службе СДЕК отсутствует.")
-                    console.log("ONLY RU: ничего не найдено")
+                    printErr("Направление отсутствует.")
+                    if (log) {console.log("ONLY RU: ничего не найдено")}
                     return
                 }
 
                 if (response.suggestions[0].data.cdek_id) {
                     request['cdek_id'] = response.suggestions[0].data.cdek_id
-                    console.log("RU:", response.suggestions[0].data.cdek_id)
+                    if (log) {console.log("RU:", response.suggestions[0].data.cdek_id)}
                     // получаем список тарифов
                     // ветка работает по России
                     // получаем калькуляцию по тарифам
@@ -822,7 +827,7 @@ $( function() {
                             var response = JSON.parse(response)
                             // console.log("ONLY RU CALC RESULT:", response)
                         } catch(err) {
-                            console.log(err)
+                            if (log) {console.log(err)}
                             return
                         }
                         // получен результат в расчетом
@@ -832,7 +837,7 @@ $( function() {
                     });
 
                 } else {
-                    printErr("Данное направление в службе СДЕК отсутствует.")
+                    printErr("Направление отсутствует.")
                 }
             })
             .fail(function() {
@@ -852,20 +857,20 @@ $( function() {
                 try {
                     var response = JSON.parse(response)
                     if (response.length !== 1) {
-                        printErr("Данное направление в службе СДЕК отсутствует.")
-                        console.log("ONLY RU BY KZ: Ничего не найдено")
+                        printErr("Направление отсутствует.")
+                        if (log) {console.log("ONLY RU BY KZ: Ничего не найдено")}
                         return
                     }
                     // console.log("ONLY RU BY KZ", response)
                 } catch(err) {
-                    console.error(err)
+                    if (log) {console.error(err)}
                     return
                 }
 
                 var cdek_id = response[0]["code"]
                 city = response[0]["city"]
                 country_iso_code = response[0]["country_code"]
-                console.log("RU BY KZ", city, cdek_id)
+                if (log) {console.log("RU BY KZ", city, cdek_id)}
                 // получаем калькуляцию по тарифам
                 $.ajax({
                     url: CDEK_TARIFFLIST_URL,
@@ -883,7 +888,7 @@ $( function() {
                         var response = JSON.parse(response)
                         // console.log("ONLY RU BY KZ: CALC RESULT", response)
                     } catch(err) {
-                        console.log(err)
+                        if (log) {console.log(err)}
                         return
                     }
                     // получен результат в расчетом
@@ -904,6 +909,22 @@ $( function() {
             { country_iso_code: "BY" },
             { country_iso_code: "KZ" },
          ],
+      },
+    });
+    
+    $("input[name=street]").suggestions({
+      token: token,
+      type: "ADDRESS",
+      hint: false,
+      bounds: "street",
+      constraints: city,
+      count: 10,
+      onSelect: function(suggestion) {
+        if (suggestion["data"]["street"]) {
+            this.value = suggestion["data"]["street"]
+            info()
+
+        }
       },
     });
     // cdek end

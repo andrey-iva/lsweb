@@ -81,16 +81,19 @@ def create_retail_order(order_id, copy_cart, params=None):
         'customerComment': params.get('notes', '')
     }
     product_t = ''
+    first_product = False
+    install = False
     for item in copy_cart.values():
         product = item['product']
-
-        if product.product_type:
-            product_t += product.product_type + ' '
-            if product.product_type == 'услуга':
-                order_c['orderType'] = 'kronshtejn-ustanovka'
-        order_c['customFields'] = {
-            'machine_model': product_t,
-        }
+        if first_product == False:
+            first_product = product
+        # if product.product_type:
+        #     product_t += product.product_type + ' '
+        #     if product.product_type == 'услуга':
+        #         order_c['orderType'] = 'kronshtejn-ustanovka'
+        # order_c['customFields'] = {
+        #     'machine_model': product_t,
+        # }
 
         # if product.item_number == 'razrab':
         #     order_c['orderType'] = 'zamery'
@@ -118,9 +121,37 @@ def create_retail_order(order_id, copy_cart, params=None):
                 'purchasePrice': float(item['total_price_install']),
                 'quantity': item['quantity'],
             })
-            order_c['orderType'] = 'kronshtejn-ustanovka'
+            install = True
+            # order_c['orderType'] = 'kronshtejn-ustanovka'
 
     order_c['items'] = items
+    if first_product:
+        if first_product.product_type == 'кронштейн':
+            order_c['orderType'] = 'kronshtejn'
+            for item in copy_cart.values():
+                product = item['product']
+                if product.brand_car and product.model_car:
+                    brand = product.brand_car.lower().capitalize()
+                    model = product.model_car.lower().capitalize()
+                    order_c['customFields'] = {
+                        'machine_model': brand + ' ' + model,
+                    }
+                break
+        if install:
+            order_c['orderType'] = 'install-bracket'
+            for item in copy_cart.values():
+                product = item['product']
+                if product.brand_car and product.model_car:
+                    brand = product.brand_car.lower().capitalize()
+                    model = product.model_car.lower().capitalize()
+                    order_c['customFields'] = {
+                        'machine_model': brand + ' ' + model,
+                    }
+                break
+        if first_product.product_type == 'рейка':
+            order_c['orderType'] = 'reil'
+        if first_product.product_type == 'услуга':
+            order_c['orderType'] = 'service'
 
     # самовывоз
     if params['payment_method'] == '0':
@@ -162,7 +193,7 @@ def create_retail_order(order_id, copy_cart, params=None):
                 'city': dadata['data'].get('city_with_type', ''),
                 'region': dadata['data'].get('region_with_type', ''),
                 'city': dadata['data'].get('city_with_type', ''),
-                'street': 'ул ' + params.get('street', '').capitalize(),
+                'street': params.get('street', '').capitalize(),
                 'building': params.get('building', ''),
                 'flat': params.get('flat', ''),
                 'text': order.address,

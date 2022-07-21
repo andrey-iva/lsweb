@@ -267,7 +267,7 @@
                 }
             }
         } catch(err) {
-            console.info(err)
+            if (log) {console.info(err)}
         }
     });
 
@@ -475,7 +475,7 @@
                     try {
                         var requestData = JSON.parse(response)
                     } catch(err) {
-                        console.info(err)
+                        if (log) {console.info(err)}
                         return
                     }
                     $(".models_car").html(buildOptions(requestData["model_car"]))
@@ -515,7 +515,7 @@
                             return
                         }
                     } catch(err) {
-                        console.info(err)
+                        if (log) {console.info(err)}
                         return
                     }
 
@@ -574,7 +574,7 @@
             method: "GET",
             headers: { 'X-Requested-With': 'XMLHttpRequest' },
             success: function(response) {
-                console.info(response)
+                if (log) {console.info(response)}
             },
             error: function() { console.error(this.url) },
         });
@@ -642,7 +642,7 @@
             var product = response["product"]
             var productLoop = response["product_loop"]
 
-            // console.log(response)
+            if (log) {console.log(productLoop)}
 
             var bigImages =
             "<div id='pro-1' class='tab-pane fade show active'>\
@@ -679,7 +679,7 @@
 
 
             function isBracket() {
-                if (quickView.data("productType") === "кронштейн") {
+                if (quickView.data("productType") === "кронштейн" && quickView.data("productAttribute") !== "loop") {
                     return true
                 } else {
                     return false
@@ -906,9 +906,9 @@
                             try {
                                 // колличество товаров с петлей
                                 response = JSON.parse(response)
-                                console.log("/cart/count/quantity/on/", response)
+                                if (log) {console.log("/cart/count/quantity/on/", response)}
                             } catch(err) {
-                                console.error("/cart/count/quantity/on/")
+                                if (log) {console.error("/cart/count/quantity/on/")}
                             }
                             var quantity_on = response["quantity_on"]
                             $.ajax({
@@ -924,10 +924,10 @@
                                     "price_install": formElem.find("input[name=price_install]").prop("checked") ? 1 : 0
                                 }
                             }).done(function(response) {
-                                console.log("add_anchor", response)
+                                if (log) {console.log("add_anchor", response)}
                                 printCart()
                             }).fail(function(err) {
-                                console.log("add_anchor", err)
+                                if (log) {console.log("add_anchor", err)}
                             });
                         })
                     } else if (formElem.find("#anchor").prop("checked") === false) {
@@ -941,7 +941,7 @@
                                 "quantity": $("input[name=quantity]").val(),
                             }
                         }).done(function(response) {
-                            console.log('remove: ', this.url, response)
+                            if (log) {console.log('remove: ', this.url, response)}
                             // удаляет отметку loop: on
                             $.ajax({
                                 url: "/cart/del/sessionkeyloop/" + quickView.data("productId") + "/",
@@ -952,7 +952,7 @@
                                 }
                             }).done(function(response) {
                                 response = JSON.parse(response)
-                                console.log("loop off::", response, this.url)
+                                if (log) {console.log("loop off::", response, this.url)}
                                 printCart()
                             })
                         })
@@ -965,7 +965,7 @@
             });
 
         }).fail(function(err) {
-            console.log(err)
+            if (log) {console.log(err)}
         });
     });
 
@@ -1072,12 +1072,12 @@
             success: function(response) {
                 try {
                     var responseData = JSON.parse(response)
-                    console.log('>>>>', responseData)
+                    if (log) {console.log('>>>>', responseData)}
                 } catch (err) {
-                    console.info("ОБНОВЛЕНИЕ И УДАЛЕНИЕ ТОВАРОВ, ОШИБКА ПРИ РАЗБОРЕ ПОЛУЧЕННЫХ ДАННЫХ:", err)
+                    if (log) {console.info("ОБНОВЛЕНИЕ И УДАЛЕНИЕ ТОВАРОВ, ОШИБКА ПРИ РАЗБОРЕ ПОЛУЧЕННЫХ ДАННЫХ:", err)}
                     return
                 }
-                console.info(this.url, "remove||update main cart:", responseData)
+                if (log) {console.info(this.url, "remove||update main cart:", responseData)}
                 var PRODUCTID = responseData["product_id"]
                 // product-subtotal
                 if (responseData.result === "update") {
@@ -1105,9 +1105,9 @@
                             try {
                                 // колличество товаров с петлей
                                 response = JSON.parse(response)
-                                console.log("/cart/count/quantity/on/", response)
+                                if (log) {console.log("/cart/count/quantity/on/", response)}
                             } catch(err) {
-                                console.error("/cart/count/quantity/on/")
+                                if (log) {console.error("/cart/count/quantity/on/")}
                             }
                             var quantity_on = response["quantity_on"]
 
@@ -1117,9 +1117,9 @@
                             }).done(function(response) {
                                 try {
                                     response = JSON.parse(response)
-                                    console.info("loop_id:", response["loop_id"])
+                                    if (log) {console.info("loop_id:", response["loop_id"])}
                                 } catch(err) {
-                                    console.error("не получил ID:", GET_LOOP_ID_URL)
+                                    if (log) {console.error("не получил ID:", GET_LOOP_ID_URL)}
                                 }
 
                                 var loopId = response["loop_id"]
@@ -1137,11 +1137,11 @@
                                         // "price_install": $("input[name=price_install]").prop("checked") ? 1 : 0
                                     }
                                 }).done(function(response) {
-                                    console.log("add_anchor", response)
+                                    if (log) {console.log("add_anchor", response)}
                                     // printCart()
                                     window.location = window.location.pathname
                                 }).fail(function(err) {
-                                    console.log("add_anchor", err)
+                                    if (log) {console.log("add_anchor", err)}
                                 });
 
                             });
@@ -1155,9 +1155,9 @@
                         }).done(function(response) {
                             try {
                                 response = JSON.parse(response)
-                                console.info("loop_id:", response["loop_id"])
+                                if (log) {console.info("loop_id:", response["loop_id"])}
                             } catch(err) {
-                                console.error("не получил ID:", GET_LOOP_ID_URL)
+                                if (log) {console.error("не получил ID:", GET_LOOP_ID_URL)}
                             }
 
                             var loopId = response["loop_id"]
@@ -1172,7 +1172,7 @@
                                     "quantity": currentForm.find("input[name=quantity]").val(),
                                 }
                             }).done(function(response) {
-                                console.log(response)
+                                if (log) {console.log(response)}
                                 // удаляет отметку loop: on
                                 $.ajax({
                                     url: "/cart/del/sessionkeyloop/" + currentForm.data("productId") + "/",
@@ -1182,7 +1182,9 @@
                                         "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),
                                     }
                                 }).done(function(response) {
-                                    console.log("loop off", response, "del/sessionkeyloop/" + currentForm.data("productId") + "/")
+                                    if (log) {
+                                        console.log("loop off", response, "del/sessionkeyloop/" + currentForm.data("productId") + "/")
+                                    }
                                     window.location = window.location.pathname
                                 })
                             })
@@ -1209,9 +1211,9 @@
                             try {
                                 // колличество товаров с петлей
                                 response = JSON.parse(response)
-                                console.log("/cart/count/quantity/on/", response)
+                                if (log) {console.log("/cart/count/quantity/on/", response)}
                             } catch(err) {
-                                console.error("/cart/count/quantity/on/")
+                                if (log) {console.error("/cart/count/quantity/on/")}
                             }
                             
                             var quantity_on = response["quantity_on"]
@@ -1221,9 +1223,9 @@
                             }).done(function(response) {
                                 try {
                                     response = JSON.parse(response)
-                                    console.info("loop_id:", response["loop_id"])
+                                    if (log) {console.info("loop_id:", response["loop_id"])}
                                 } catch(err) {
-                                    console.error("не получил ID:", GET_LOOP_ID_URL)
+                                    if (log) {console.error("не получил ID:", GET_LOOP_ID_URL)}
                                 }
 
                                 var loopId = response["loop_id"]
@@ -1233,7 +1235,7 @@
                                         method: "POST",
                                         data: {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()}
                                     }).done(function(response) {
-                                        console.log(response)
+                                        if (log) {console.log(response)}
                                         if (response) {
                                             window.location = window.location.pathname
                                         }
@@ -1258,10 +1260,12 @@
 
                     // changeCartLengthSubTotal(responseData)
                 } else {
-                    console.error(this.url, "error update cart")
+                    if (log) {console.error(this.url, "error update cart")}
                 }
             },
-            error: function() { console.error(this.url) },
+            error: function() {
+                if (log) {console.error(this.url)}
+            },
         })
         })
         
@@ -1289,10 +1293,12 @@
                         try {
                             var responseData = JSON.parse(response)
                         } catch (err) {
-                            console.info("УДАЛЕНИЕ ТОВАРОВ ИЗ МИНИ КОРЗИНЫ, ОШИБКА ПРИ РАЗБОРЕ ПОЛУЧЕННЫХ ДАННЫХ:", err)
+                            if (log) {
+                                console.info("УДАЛЕНИЕ ТОВАРОВ ИЗ МИНИ КОРЗИНЫ, ОШИБКА ПРИ РАЗБОРЕ ПОЛУЧЕННЫХ ДАННЫХ:", err)
+                            }
                             return
                         }
-                        console.info(this.url, "remove mini cart:", responseData)
+                        if (log) {console.info(this.url, "remove mini cart:", responseData)}
                         if (responseData.result === "remove") {
                             parent.addClass("d-none")
                             // счетчики корзины на странице
@@ -1314,14 +1320,16 @@
                                     method: "POST",
                                     data: {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()}
                                 }).done(function(response) {
-                                    console.log("mini cart", response)
+                                    if (log) {console.log("mini cart", response)}
                                     window.location = window.location.pathname
                                 })
                             }
                             window.location = window.location.pathname
                         }
                     },
-                    error: function() { console.error(this.url) },
+                    error: function() {
+                        if (log) {console.error(this.url)}
+                    },
                 });
             });
         });
@@ -1338,10 +1346,12 @@
                 try {
                     var responseData = JSON.parse(response)
                 } catch (err) {
-                    console.info("ПОЛУЧЕНИЕ ДАННЫХ КОРЗИНЫ, ОШИБКА ПРИ РАЗБОРЕ ПОЛУЧЕННЫХ ДАННЫХ:", err)
+                    if (log) {
+                        console.info("ПОЛУЧЕНИЕ ДАННЫХ КОРЗИНЫ, ОШИБКА ПРИ РАЗБОРЕ ПОЛУЧЕННЫХ ДАННЫХ:", err)
+                    }
                     return
                 }
-                console.info(this.url, "get info", responseData)
+                if (log) {console.info(this.url, "get info", responseData)}
                 // счетчики корзины на странице
                 $(".cart_info").html("<i class='icon-basket-loaded'></i><span class='black'>" + responseData.cart_length + "</span>" + responseData.sub_total)
                 $(".cart_middle").html("<i class='icon-basket-loaded'></i><span class='pro-count black'>" + responseData.cart_length + "</span>")
@@ -1404,7 +1414,9 @@
                 $("#cart_mini_content").html(htm)
                 removeItemMiniCart()
             },
-            error: function() { console.error(this.url) },
+            error: function() {
+                if (log) {console.error(this.url)}
+            },
         });
     }
 
@@ -1422,11 +1434,13 @@
                 try {
                     var responseData = JSON.parse(response)
                 } catch (err) {
-                    console.info("ДОБАВЛЕНИЕ В КОЗИНУ, ОШИБКА ПРИ РАЗБОРЕ ПОЛУЧЕННЫХ ДАННЫХ:", err)
-                    console.log(response)
+                    if (log) {
+                        console.info("ДОБАВЛЕНИЕ В КОЗИНУ, ОШИБКА ПРИ РАЗБОРЕ ПОЛУЧЕННЫХ ДАННЫХ:", err)
+                        console.log(response)
+                    }
                     return
                 }
-                console.info(this.url, "update mini cart:", responseData)
+                if (log) {console.info(this.url, "update mini cart:", responseData)}
 
                 // если товар успешно добавлен в козину, обновляем
                 if (responseData.result === "update") {
@@ -1460,9 +1474,9 @@
                             try {
                                 // колличество товаров с петлей
                                 response = JSON.parse(response)
-                                console.log("/cart/count/quantity/on/", response)
+                                if (log) {console.log("/cart/count/quantity/on/", response)}
                             } catch(err) {
-                                console.error("/cart/count/quantity/on/")
+                                if (log) {console.error("/cart/count/quantity/on/")}
                             }
                             var quantity_on = response["quantity_on"]
                             $.ajax({
@@ -1478,10 +1492,10 @@
                                     "price_install": $("input[name=price_install]").prop("checked") ? 1 : 0
                                 }
                             }).done(function(response) {
-                                console.log("add_anchor", response)
+                                if (log) {console.log("add_anchor", response)}
                                 printCart()
                             }).fail(function(err) {
-                                console.log("add_anchor", err)
+                                if (log) {console.log("add_anchor", err)}
                             });
                         })
                         
@@ -1497,7 +1511,7 @@
                                 "quantity": $("input[name=quantity]").val(),
                             }
                         }).done(function(response) {
-                            console.log('remove: ', url, response)
+                            if (log) {console.log('remove: ', url, response)}
                             // удаляет отметку loop: on
                             $.ajax({
                                 url: formElem.find("#add_anchor").data("urlLoopOff"),
@@ -1508,7 +1522,7 @@
                                 }
                             }).done(function(response) {
                                 response = JSON.parse(response)
-                                console.log("loop off::", response, this.url)
+                                if (log) {console.log("loop off::", response, this.url)}
                                 printCart()
                             })
                         })
@@ -1519,7 +1533,9 @@
 
                 }
             },
-            error: function() { console.error(this.url) },
+            error: function() {
+                if (log) {console.error(this.url)}
+            },
         });
     });
 
@@ -1538,7 +1554,7 @@
                     "price_install": $("input[name=price_install]").prop("checked") ? 1 : 0
                 }
             }).done(function(response) {
-                console.log('remove: ', url)
+                if (log) {console.log('remove: ', url)}
             })
         }
     });
