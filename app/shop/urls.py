@@ -1,6 +1,6 @@
 from django.urls import re_path, path, include
 
-from .views import view, shop, cart, order, blog, cdek, error
+from .views import view, shop, cart, order, blog, cdek, error, product_map
 
 app_name = 'shop'
 
@@ -9,6 +9,7 @@ handler404 = 'shop.views.error.bad_request'
 
 urlpatterns = [
 	path('', view.home, name='home'),
+	path('make/map/', product_map.make_map, name='make_map'),
 	path('about-us/', view.about, name='about'),
 	path(u'доставка-и-оплата/', view.shipping_payment, name='shipping_payment'),
 	path('pdd/', view.pdd, name='pdd'),

@@ -1,4 +1,4 @@
-$( function() {
+$(function($) {
     $("input[name=city]").focus(function(e) { $(this).val("") })
     // д. Дом, кв. Квартира, стр. Строение, к. Корпус
     $("input").on("input", function(e) { info() })
@@ -15,7 +15,7 @@ $( function() {
 
         var address = ""
         var street = $("input[name=street]").val()
-        address += street ? 'ул ' + street.charAt(0).toUpperCase() + street.slice(1) + ", ": ""
+        address += street ? street.charAt(0).toUpperCase() + street.slice(1) + ", ": ""
 
         var building = $("input[name=building]").val()
         address += building ? 'д ' + building + ", ": ""
@@ -920,11 +920,12 @@ $( function() {
       constraints: city,
       count: 10,
       onSelect: function(suggestion) {
-        if (suggestion["data"]["street"]) {
-            this.value = suggestion["data"]["street"]
-            info()
+        info()
+        // if (suggestion["data"]["street"]) {
+        //     this.value = suggestion["data"]["street"]
+        //     info()
 
-        }
+        // }
       },
     });
     // cdek end

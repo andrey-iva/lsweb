@@ -121,6 +121,9 @@ class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
 
     def preview_video(self, obj):
         return mark_safe(u'<video width="500" preload="metadata" controls="controls"><source src="%s"></video>' % str(obj.video.url))
+
+    class Media:
+        js = ('/static/shop/assets/user.js',)
 # end import - export
 
 

@@ -1,4 +1,4 @@
-(function($) {
+$(function($) {
     "use strict";
 
     function formatPrice(cls) {
@@ -1558,4 +1558,4 @@
             })
         }
     });
-})(jQuery);
+});
