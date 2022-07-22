@@ -3,7 +3,7 @@ $(function($) {
 	var csrf = $("input[name=csrfmiddlewaretoken]")
 
 	function make_product_map_xml(e) {
-		e.preventDefault()
+		// e.preventDefault()
 		$.ajax({
 			url: "/make/map/",
 			method: "POST",

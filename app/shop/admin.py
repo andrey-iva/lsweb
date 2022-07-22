@@ -5,7 +5,7 @@ from django_summernote.admin import SummernoteModelAdmin
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django.shortcuts import redirect
-
+from urllib.parse import unquote
 from pprint import pprint
 from .models import Category, Product, ProductImage, Order, OrderItem, Post, Message
 from .resources import ProductResource, ProductImageResource, PostResource
@@ -37,7 +37,7 @@ class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
 
 # import - export
-from urllib.parse import unquote
+
 
 @admin.register(Product)
 class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):

@@ -13,7 +13,7 @@ PERCENT = 5
 # retailcrm
 RETAIL_SITE = 'isofix-msk-ru'
 RETAIL_HOST = 'https://isofix-msk.retailcrm.ru'
-RETAIL_CRM_ID = 'dV820029C6QSbh9iaHyTcZ4veHKhA46v'
+RETAIL_CRM_ID = ''
 
 # yookassa
 # Configuration.account_id = '916495'
@@ -27,13 +27,10 @@ PAYMENT_REDIRECT_PAGE = 'http://127.0.0.1:8000/order/created/'
 PAYMENT_WAITING_TIME = 60
 
 # cdek
-# PROD = False
-# CLIENT_ID = 'EMscd6r9JnFiQ3bLoyjJY6eM78JrJceI'
-# CLIENT_SECRET = 'PjLZkKBHEiLK3YsjtNrt3TGNG0ahs3kG'
+PROD = False
+CLIENT_ID = 'EMscd6r9JnFiQ3bLoyjJY6eM78JrJceI'
+CLIENT_SECRET = 'PjLZkKBHEiLK3YsjtNrt3TGNG0ahs3kG'
 
-PROD = True
-CLIENT_ID = 'J0WbjKwXqA6EaIv3BHGw26B4YHnXiG0g'
-CLIENT_SECRET = 'fBTBvteAjRPyjwWpKbqg9Vd1YkU1UQmh'
 
 WEIGHT = 1500
 BOX = 'WASTE_PAPER'  # order.js
