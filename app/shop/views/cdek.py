@@ -10,7 +10,8 @@ import logging
 import csv
 import os
 
-from .. import PROD, CLIENT_ID, CLIENT_SECRET, FROM_LOCATION, TARIFF_CODES, BOX, WEIGHT
+from .. import PROD, FROM_LOCATION, TARIFF_CODES, BOX, WEIGHT
+from .. import CLIENT_ID, CLIENT_SECRET
 from ..cart import Cart
 
 if PROD:

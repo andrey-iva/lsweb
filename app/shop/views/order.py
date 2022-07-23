@@ -18,7 +18,7 @@ from ..cart import Cart
 from ..models import OrderItem, Order
 from .. import PAYMENT_REDIRECT_PAGE, PAYMENT_WAITING_TIME, ADMIN_EMAIL
 from .. import ADMIN_EMAIL_ORDER_INFO, CART_SESSION_ID
-from .. import RETAIL_HOST, RETAIL_CRM_ID, RETAIL_SITE
+from .. import RETAIL_HOST, RETAIL_CRM_ID, RETAIL_SITE, RETAIL_BRAND_CODE
 from .. import WEIGHT, PERCENT
 from pprint import pprint
 
@@ -135,6 +135,8 @@ def create_retail_order(order_id, copy_cart, params=None):
                     model = product.model_car.lower().capitalize()
                     order_c['customFields'] = {
                         'machine_model': brand + ' ' + model,
+                        'brand_of_the_machine': RETAIL_BRAND_CODE.get(brand.upper(),
+                                                                      'no_information'),
                     }
                 break
         if install:
@@ -146,6 +148,8 @@ def create_retail_order(order_id, copy_cart, params=None):
                     model = product.model_car.lower().capitalize()
                     order_c['customFields'] = {
                         'machine_model': brand + ' ' + model,
+                        'brand_of_the_machine': RETAIL_BRAND_CODE.get(brand.upper(),
+                                                                      'no_information'),
                     }
                 break
         if first_product.product_type == 'рейка':
@@ -323,7 +327,7 @@ def send_MAIL(subject, message, from_email, to_email):
 def order_create(request):
     cart = Cart(request)
     copy_cart = request.session.get(CART_SESSION_ID).copy()
-    percent = 0
+    # percent = 0
     if len(cart) == 0:
         return redirect('shop:product_list')
 
