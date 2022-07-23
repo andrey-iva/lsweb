@@ -261,11 +261,11 @@ class Order(models.Model):
     yookassa_amount = models.DecimalField(
             max_digits=10, decimal_places=2, verbose_name='Юкасса сумма', blank=True, default=0)
     yookassa_status = models.CharField(max_length=30, blank=True, verbose_name='Юкасса статус')
+    retail_crm_status = models.CharField(max_length=30, blank=True, verbose_name='CRM_ID')
     status = models.CharField(max_length=20,
                                     verbose_name='Статус',
                                     choices=(
                                         ('new', 'Новый'),
-                                        ('proc', 'На обработке'),
                                         ('arc', 'В архиве')), default='new')
     yookassa_full_info = models.TextField(blank=True)
     address_full_info = models.TextField(blank=True)

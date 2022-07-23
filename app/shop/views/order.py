@@ -11,7 +11,7 @@ from django import forms
 from django.core.mail import send_mail
 from yookassa import Payment
 
-from threading import Thread
+from threading import Thread, Lock
 from decimal import Decimal
 
 from ..cart import Cart
@@ -22,6 +22,7 @@ from .. import RETAIL_HOST, RETAIL_CRM_ID, RETAIL_SITE, RETAIL_BRAND_CODE
 from .. import WEIGHT, PERCENT
 from pprint import pprint
 
+lock = Lock()
 
 def get_subject(order_id):
     return f'iSOFIX-MSK Заказ №{order_id}'
@@ -80,12 +81,12 @@ def create_retail_order(order_id, copy_cart, params=None):
         'email': order.email,
         'customerComment': params.get('notes', '')
     }
-    product_t = ''
+    # product_t = ''
     first_product = False
     install = False
     for item in copy_cart.values():
         product = item['product']
-        if first_product == False:
+        if first_product is False:
             first_product = product
         # if product.product_type:
         #     product_t += product.product_type + ' '
@@ -217,7 +218,15 @@ def create_retail_order(order_id, copy_cart, params=None):
     pprint(order_c)
     result = client.order_create(order_c, RETAIL_SITE)
     # 'get_error_msg', 'get_errors', 'get_response', 'get_status_code', 'is_successful'
-    pprint(result.get_response())
+    res = result.get_response()
+    pprint(res)
+    lock.acquire()
+    if res['success'] is True:
+        order.retail_crm_status = str(res['id'])
+    if res['success'] is False:
+        order.retail_crm_status = 'FAIL'
+    order.save()
+    lock.release()
     if result.get_errors():
         logging.error('Retail error: %s', result.get_errors())
     logging.debug('Tread create order finish status: %s', result.get_status_code())
@@ -285,8 +294,10 @@ def payment_status(payment_id, order_id, wait_time):
     # print(pickle.loads(r))
     while status == 'pending':
         if count == wait_time:
+            lock.acquire()
             order.yookassa_status = 'unknown'
             order.save()
+            lock.release()
             logging.debug("Thread %s: finishing", payment_id)
             return
         payment = Payment.find_one(payment_id)
@@ -298,7 +309,7 @@ def payment_status(payment_id, order_id, wait_time):
             break
         count += 1
         time.sleep(1)
-
+    lock.acquire()
     order.yookassa_status = payment.status
     if status == 'succeeded':
         order.paid = paid
@@ -306,6 +317,7 @@ def payment_status(payment_id, order_id, wait_time):
         order.yookassa_amount = payment.amount.value
         order.yookassa_full_info = pickle.dumps(payment)
     order.save()
+    lock.release()
 
     logging.debug("Thread %s: finishing", payment_id)
 

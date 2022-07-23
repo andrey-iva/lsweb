@@ -123,7 +123,7 @@ class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
         return mark_safe(u'<video width="500" preload="metadata" controls="controls"><source src="%s"></video>' % str(obj.video.url))
 
     class Media:
-        js = ('/static/shop/assets/user.js',)
+        js = ('/static/shop/assets/product.js',)
 # end import - export
 
 
@@ -134,12 +134,20 @@ class OrderItemInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
+    list_per_page = 10
     empty_value_display = '-empty-'
-    list_display = ['id', 'first_name', 'status', 'paid', 'grand_total', 'phone', 'created']
+    list_display = [
+        'id', 'retail_crm_status', 'first_name', 'status', 'paid', 'grand_total', 'phone',
+        'created',
+    ]
     list_filter = ['paid', 'status', 'created']
-    exclude = ['yookassa_full_info']
+    list_editable = ['status']
+    exclude = ['yookassa_full_info', 'address_full_info', 'retail_crm_status']
     # list_editable = ['paid', 'status']
     inlines = [OrderItemInline]
+
+    class Media:
+        js = ('/static/shop/assets/order.js',)
 
 
 @admin.register(Post)
