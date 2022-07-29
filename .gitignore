@@ -2,8 +2,10 @@
 mkcert-v1.4.4-linux-amd64
 cert.pem
 key.pem
-catalog.yml
+catalog.xml
 app.py
+exception
+#app/shop/__init__.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
