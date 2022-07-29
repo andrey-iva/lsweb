@@ -111,6 +111,20 @@ class Product(models.Model):
         help_text='Выбрать из списка тип услуги, если тип товара установлен как услуга, иначе оставить пустым'
     )
 
+    order_type = models.CharField(
+        max_length=30,
+        verbose_name='RetailCRM Тип заказа',
+        blank=True,
+        choices=(
+            ('kronshtejn', 'Кронштейн'),
+            ('zamery', 'Подбор/разработка'),
+            ('tretiy-ryad', 'Третий ряд'),
+            ('kronshtejn-ustanovka', 'Установка'),
+            ('reyka-ind', 'Рейка индив-ая'),
+            ('reyka', 'Рейка станд-ая')),
+        default='kronshtejn',
+    )
+
     weight = models.IntegerField(
         blank=True, 
         default=1500,
@@ -184,14 +198,10 @@ class Product(models.Model):
     seo_key = models.TextField(
         blank=True, 
         verbose_name='SEO keys',
-        help_text='Например: кронштейн, рейка, рейки, установка, разработка и.т.д. Нет необходимомти \
-        вставлять текст со строницы, это будет неправильно и в таком случае лучше оставить поле пустым'
     )
     seo_desc = models.TextField(
         blank=True,
         verbose_name='SEO content',
-        help_text='Нет необходимости заполнять это поле, если сюда вставлять текст со страницы, это будет \
-        не правильно и в таком случае лучше оставить поле пустым'
     )
     # full_url = models.TextField(
     #     blank=True, verbose_name='Полный URL')

@@ -93,10 +93,10 @@
 <div class="shop-area pt-120 pb-120">
     <div class="container">
         <div class="row flex">
-            <div class="order-xl-2 order-lg-2 order-2 col-lg-9">
+            <div id="scroll_to_products" class="order-xl-2 order-lg-2 order-2 col-lg-9">
                 <div class="shop-topbar-wrapper">
                     <div class="shop-topbar-left">
-                        <div class="view-mode nav">
+<!--                         <div class="view-mode nav">
                             {% if product_view_style == 'grid' %}
                             <a class="grid_style active" data-grid-style-url="{% url 'shop:toggle_style' 'grid' %}">
                                 <i class="icon-grid"></i>
@@ -112,12 +112,12 @@
                                 <i class="icon-menu"></i>
                             </a>
                             {% endif %}
-                        </div>
+                        </div> -->
 
-                        <button type="button" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target=".bd-example-modal-xl">фильтр</button>
+                        <button type="button" class="btn btn-dark btn-sm bg-black" data-toggle="modal" data-target=".bd-example-modal-xl">Фильтр по моделям</button>
 
-                        <a class="btn btn-outline-dark btn-sm ml-1" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                            марки
+                        <a class="btn btn-danger btn-sm ml-1" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                            Марки
                           </a>
 
                     </div>
@@ -138,9 +138,10 @@
                             </select>
                         </div>
                     </div>
+
                 </div>
 
-                <div id="scroll_to_products" class="shop-bottom-area">
+                <div class="shop-bottom-area">
                     <div class="tab-content jump">
                         <div class="collapse" id="collapseExample">
                           <div class="card card-body mb-5">
@@ -154,7 +155,6 @@
                             </div>
                           </div>
                         </div>
-
                         {% if product_view_style == 'grid' %}
                         <div id="shop-1" class="product_grid_style tab-pane active">
                             <div class="row">

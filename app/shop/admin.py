@@ -45,11 +45,11 @@ class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     search_help_text = 'Поиск по названию'
     resource_class = ProductResource
     inlines = [ProductImageInline, ]
-    search_fields = ['name', 'item_number']
+    search_fields = ['name', 'item_number', 'slug']
     fields = [
         'category', 'name', 'slug', 'price', 'price_install',
         'item_number', 'brand_car', 'model_car', 'year', 'seat_type', 'product_type',
-        'service_type', 'available', 'attribute', 'image_base', 'preview', 'description_short',
+        'service_type', 'order_type', 'available', 'attribute', 'image_base', 'preview', 'description_short',
         'description_full', 'seo_title', 'seo_key', 'seo_desc',
         'video_shot', 'preview_shot', 'video', 'preview_video', 'frame_video',
     ]

@@ -95,6 +95,16 @@ WSGI_APPLICATION = 'app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'isofix',
+#         'USER': 'toor',
+#         'PASSWORD': '42903891',
+#         'HOST': 'localhost',
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -173,11 +183,18 @@ if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = "smtp.gmail.com"
-    EMAIL_HOST_USER = "andrey.iv.cherkessk@gmail.com"
-    EMAIL_HOST_PASSWORD = 'andrey42903891'
+    EMAIL_HOST = "mail.hosting.reg.ru"
+    EMAIL_HOST_USER = "isofix-msk@isofix.ru"
+    EMAIL_HOST_PASSWORD = 'isofix2019'
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
+
+    # EMAIL_HOST = "smtp.gmail.com"
+    # EMAIL_HOST_USER = "andrey.iv.cherkessk@gmail.com"
+    # EMAIL_HOST_PASSWORD = 'andrey42903891'
+    # EMAIL_PORT = 587
+    # EMAIL_USE_TLS = True
+    
     # EMAIL_PORT = 465
     # EMAIL_USE_SSL = True
 
@@ -191,27 +208,27 @@ LOGGING = {
         'console': {
             'format': '[%(asctime)s %(levelname)-1s] %(message)s'
         },
-        # 'file': {
-        #     'format': '%(asctime)s %(name)-1s %(levelname)-1s %(message)s'
-        # }
+        'file': {
+            'format': '%(asctime)s %(name)-1s %(levelname)-1s %(message)s'
+        }
     },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
             'formatter': 'console'
         },
-        # 'file': {
-        #     'level': 'DEBUG',
-        #     'class': 'logging.FileHandler',
-        #     'formatter': 'file',
-        #     'filename': 'debug.log'
-        # }
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'formatter': 'file',
+            'filename': os.path.join(BASE_DIR, 'exception', 'debug.log')
+        }
     },
     'loggers': {
         '': {
-            'level': 'DEBUG',
-            'handlers': ['console']
-            # 'handlers': ['console', 'file']
+            'level': 'ERROR',
+            # 'handlers': ['console']
+            'handlers': ['console', 'file'],
         }
     }
 }

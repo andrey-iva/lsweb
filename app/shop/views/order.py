@@ -51,15 +51,8 @@ def create_retail_order(order_id, copy_cart, params=None):
     delivery = {}
     dadata = {}
     items = []
-    # seat_type = {
-    #     'Переднее пассажирское': 'front-passenger-seat',
-    #     'заднее (по центру)': 'rear-center-seat',
-    #     'Заднее правое': 'rear-right-seat',
-    #     'Заднее левое': 'rear-left-seat',
-    #     'Третий ряд': 'third-row-seat',
-    # }
 
-    client = retailcrm.v5(RETAIL_HOST, RETAIL_CRM_ID)
+    # client = retailcrm.v5(RETAIL_HOST, RETAIL_CRM_ID)
 
     if params['payment_method'] == 'paynow':
         time.sleep(PAYMENT_WAITING_TIME * 2)
@@ -81,33 +74,17 @@ def create_retail_order(order_id, copy_cart, params=None):
         'email': order.email,
         'customerComment': params.get('notes', '')
     }
-    # product_t = ''
+
     first_product = False
     install = False
     for item in copy_cart.values():
         product = item['product']
+        if int(item['price_install']) > 0:
+            install = True
+    for item in copy_cart.values():
+        product = item['product']
         if first_product is False:
             first_product = product
-        # if product.product_type:
-        #     product_t += product.product_type + ' '
-        #     if product.product_type == 'услуга':
-        #         order_c['orderType'] = 'kronshtejn-ustanovka'
-        # order_c['customFields'] = {
-        #     'machine_model': product_t,
-        # }
-
-        # if product.item_number == 'razrab':
-        #     order_c['orderType'] = 'zamery'
-        # if product.item_number == 'ustanovka' or product.item_number == 'SVARK':
-        #     order_c['orderType'] = 'kronshtejn-ustanovka'
-        # if product.item_number == 'reyka-msk':
-        #     order_c['orderType'] = 'reyka'
-
-        # r1 = product.item_number == 'reyka-centr-krai'
-        # r2 = product.item_number == 'reyka-centr'
-        # r3 = product.item_number == 'reyka-centr'
-        # if r1 or r2 or r3:
-        #     order_c['orderType'] = 'reyka-ind'
 
         items.append({
             'productName': product.name,
@@ -122,13 +99,13 @@ def create_retail_order(order_id, copy_cart, params=None):
                 'purchasePrice': float(item['total_price_install']),
                 'quantity': item['quantity'],
             })
-            install = True
-            # order_c['orderType'] = 'kronshtejn-ustanovka'
 
     order_c['items'] = items
     if first_product:
         if first_product.product_type == 'кронштейн':
             order_c['orderType'] = 'kronshtejn'
+            if install:
+                order_c['orderType'] = 'kronshtejn-ustanovka'
             for item in copy_cart.values():
                 product = item['product']
                 if product.brand_car and product.model_car:
@@ -140,23 +117,17 @@ def create_retail_order(order_id, copy_cart, params=None):
                                                                       'no_information'),
                     }
                 break
-        if install:
-            order_c['orderType'] = 'install-bracket'
-            for item in copy_cart.values():
-                product = item['product']
-                if product.brand_car and product.model_car:
-                    brand = product.brand_car.lower().capitalize()
-                    model = product.model_car.lower().capitalize()
-                    order_c['customFields'] = {
-                        'machine_model': brand + ' ' + model,
-                        'brand_of_the_machine': RETAIL_BRAND_CODE.get(brand.upper(),
-                                                                      'no_information'),
-                    }
-                break
-        if first_product.product_type == 'рейка':
-            order_c['orderType'] = 'reil'
-        if first_product.product_type == 'услуга':
-            order_c['orderType'] = 'service'
+
+        if first_product.order_type == 'zamery':
+            order_c['orderType'] = first_product.order_type
+        if first_product.order_type == 'tretiy-ryad':
+            order_c['orderType'] = first_product.order_type
+        if first_product.order_type == 'kronshtejn-ustanovka':
+            order_c['orderType'] = first_product.order_type
+        if first_product.order_type == 'reyka-ind':
+            order_c['orderType'] = first_product.order_type
+        if first_product.order_type == 'reyka':
+            order_c['orderType'] = first_product.order_type
 
     # самовывоз
     if params['payment_method'] == '0':
@@ -216,21 +187,21 @@ def create_retail_order(order_id, copy_cart, params=None):
     order_c['delivery'] = delivery
 
     pprint(order_c)
-    result = client.order_create(order_c, RETAIL_SITE)
     # 'get_error_msg', 'get_errors', 'get_response', 'get_status_code', 'is_successful'
-    res = result.get_response()
-    pprint(res)
-    lock.acquire()
-    if res['success'] is True:
-        order.retail_crm_status = str(res['id'])
-    if res['success'] is False:
-        order.retail_crm_status = 'FAIL'
-    order.save()
-    lock.release()
-    if result.get_errors():
-        logging.error('Retail error: %s', result.get_errors())
-    logging.debug('Tread create order finish status: %s', result.get_status_code())
-    # logging.debug('Tread create_retail_order finish status: %s', 'end')
+    # result = client.order_create(order_c, RETAIL_SITE)
+    # res = result.get_response()
+    # pprint(res)
+    # lock.acquire()
+    # if res['success'] is True:
+    #     order.retail_crm_status = str(res['id'])
+    # if res['success'] is False:
+    #     order.retail_crm_status = 'FAIL'
+    # order.save()
+    # lock.release()
+    # if result.get_errors():
+    #     logging.error('Retail error: %s', result.get_errors())
+    # logging.debug('Tread create order finish status: %s', result.get_status_code())
+    logging.debug('Tread create_retail_order finish status: %s', 'end')
 
 
 def order_info(order_id, copy_cart):
@@ -240,7 +211,7 @@ def order_info(order_id, copy_cart):
     for item in copy_cart.values():
         product = item['product']
         price = str(item['price_install'])
-        install = 'Да ' + price if int(item['price_install']) > 0 else '-'
+        install = 'Да ' + price if int(item['price_install']) > 0 else 'Нет '
         quantity = item['quantity']
         html += '\n<ul>\n'
         html += f'\t<li>{product.name}</li>\n'
@@ -265,7 +236,7 @@ def order_info(order_id, copy_cart):
 <h3>Продукты</h3>
 <hr>
 <ul>
-    {html}
+{html}
 </ul>
 '''
 

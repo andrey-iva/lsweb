@@ -3,7 +3,20 @@
         <a class="sidebar-close"><i class="icon_close"></i></a>
         <div class="mobile-header-content-area">
             <div class="header-offer-wrap-3 mobile-header-padding-border-4">
-                <!-- <p class="black">Free shipping worldwide for orders over $99 <a href="#">Learn More</a></p> -->
+
+                <div class="sidebar-wrapper sidebar-wrapper-mrg-right">
+                    <div class="sidebar-widget mb-40">
+                        <div class="sidebar-search">
+                                <form class="sidebar-search-form" action="{% url 'shop:product_list' %}">
+                                    <input type="text" name="search_query" placeholder="Что будем искать?">
+                                    <button type="submit">
+                                    <i class="icon-magnifier"></i>
+                                    </button>
+                                </form>
+                        </div>
+                    </div>
+                </div>
+
             </div>
             <div class="mobile-menu-wrap mobile-header-padding-border-2">
                 <!-- mobile menu start -->

@@ -5,7 +5,8 @@ from .views import view, shop, cart, order, blog, cdek, error, pmap
 app_name = 'shop'
 
 handler404 = 'shop.views.error.page_not_found'
-handler404 = 'shop.views.error.bad_request'
+handler400 = 'shop.views.error.bad_request'
+handler403 = 'shop.views.error.permission_denied'
 
 urlpatterns = [
     path('', view.home, name='home'),
@@ -15,10 +16,12 @@ urlpatterns = [
     path('pdd/', view.pdd, name='pdd'),
     path('video/', view.video_list, name='video_list'),
     path('policy/', view.policy, name='policy'),
+    path('clear/session/', view.clear_session, name='clear_session'),
     path('contact/', include([
         path('', view.contact, name='contact'),
+        path('form/', view.get_message_form, name='get_message_form'),
         path('<str:message>/', view.contact, name='contact'),
-        path('contact/send/massage/', view.contact_send_message, name='contact_send_message'),
+        path('send/massage/', view.contact_send_message, name='contact_send_message'),
     ])),
     path('shop/', shop.product_list, name='shop_page'),
     path('product/loop_id/', shop.loop_id, name='loop_id'),
@@ -68,5 +71,7 @@ urlpatterns = [
     ])),
     path('404/', error.page_not_found),
     path('400/', error.bad_request),
+    path('403/', error.permission_denied),
+    # re_path(r'^\w*', view.ret_index, name='ret_index'),
     # path('order/', include([])),
 ]
